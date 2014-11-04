@@ -1,0 +1,28 @@
+
+.content {
+    font-family: 'Open Sans', sans-serif;
+    margin-left: auto;
+    margin-right: auto;
+    width:900px;
+    border-color:#000;
+    border-style:solid;
+    border-width:0px 1px;
+    padding:5px;
+}
+
+h2 {
+    margin-top:50px;
+}
+
+.header table {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.header table td {
+    padding: 5px;
+}
+
+a {
+    color:#000;
+}
