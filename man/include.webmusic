@@ -1,0 +1,18 @@
+[FILES]
+.I /usr/share/webmusic/Services/
+.RS
+The global service directory, which contains all the system-installed
+services.
+.RE
+.I ~/.local/share/webmusic/Services/
+.RS
+The user service directory, which can be used to update the
+system-installed services.
+.RE
+[ADDITIONAL INFORMATION]
+.RS
+For further information please visit the webmusic
+.UR http://webmusic.tiede.org/
+Homepage
+.UE
+\[char46]

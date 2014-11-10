@@ -1,0 +1,13 @@
+[Desktop Entry]
+Version=1.0
+
+_Name=WebMusic
+_Comment=Listen to your music
+
+Icon=webmusic
+Exec=@WEBMUSIC_LOCAL_BINDIR@webmusic
+Type=Application
+
+StartupNotify=true
+Categories=Network;GNOME;GTK;WebBrowser;
+_Keywords=webmusic;music;

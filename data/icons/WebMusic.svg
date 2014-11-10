@@ -1,0 +1,860 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="210mm"
+   height="297mm"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.5 r10040"
+   sodipodi:docname="WebMusic.svg">
+  <defs
+     id="defs4">
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3896-3"
+       id="radialGradient3902-0"
+       cx="383.57144"
+       cy="663.07648"
+       fx="383.57144"
+       fy="663.07648"
+       r="50.714287"
+       gradientTransform="matrix(1,0,0,0.77464785,0,149.42571)"
+       gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient3896-3">
+      <stop
+         style="stop-color:#000000;stop-opacity:1;"
+         offset="0"
+         id="stop3898-0" />
+      <stop
+         style="stop-color:#000000;stop-opacity:0;"
+         offset="1"
+         id="stop3900-0" />
+    </linearGradient>
+    <radialGradient
+       r="50.714287"
+       fy="663.07648"
+       fx="383.57144"
+       cy="663.07648"
+       cx="383.57144"
+       gradientTransform="matrix(1,0,0,0.77464785,0,149.42571)"
+       gradientUnits="userSpaceOnUse"
+       id="radialGradient3947-5"
+       xlink:href="#linearGradient3896-3-9"
+       inkscape:collect="always" />
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient3896-3-9">
+      <stop
+         style="stop-color:#000000;stop-opacity:1;"
+         offset="0"
+         id="stop3898-0-0" />
+      <stop
+         style="stop-color:#000000;stop-opacity:0;"
+         offset="1"
+         id="stop3900-0-3" />
+    </linearGradient>
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3896-0"
+       id="radialGradient3902-5"
+       cx="383.57144"
+       cy="663.07648"
+       fx="383.57144"
+       fy="663.07648"
+       r="50.714287"
+       gradientTransform="matrix(1,0,0,0.77464785,0,149.42571)"
+       gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient3896-0">
+      <stop
+         style="stop-color:#000000;stop-opacity:1;"
+         offset="0"
+         id="stop3898-4" />
+      <stop
+         style="stop-color:#000000;stop-opacity:0;"
+         offset="1"
+         id="stop3900-6" />
+    </linearGradient>
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3896-0-1"
+       id="radialGradient3902-5-6"
+       cx="383.57144"
+       cy="663.07648"
+       fx="383.57144"
+       fy="663.07648"
+       r="50.714287"
+       gradientTransform="matrix(1,0,0,0.77464785,0,149.42571)"
+       gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient3896-0-1">
+      <stop
+         style="stop-color:#000000;stop-opacity:1;"
+         offset="0"
+         id="stop3898-4-0" />
+      <stop
+         style="stop-color:#000000;stop-opacity:0;"
+         offset="1"
+         id="stop3900-6-0" />
+    </linearGradient>
+    <radialGradient
+       r="50.714287"
+       fy="663.07648"
+       fx="383.57144"
+       cy="663.07648"
+       cx="383.57144"
+       gradientTransform="matrix(1,0,0,0.77464785,0,149.42571)"
+       gradientUnits="userSpaceOnUse"
+       id="radialGradient3947-5-8"
+       xlink:href="#linearGradient3896-3-9-1"
+       inkscape:collect="always" />
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient3896-3-9-1">
+      <stop
+         style="stop-color:#000000;stop-opacity:1;"
+         offset="0"
+         id="stop3898-0-0-5" />
+      <stop
+         style="stop-color:#000000;stop-opacity:0;"
+         offset="1"
+         id="stop3900-0-3-6" />
+    </linearGradient>
+    <radialGradient
+       r="50.714287"
+       fy="663.07648"
+       fx="383.57144"
+       cy="663.07648"
+       cx="383.57144"
+       gradientTransform="matrix(1,0,0,0.77464785,0,149.42571)"
+       gradientUnits="userSpaceOnUse"
+       id="radialGradient3947-5-1"
+       xlink:href="#linearGradient3896-3-9-0"
+       inkscape:collect="always" />
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient3896-3-9-0">
+      <stop
+         style="stop-color:#000000;stop-opacity:1;"
+         offset="0"
+         id="stop3898-0-0-57" />
+      <stop
+         style="stop-color:#000000;stop-opacity:0;"
+         offset="1"
+         id="stop3900-0-3-9" />
+    </linearGradient>
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3896-0-16"
+       id="radialGradient3902-5-5"
+       cx="383.57144"
+       cy="663.07648"
+       fx="383.57144"
+       fy="663.07648"
+       r="50.714287"
+       gradientTransform="matrix(1,0,0,0.77464785,0,149.42571)"
+       gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient3896-0-16">
+      <stop
+         style="stop-color:#000000;stop-opacity:1;"
+         offset="0"
+         id="stop3898-4-6" />
+      <stop
+         style="stop-color:#000000;stop-opacity:0;"
+         offset="1"
+         id="stop3900-6-1" />
+    </linearGradient>
+    <radialGradient
+       r="50.714287"
+       fy="663.07648"
+       fx="383.57144"
+       cy="663.07648"
+       cx="383.57144"
+       gradientTransform="matrix(1,0,0,0.77464785,0,149.42571)"
+       gradientUnits="userSpaceOnUse"
+       id="radialGradient3947-5-1-5"
+       xlink:href="#linearGradient3896-3-9-0-8"
+       inkscape:collect="always" />
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient3896-3-9-0-8">
+      <stop
+         style="stop-color:#000000;stop-opacity:1;"
+         offset="0"
+         id="stop3898-0-0-57-4" />
+      <stop
+         style="stop-color:#000000;stop-opacity:0;"
+         offset="1"
+         id="stop3900-0-3-9-8" />
+    </linearGradient>
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3896-0-16-6"
+       id="radialGradient3902-5-5-9"
+       cx="383.57144"
+       cy="663.07648"
+       fx="383.57144"
+       fy="663.07648"
+       r="50.714287"
+       gradientTransform="matrix(1,0,0,0.77464785,0,149.42571)"
+       gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient3896-0-16-6">
+      <stop
+         style="stop-color:#000000;stop-opacity:1;"
+         offset="0"
+         id="stop3898-4-6-9" />
+      <stop
+         style="stop-color:#000000;stop-opacity:0;"
+         offset="1"
+         id="stop3900-6-1-5" />
+    </linearGradient>
+    <radialGradient
+       r="50.714287"
+       fy="663.07648"
+       fx="383.57144"
+       cy="663.07648"
+       cx="383.57144"
+       gradientTransform="matrix(1,0,0,0.77464785,0,149.42571)"
+       gradientUnits="userSpaceOnUse"
+       id="radialGradient3947-5-1-5-9"
+       xlink:href="#linearGradient3896-3-9-0-8-0"
+       inkscape:collect="always" />
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient3896-3-9-0-8-0">
+      <stop
+         style="stop-color:#000000;stop-opacity:1;"
+         offset="0"
+         id="stop3898-0-0-57-4-0" />
+      <stop
+         style="stop-color:#000000;stop-opacity:0;"
+         offset="1"
+         id="stop3900-0-3-9-8-5" />
+    </linearGradient>
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3896-0-16-6-9"
+       id="radialGradient3902-5-5-9-4"
+       cx="383.57144"
+       cy="663.07648"
+       fx="383.57144"
+       fy="663.07648"
+       r="50.714287"
+       gradientTransform="matrix(1,0,0,0.77464785,0,149.42571)"
+       gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient3896-0-16-6-9">
+      <stop
+         style="stop-color:#000000;stop-opacity:1;"
+         offset="0"
+         id="stop3898-4-6-9-1" />
+      <stop
+         style="stop-color:#000000;stop-opacity:0;"
+         offset="1"
+         id="stop3900-6-1-5-1" />
+    </linearGradient>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.49497475"
+     inkscape:cx="-174.18951"
+     inkscape:cy="437.18597"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1920"
+     inkscape:window-height="1016"
+     inkscape:window-x="0"
+     inkscape:window-y="27"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Ebene 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.56725138;stroke-opacity:1"
+       id="rect3985-7"
+       width="254.94395"
+       height="216.45906"
+       x="36.569523"
+       y="81.78875"
+       ry="32.896915"
+       rx="34.354145"
+       inkscape:export-filename="/mnt/daten/Programmierung/vala/WebMusic/data/icons/hicolor/256x256/apps/webmusic.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="fill:#626262;fill-opacity:1;stroke:#000000;stroke-width:0.66384685;stroke-opacity:1"
+       id="rect3852-4"
+       width="166.46039"
+       height="158.03548"
+       x="-317.48337"
+       y="343.33676"
+       transform="matrix(0.91531511,-0.40273844,0.89959958,0.43671569,0,0)"
+       ry="39.227085"
+       inkscape:export-filename="/mnt/daten/Programmierung/vala/WebMusic/data/icons/hicolor/256x256/apps/webmusic.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       sodipodi:type="arc"
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-opacity:1"
+       id="path3755-5"
+       sodipodi:cx="275.71429"
+       sodipodi:cy="626.64789"
+       sodipodi:rx="32.857143"
+       sodipodi:ry="40"
+       d="m 308.57144,626.64789 a 32.857143,40 0 1 1 -65.71429,0 32.857143,40 0 1 1 65.71429,0 z"
+       transform="matrix(1.0161797,-0.08078779,0.05695023,0.65005371,-213.41232,-123.78092)"
+       inkscape:export-filename="/mnt/daten/Programmierung/vala/WebMusic/data/icons/hicolor/256x256/apps/webmusic.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       sodipodi:type="arc"
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-opacity:1"
+       id="path3755-4-1"
+       sodipodi:cx="275.71429"
+       sodipodi:cy="626.64789"
+       sodipodi:rx="32.857143"
+       sodipodi:ry="40"
+       d="m 308.57144,626.64789 a 32.857143,40 0 1 1 -65.71429,0 32.857143,40 0 1 1 65.71429,0 z"
+       transform="matrix(1.0193098,-0.0272975,0.019243,0.65205598,-68.494935,-163.5594)"
+       inkscape:export-filename="/mnt/daten/Programmierung/vala/WebMusic/data/icons/hicolor/256x256/apps/webmusic.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.81286621;stroke-opacity:1"
+       id="rect3804-8"
+       width="5.0477757"
+       height="144.25662"
+       x="130.58037"
+       y="117.6591"
+       ry="0"
+       rx="0"
+       inkscape:export-filename="/mnt/daten/Programmierung/vala/WebMusic/data/icons/hicolor/256x256/apps/webmusic.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.02468324;stroke-opacity:1"
+       id="rect3824-1"
+       width="127.44112"
+       height="19.577911"
+       x="130.58037"
+       y="99.683975"
+       inkscape:export-filename="/mnt/daten/Programmierung/vala/WebMusic/data/icons/hicolor/256x256/apps/webmusic.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.75063694;stroke-opacity:1"
+       id="rect3804-9-6"
+       width="5.0477757"
+       height="123.01482"
+       x="252.989"
+       y="114.05669"
+       ry="0"
+       rx="0"
+       inkscape:export-filename="/mnt/daten/Programmierung/vala/WebMusic/data/icons/hicolor/256x256/apps/webmusic.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       sodipodi:type="arc"
+       style="fill:url(#radialGradient3902-5);fill-opacity:1;stroke:none"
+       id="path3878-5"
+       sodipodi:cx="383.57144"
+       sodipodi:cy="663.07648"
+       sodipodi:rx="50.714287"
+       sodipodi:ry="39.285713"
+       d="m 434.28573,663.07648 a 50.714287,39.285713 0 1 1 -101.42858,0 50.714287,39.285713 0 1 1 101.42858,0 z"
+       transform="matrix(0.67436795,-0.20443543,0.37420351,0.36842174,-401.90836,126.81669)"
+       inkscape:export-filename="/mnt/daten/Programmierung/vala/WebMusic/data/icons/hicolor/256x256/apps/webmusic.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       sodipodi:type="arc"
+       style="fill:url(#radialGradient3947-5);fill-opacity:1;stroke:none"
+       id="path3878-7-3"
+       sodipodi:cx="383.57144"
+       sodipodi:cy="663.07648"
+       sodipodi:rx="50.714287"
+       sodipodi:ry="39.285713"
+       d="m 434.28573,663.07648 a 50.714287,39.285713 0 1 1 -101.42858,0 50.714287,39.285713 0 1 1 101.42858,0 z"
+       transform="matrix(0.67436795,-0.20443543,0.37420351,0.36842174,-281.74138,102.59483)"
+       inkscape:export-filename="/mnt/daten/Programmierung/vala/WebMusic/data/icons/hicolor/256x256/apps/webmusic.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.10635964;stroke-opacity:1"
+       id="rect3985-7-1"
+       width="47.801994"
+       height="40.586075"
+       x="391.89661"
+       y="277.46683"
+       ry="6.1681714"
+       rx="6.4414024"
+       inkscape:export-filename="/mnt/daten/Programmierung/vala/WebMusic/data/icons/hicolor/48x48/apps/webmusic.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="fill:#626262;fill-opacity:1;stroke:#000000;stroke-width:0.12447129;stroke-opacity:1"
+       id="rect3852-4-1"
+       width="31.211325"
+       height="29.631653"
+       x="-148.31718"
+       y="582.72821"
+       transform="matrix(0.91531512,-0.40273841,0.89959959,0.43671566,0,0)"
+       ry="7.3550787"
+       inkscape:export-filename="/mnt/daten/Programmierung/vala/WebMusic/data/icons/hicolor/48x48/apps/webmusic.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       sodipodi:type="arc"
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-opacity:1"
+       id="path3755-5-1"
+       sodipodi:cx="275.71429"
+       sodipodi:cy="626.64789"
+       sodipodi:rx="32.857143"
+       sodipodi:ry="40"
+       d="m 308.57144,626.64789 a 32.857143,40 0 1 1 -65.71429,0 32.857143,40 0 1 1 65.71429,0 z"
+       transform="matrix(0.19053371,-0.01514771,0.01067817,0.12188507,345.02501,238.92248)"
+       inkscape:export-filename="/mnt/daten/Programmierung/vala/WebMusic/data/icons/hicolor/48x48/apps/webmusic.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       sodipodi:type="arc"
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-opacity:1"
+       id="path3755-4-1-1"
+       sodipodi:cx="275.71429"
+       sodipodi:cy="626.64789"
+       sodipodi:rx="32.857143"
+       sodipodi:ry="40"
+       d="m 308.57144,626.64789 a 32.857143,40 0 1 1 -65.71429,0 32.857143,40 0 1 1 65.71429,0 z"
+       transform="matrix(0.1911206,-0.00511828,0.00360806,0.12226049,372.19702,231.46402)"
+       inkscape:export-filename="/mnt/daten/Programmierung/vala/WebMusic/data/icons/hicolor/48x48/apps/webmusic.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.15241241;stroke-opacity:1"
+       id="rect3804-8-4"
+       width="0.94645798"
+       height="27.048117"
+       x="409.52362"
+       y="284.19247"
+       ry="0"
+       rx="0"
+       inkscape:export-filename="/mnt/daten/Programmierung/vala/WebMusic/data/icons/hicolor/48x48/apps/webmusic.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.19212811;stroke-opacity:1"
+       id="rect3824-1-3"
+       width="23.89521"
+       height="3.6708584"
+       x="409.52362"
+       y="280.82217"
+       inkscape:export-filename="/mnt/daten/Programmierung/vala/WebMusic/data/icons/hicolor/48x48/apps/webmusic.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.14074443;stroke-opacity:1"
+       id="rect3804-9-6-8"
+       width="0.94645798"
+       height="23.065277"
+       x="432.47522"
+       y="283.51706"
+       ry="0"
+       rx="0"
+       inkscape:export-filename="/mnt/daten/Programmierung/vala/WebMusic/data/icons/hicolor/48x48/apps/webmusic.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       sodipodi:type="arc"
+       style="fill:url(#radialGradient3902-5-6);fill-opacity:1;stroke:none"
+       id="path3878-5-5"
+       sodipodi:cx="383.57144"
+       sodipodi:cy="663.07648"
+       sodipodi:rx="50.714287"
+       sodipodi:ry="39.285713"
+       d="m 434.28573,663.07648 a 50.714287,39.285713 0 1 1 -101.42858,0 50.714287,39.285713 0 1 1 101.42858,0 z"
+       transform="matrix(0.126444,-0.03833164,0.07016316,0.06907908,309.682,285.90953)"
+       inkscape:export-filename="/mnt/daten/Programmierung/vala/WebMusic/data/icons/hicolor/48x48/apps/webmusic.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       sodipodi:type="arc"
+       style="fill:url(#radialGradient3947-5-8);fill-opacity:1;stroke:none"
+       id="path3878-7-3-5"
+       sodipodi:cx="383.57144"
+       sodipodi:cy="663.07648"
+       sodipodi:rx="50.714287"
+       sodipodi:ry="39.285713"
+       d="m 434.28573,663.07648 a 50.714287,39.285713 0 1 1 -101.42858,0 50.714287,39.285713 0 1 1 101.42858,0 z"
+       transform="matrix(0.126444,-0.03833164,0.07016316,0.06907908,332.21331,281.36793)"
+       inkscape:export-filename="/mnt/daten/Programmierung/vala/WebMusic/data/icons/hicolor/48x48/apps/webmusic.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.28362569;stroke-opacity:1"
+       id="rect3985-7-9"
+       width="127.47197"
+       height="108.22953"
+       x="362.42618"
+       y="89.468231"
+       ry="16.448458"
+       rx="17.177073"
+       inkscape:export-filename="/mnt/daten/Programmierung/vala/WebMusic/src/Resources/Icons/WebMusic.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="fill:#626262;fill-opacity:1;stroke:#000000;stroke-width:0.33192343;stroke-opacity:1"
+       id="rect3852-4-4"
+       width="83.230194"
+       height="79.017738"
+       x="-18.859888"
+       y="411.89249"
+       transform="matrix(0.91531511,-0.40273845,0.89959958,0.4367157,0,0)"
+       ry="19.613543"
+       inkscape:export-filename="/mnt/daten/Programmierung/vala/WebMusic/src/Resources/Icons/WebMusic.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       sodipodi:type="arc"
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-opacity:1"
+       id="path3755-5-7"
+       sodipodi:cx="275.71429"
+       sodipodi:cy="626.64789"
+       sodipodi:rx="32.857143"
+       sodipodi:ry="40"
+       d="m 308.57144,626.64789 a 32.857143,40 0 1 1 -65.71429,0 32.857143,40 0 1 1 65.71429,0 z"
+       transform="matrix(0.50808983,-0.04039389,0.02847511,0.32502685,237.43527,-13.316593)"
+       inkscape:export-filename="/mnt/daten/Programmierung/vala/WebMusic/src/Resources/Icons/WebMusic.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       sodipodi:type="arc"
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-opacity:1"
+       id="path3755-4-1-2"
+       sodipodi:cx="275.71429"
+       sodipodi:cy="626.64789"
+       sodipodi:rx="32.857143"
+       sodipodi:ry="40"
+       d="m 308.57144,626.64789 a 32.857143,40 0 1 1 -65.71429,0 32.857143,40 0 1 1 65.71429,0 z"
+       transform="matrix(0.50965488,-0.01364875,0.0096215,0.32602798,309.89396,-33.205833)"
+       inkscape:export-filename="/mnt/daten/Programmierung/vala/WebMusic/src/Resources/Icons/WebMusic.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.40643311;stroke-opacity:1"
+       id="rect3804-8-0"
+       width="2.5238879"
+       height="72.128311"
+       x="409.43161"
+       y="107.40341"
+       ry="0"
+       rx="0"
+       inkscape:export-filename="/mnt/daten/Programmierung/vala/WebMusic/src/Resources/Icons/WebMusic.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.51234162;stroke-opacity:1"
+       id="rect3824-1-0"
+       width="63.720554"
+       height="9.7889557"
+       x="409.43161"
+       y="98.415848"
+       inkscape:export-filename="/mnt/daten/Programmierung/vala/WebMusic/src/Resources/Icons/WebMusic.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.37531847;stroke-opacity:1"
+       id="rect3804-9-6-2"
+       width="2.5238879"
+       height="61.507408"
+       x="470.63589"
+       y="105.6022"
+       ry="0"
+       rx="0"
+       inkscape:export-filename="/mnt/daten/Programmierung/vala/WebMusic/src/Resources/Icons/WebMusic.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       sodipodi:type="arc"
+       style="fill:url(#radialGradient3902-5-5);fill-opacity:1;stroke:none"
+       id="path3878-5-3"
+       sodipodi:cx="383.57144"
+       sodipodi:cy="663.07648"
+       sodipodi:rx="50.714287"
+       sodipodi:ry="39.285713"
+       d="m 434.28573,663.07648 a 50.714287,39.285713 0 1 1 -101.42858,0 50.714287,39.285713 0 1 1 101.42858,0 z"
+       transform="matrix(0.33718396,-0.10221771,0.18710175,0.18421087,143.18725,111.98221)"
+       inkscape:export-filename="/mnt/daten/Programmierung/vala/WebMusic/src/Resources/Icons/WebMusic.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       sodipodi:type="arc"
+       style="fill:url(#radialGradient3947-5-1);fill-opacity:1;stroke:none"
+       id="path3878-7-3-8"
+       sodipodi:cx="383.57144"
+       sodipodi:cy="663.07648"
+       sodipodi:rx="50.714287"
+       sodipodi:ry="39.285713"
+       d="m 434.28573,663.07648 a 50.714287,39.285713 0 1 1 -101.42858,0 50.714287,39.285713 0 1 1 101.42858,0 z"
+       transform="matrix(0.33718396,-0.10221771,0.18710175,0.18421087,203.27074,99.871283)"
+       inkscape:export-filename="/mnt/daten/Programmierung/vala/WebMusic/src/Resources/Icons/WebMusic.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.14181283;stroke-opacity:1"
+       id="rect3985-7-9-1"
+       width="63.735977"
+       height="54.114761"
+       x="568.1015"
+       y="119.37703"
+       ry="8.2242289"
+       rx="8.5885353"
+       inkscape:export-filename="/mnt/daten/Programmierung/vala/WebMusic/src/Resources/Icons/WebMusic.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="fill:#626262;fill-opacity:1;stroke:#000000;stroke-width:0.1659617;stroke-opacity:1"
+       id="rect3852-4-4-9"
+       width="41.615093"
+       height="39.508865"
+       x="124.17472"
+       y="500.07498"
+       transform="matrix(0.91531509,-0.40273848,0.89959956,0.43671573,0,0)"
+       ry="9.8067703"
+       inkscape:export-filename="/mnt/daten/Programmierung/vala/WebMusic/src/Resources/Icons/WebMusic.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       sodipodi:type="arc"
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-opacity:1"
+       id="path3755-5-7-1"
+       sodipodi:cx="275.71429"
+       sodipodi:cy="626.64789"
+       sodipodi:rx="32.857143"
+       sodipodi:ry="40"
+       d="m 308.57144,626.64789 a 32.857143,40 0 1 1 -65.71429,0 32.857143,40 0 1 1 65.71429,0 z"
+       transform="matrix(0.25404488,-0.02019694,0.01423755,0.16251342,505.60607,67.984612)"
+       inkscape:export-filename="/mnt/daten/Programmierung/vala/WebMusic/src/Resources/Icons/WebMusic.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       sodipodi:type="arc"
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-opacity:1"
+       id="path3755-4-1-2-6"
+       sodipodi:cx="275.71429"
+       sodipodi:cy="626.64789"
+       sodipodi:rx="32.857143"
+       sodipodi:ry="40"
+       d="m 308.57144,626.64789 a 32.857143,40 0 1 1 -65.71429,0 32.857143,40 0 1 1 65.71429,0 z"
+       transform="matrix(0.25482741,-0.00682437,0.00481075,0.16301398,541.83542,58.039992)"
+       inkscape:export-filename="/mnt/daten/Programmierung/vala/WebMusic/src/Resources/Icons/WebMusic.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.20321654;stroke-opacity:1"
+       id="rect3804-8-0-0"
+       width="1.2619438"
+       height="36.064156"
+       x="591.60425"
+       y="128.34462"
+       ry="0"
+       rx="0"
+       inkscape:export-filename="/mnt/daten/Programmierung/vala/WebMusic/src/Resources/Icons/WebMusic.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.25617078;stroke-opacity:1"
+       id="rect3824-1-0-3"
+       width="31.860273"
+       height="4.8944778"
+       x="591.60425"
+       y="123.85082"
+       inkscape:export-filename="/mnt/daten/Programmierung/vala/WebMusic/src/Resources/Icons/WebMusic.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.18765922;stroke-opacity:1"
+       id="rect3804-9-6-2-4"
+       width="1.2619438"
+       height="30.753702"
+       x="622.20636"
+       y="127.44401"
+       ry="0"
+       rx="0"
+       inkscape:export-filename="/mnt/daten/Programmierung/vala/WebMusic/src/Resources/Icons/WebMusic.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       sodipodi:type="arc"
+       style="fill:url(#radialGradient3902-5-5-9);fill-opacity:1;stroke:none"
+       id="path3878-5-3-9"
+       sodipodi:cx="383.57144"
+       sodipodi:cy="663.07648"
+       sodipodi:rx="50.714287"
+       sodipodi:ry="39.285713"
+       d="m 434.28573,663.07648 a 50.714287,39.285713 0 1 1 -101.42858,0 50.714287,39.285713 0 1 1 101.42858,0 z"
+       transform="matrix(0.16859196,-0.05110885,0.09355086,0.09210543,458.48207,130.63402)"
+       inkscape:export-filename="/mnt/daten/Programmierung/vala/WebMusic/src/Resources/Icons/WebMusic.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       sodipodi:type="arc"
+       style="fill:url(#radialGradient3947-5-1-5);fill-opacity:1;stroke:none"
+       id="path3878-7-3-8-4"
+       sodipodi:cx="383.57144"
+       sodipodi:cy="663.07648"
+       sodipodi:rx="50.714287"
+       sodipodi:ry="39.285713"
+       d="m 434.28573,663.07648 a 50.714287,39.285713 0 1 1 -101.42858,0 50.714287,39.285713 0 1 1 101.42858,0 z"
+       transform="matrix(0.16859196,-0.05110885,0.09355086,0.09210543,488.52381,124.57855)"
+       inkscape:export-filename="/mnt/daten/Programmierung/vala/WebMusic/src/Resources/Icons/WebMusic.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.0709064;stroke-opacity:1"
+       id="rect3985-7-9-1-1"
+       width="31.867973"
+       height="27.057383"
+       x="573.96454"
+       y="292.92535"
+       ry="4.1121149"
+       rx="4.2942653"
+       inkscape:export-filename="/mnt/daten/Programmierung/vala/WebMusic/src/Resources/Icons/WebMusic.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="fill:#626262;fill-opacity:1;stroke:#000000;stroke-width:0.08298082;stroke-opacity:1"
+       id="rect3852-4-4-9-4"
+       width="20.807539"
+       height="19.754425"
+       x="-47.106564"
+       y="683.40894"
+       transform="matrix(0.915315,-0.40273868,0.89959946,0.43671594,0,0)"
+       ry="4.9033833"
+       inkscape:export-filename="/mnt/daten/Programmierung/vala/WebMusic/src/Resources/Icons/WebMusic.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       sodipodi:type="arc"
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-opacity:1"
+       id="path3755-5-7-1-3"
+       sodipodi:cx="275.71429"
+       sodipodi:cy="626.64789"
+       sodipodi:rx="32.857143"
+       sodipodi:ry="40"
+       d="m 308.57144,626.64789 a 32.857143,40 0 1 1 -65.71429,0 32.857143,40 0 1 1 65.71429,0 z"
+       transform="matrix(0.12702238,-0.01009847,0.00711877,0.08125672,542.71685,267.22915)"
+       inkscape:export-filename="/mnt/daten/Programmierung/vala/WebMusic/src/Resources/Icons/WebMusic.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       sodipodi:type="arc"
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-opacity:1"
+       id="path3755-4-1-2-6-5"
+       sodipodi:cx="275.71429"
+       sodipodi:cy="626.64789"
+       sodipodi:rx="32.857143"
+       sodipodi:ry="40"
+       d="m 308.57144,626.64789 a 32.857143,40 0 1 1 -65.71429,0 32.857143,40 0 1 1 65.71429,0 z"
+       transform="matrix(0.12741364,-0.00341219,0.00240537,0.081507,560.83152,262.25684)"
+       inkscape:export-filename="/mnt/daten/Programmierung/vala/WebMusic/src/Resources/Icons/WebMusic.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.10160825;stroke-opacity:1"
+       id="rect3804-8-0-0-7"
+       width="0.63097161"
+       height="18.03208"
+       x="585.71594"
+       y="297.40915"
+       ry="0"
+       rx="0"
+       inkscape:export-filename="/mnt/daten/Programmierung/vala/WebMusic/src/Resources/Icons/WebMusic.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.12808536;stroke-opacity:1"
+       id="rect3824-1-0-3-1"
+       width="15.930129"
+       height="2.4472392"
+       x="585.71594"
+       y="295.16226"
+       inkscape:export-filename="/mnt/daten/Programmierung/vala/WebMusic/src/Resources/Icons/WebMusic.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.09382959;stroke-opacity:1"
+       id="rect3804-9-6-2-4-1"
+       width="0.63097161"
+       height="15.376852"
+       x="601.01697"
+       y="296.95883"
+       ry="0"
+       rx="0"
+       inkscape:export-filename="/mnt/daten/Programmierung/vala/WebMusic/src/Resources/Icons/WebMusic.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       sodipodi:type="arc"
+       style="fill:url(#radialGradient3902-5-5-9-4);fill-opacity:1;stroke:none"
+       id="path3878-5-3-9-7"
+       sodipodi:cx="383.57144"
+       sodipodi:cy="663.07648"
+       sodipodi:rx="50.714287"
+       sodipodi:ry="39.285713"
+       d="m 434.28573,663.07648 a 50.714287,39.285713 0 1 1 -101.42858,0 50.714287,39.285713 0 1 1 101.42858,0 z"
+       transform="matrix(0.08429594,-0.02555443,0.04677541,0.04605272,519.15486,298.55386)"
+       inkscape:export-filename="/mnt/daten/Programmierung/vala/WebMusic/src/Resources/Icons/WebMusic.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+    <path
+       sodipodi:type="arc"
+       style="fill:url(#radialGradient3947-5-1-5-9);fill-opacity:1;stroke:none"
+       id="path3878-7-3-8-4-8"
+       sodipodi:cx="383.57144"
+       sodipodi:cy="663.07648"
+       sodipodi:rx="50.714287"
+       sodipodi:ry="39.285713"
+       d="m 434.28573,663.07648 a 50.714287,39.285713 0 1 1 -101.42858,0 50.714287,39.285713 0 1 1 101.42858,0 z"
+       transform="matrix(0.08429594,-0.02555443,0.04677541,0.04605272,534.17572,295.52613)"
+       inkscape:export-filename="/mnt/daten/Programmierung/vala/WebMusic/src/Resources/Icons/WebMusic.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90" />
+  </g>
+</svg>

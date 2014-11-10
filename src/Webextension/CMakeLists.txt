@@ -1,0 +1,49 @@
+ #
+ #   Copyright (C) 2014  Marcel Tiede
+ #
+ #   This program is free software: you can redistribute it and/or modify
+ #   it under the terms of the GNU General Public License as published by
+ #   the Free Software Foundation, either version 3 of the License, or
+ #   (at your option) any later version.
+ #
+ #   This program is distributed in the hope that it will be useful,
+ #   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+ #   
+ #   You should have received a copy of the GNU General Public License
+ #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ #
+
+vala_precompile(VALA_C
+    Player.vala
+    WebMusicPlayer.vala
+    WebMusicWebExtension.vala
+    JavascriptContext.vala
+    JavascriptMusicPlayer.vala
+    Plugins/IPlugin.vala
+    Plugins/MPRIS.vala
+    Plugins/Notification.vala
+OPTIONS
+    ${VALAFLAGS}
+PACKAGES
+    glib-2.0
+    gtk+-3.0
+    libnotify 
+    WebKit2WebExtension-4.0
+CUSTOM_VAPIS
+    ${CMAKE_BINARY_DIR}/src/Lib/libshare.vapi
+    ${CMAKE_SOURCE_DIR}/vapi/config.vapi
+    ${CMAKE_SOURCE_DIR}/vapi/javascriptcore.vapi
+GENERATE_VAPI
+    libwebextension
+GENERATE_HEADER
+    libwebextension
+)
+
+add_library(webextension SHARED ${VALA_C})
+target_link_libraries(webextension share ${GLIB_LDFLAGS} ${WEBEXTENSION_LDFLAGS} ${NOTIFY_LDFLAGS})
+set_target_properties(webextension PROPERTIES
+                      COMPILE_FLAGS "${GLIB_CFLAGS} ${GTK_CFLAGS} ${WEBEXTENSION_CFLAGS} ${NOTIFY_CFLAGS} ${COMMON_CFLAGS}"
+                      INCLUDE_DIRECTORIES "${CMAKE_BINARY_DIR}/src/Lib")
+                      
+install(TARGETS webextension DESTINATION "${PKG_LIBDIR}")

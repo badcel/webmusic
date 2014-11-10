@@ -1,0 +1,203 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-11-07 18:37+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../data/webmusic.desktop.in.h:1 ../src/Browser/AppWindow.vala:216
+#: ../src/Browser/Dialogs/AboutDialog.vala:56
+msgid "WebMusic"
+msgstr ""
+
+#: ../data/webmusic.desktop.in.h:2 ../src/Browser/WebMusic.vala:201
+#: ../src/Browser/AppWindow.vala:222
+msgid "Listen to your music"
+msgstr ""
+
+#: ../data/webmusic.desktop.in.h:3
+msgid "webmusic;music;"
+msgstr ""
+
+#: ../src/Browser/WebMusic.vala:44
+msgid "Show version number"
+msgstr ""
+
+#: ../src/Browser/WebMusic.vala:46
+msgid "Define the service to use for application startup"
+msgstr ""
+
+#: ../src/Browser/WebMusic.vala:46
+msgid "SERVICE"
+msgstr ""
+
+#: ../src/Browser/WebMusic.vala:50
+msgid "List all supported services"
+msgstr ""
+
+#: ../src/Browser/WebMusic.vala:136
+#, c-format
+msgid ""
+"Startup service %s file could not be loaded. Application shuts down. (%s)"
+msgstr ""
+
+#: ../src/Browser/WebMusic.vala:202 ../src/Browser/Dialogs/AboutDialog.vala:37
+msgid ""
+"A web based music player that integrates your favourite music service into "
+"the desktop."
+msgstr ""
+
+#: ../src/Browser/AppWindow.vala:218
+#: ../src/Webextension/WebMusicWebExtension.vala:118
+#: ../src/Webextension/Plugins/Notification.vala:49
+#, c-format
+msgid "by %s"
+msgstr ""
+
+#: ../src/Browser/AppWindow.vala:219
+#: ../src/Webextension/WebMusicWebExtension.vala:119
+#: ../src/Webextension/Plugins/Notification.vala:50
+#, c-format
+msgid "from %s"
+msgstr ""
+
+#: ../src/Browser/Dialogs/AboutDialog.vala:39
+#, c-format
+msgid "Powered by WebKit %d.%d.%d\n"
+msgstr ""
+
+#: ../src/Webextension/WebMusicWebExtension.vala:121
+#: ../src/Webextension/Plugins/Notification.vala:48
+#, c-format
+msgid "Now playing %s"
+msgstr ""
+
+#: ../src/Resources/ui/main.ui.h:1
+msgid "More"
+msgstr ""
+
+#: ../src/Resources/ui/main.ui.h:2
+msgid "Currently no integration script available."
+msgstr ""
+
+#: ../src/Resources/ui/popover-menu.ui.h:1
+msgid "Mini-Mode"
+msgstr ""
+
+#: ../src/Resources/ui/popover-menu.ui.h:2
+msgid "Deezer"
+msgstr ""
+
+#: ../src/Resources/ui/popover-menu.ui.h:3
+msgid "Jamendo"
+msgstr ""
+
+#: ../src/Resources/ui/application-menu.ui.h:1
+msgid "Pr_eferences"
+msgstr ""
+
+#: ../src/Resources/ui/application-menu.ui.h:2
+msgid "_About"
+msgstr ""
+
+#: ../src/Resources/ui/application-menu.ui.h:3
+msgid "_Quit"
+msgstr ""
+
+#: ../src/Resources/ui/preferences-dialog.ui.h:1
+msgid "Always"
+msgstr ""
+
+#: ../src/Resources/ui/preferences-dialog.ui.h:2
+msgid "Only in normal mode"
+msgstr ""
+
+#: ../src/Resources/ui/preferences-dialog.ui.h:3
+msgid "Only in mini mode"
+msgstr ""
+
+#: ../src/Resources/ui/preferences-dialog.ui.h:4
+msgid "Never"
+msgstr ""
+
+#: ../src/Resources/ui/preferences-dialog.ui.h:5
+msgid "Preferences"
+msgstr ""
+
+#: ../src/Resources/ui/preferences-dialog.ui.h:6
+msgid "Behavior"
+msgstr ""
+
+#: ../src/Resources/ui/preferences-dialog.ui.h:7
+msgid "Dark Theme:"
+msgstr ""
+
+#: ../src/Resources/ui/preferences-dialog.ui.h:8
+msgid "Plugins"
+msgstr ""
+
+#: ../src/Resources/ui/preferences-dialog.ui.h:9
+msgid "Enable Notifications"
+msgstr ""
+
+#: ../src/Resources/ui/preferences-dialog.ui.h:10
+msgid "Enable MPRIS Support"
+msgstr ""
+
+#: ../src/Resources/ui/preferences-dialog.ui.h:11
+msgid "Temporary Data"
+msgstr ""
+
+#: ../src/Resources/ui/preferences-dialog.ui.h:12
+#: ../src/Resources/ui/clear-data-dialog.ui.h:2
+msgid "C_lear"
+msgstr ""
+
+#: ../src/Resources/ui/clear-data-dialog.ui.h:1
+msgid "Clear Temporary Data"
+msgstr ""
+
+#: ../src/Resources/ui/clear-data-dialog.ui.h:3
+msgid "_Cancel"
+msgstr ""
+
+#: ../src/Resources/ui/clear-data-dialog.ui.h:4
+msgid "Select the temporary data you wish to clear"
+msgstr ""
+
+#: ../src/Resources/ui/clear-data-dialog.ui.h:5
+msgid ""
+"You are about to clear temporary data which was created by using music "
+"services you have visited. Check the types of information that you want to "
+"remove:"
+msgstr ""
+
+#: ../src/Resources/ui/clear-data-dialog.ui.h:6
+msgid "Cookies"
+msgstr ""
+
+#: ../src/Resources/ui/clear-data-dialog.ui.h:7
+msgid "Album Art"
+msgstr ""
+
+#: ../src/Resources/ui/clear-data-dialog.ui.h:8
+msgid "Internet files"
+msgstr ""
+
+#: ../src/Resources/ui/clear-data-dialog.ui.h:9
+msgid ""
+"You cannot undo this action. The data you are choosing to clear will be "
+"removed forever."
+msgstr ""

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <requires lib="gtk+" version="3.12"/>
+  <menu id='popovermenu'>
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">Mini-Mode</attribute>
+        <attribute name="action">win.minimode</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">Deezer</attribute>
+        <attribute name="action">win.service</attribute>
+        <attribute name="target">deezer</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">Jamendo</attribute>
+        <attribute name="action">win.service</attribute>
+        <attribute name="target">jamendo</attribute>
+      </item>
+    </section>
+</menu>
+</interface>

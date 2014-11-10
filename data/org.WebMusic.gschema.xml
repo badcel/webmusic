@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+    <schema path="/org/WebMusic/" id="org.WebMusic" gettext-domain="">
+        <child schema="org.WebMusic.Browser" name="browser"/>
+        <child schema="org.WebMusic.Webextension" name="webextension"/>
+    </schema>
+    <schema path="/org/WebMusic/Browser/" id="org.WebMusic.Browser">   
+        <key type="s" name="use-dark-theme">
+            <choices>
+                <choice value='always' />
+                <choice value='only-normal-mode' />
+                <choice value='only-mini-mode' />
+                <choice value='never' />
+            </choices>
+            <default>'only-mini-mode'</default>
+            <summary>Use dark theme</summary>
+            <description>Choose in which state a the player should prefer a dark theme.</description>
+        </key>
+        <key name="last-used-service" type="s">
+            <default>''</default>
+            <summary>The last used service</summary>
+            <description>This service is loaded at application startup</description>
+        </key>
+    </schema>
+    <schema path="/org/WebMusic/Webextension/" id="org.WebMusic.Webextension">   
+        <key type="b" name="enable-notifications">
+            <default>true</default>
+            <summary>Enable notifications</summary>
+            <description>Enable notifications for the player.</description>
+        </key>
+        <key type="b" name="enable-mpris">
+            <default>true</default>
+            <summary>Enable MPRIS</summary>
+            <description>Enable MPRIS-System for the player.</description>
+        </key>
+    </schema>
+</schemalist>
+
