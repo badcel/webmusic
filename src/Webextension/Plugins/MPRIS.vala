@@ -1,4 +1,4 @@
-/* 
+/*
  *  Copyright (C) 2010 Andreas Obergrusberger
  *  Copyright (C) 2010 - 2012 Jörn Magens
  *  Copyright (C) 2014 Marcel Tiede
@@ -22,7 +22,7 @@
  *  Marcel Tiede
  */
 
-using WebMusic.Lib; 
+using WebMusic.Lib;
 using WebMusic.Webextension;
 
 namespace WebMusic.Webextension.Plugins {
@@ -33,24 +33,24 @@ namespace WebMusic.Webextension.Plugins {
 
     private class Mpris : GLib.Object, IPlugin {
 
-        private const string INTERFACE_NAME = "org.mpris.MediaPlayer2.Player";   
+        private const string INTERFACE_NAME = "org.mpris.MediaPlayer2.Player";
 
         private uint mOwnerId;
         private uint mRootId;
         private uint mPlayerId;
         private bool mEnable;
-        
+
         private Player mPlayer = null;
         private MprisRoot mRoot = null;
         private MprisPlayer mMprisPlayer = null;
-        
+
         private unowned DBusConnection mConnection;
-        
+
         public bool Enable {
             get { return mEnable; }
             set {
                 mEnable = value;
-                
+
                 if(value) {
                     OwnBus();
                 } else {
@@ -58,19 +58,19 @@ namespace WebMusic.Webextension.Plugins {
                 }
             }
         }
-        
-        public Mpris(BrowserDBus browser, Service service) {        
+
+        public Mpris(BrowserDBus browser, Service service) {
             mRoot = new MprisRoot(browser, service);
         }
-        
+
         ~Mpris() {
             ReleaseBus();
         }
-        
+
         public bool RegisterPlayer(Player player){
 
             mPlayer = player;
-            
+
             //TODO Connect if dbus name aquired and disconnect if dbus name lost
             mPlayer.MetadataChanged.connect(OnMetadataChanged);
             mPlayer.PlayercontrolChanged.connect(OnPlayercontrolChanged);
@@ -78,10 +78,10 @@ namespace WebMusic.Webextension.Plugins {
             //TODO Check what to do if player gets inactive (signal if no integration available)
 
             mMprisPlayer = new MprisPlayer(mPlayer);
-            
+
             return true;
         }
-        
+
         private bool OwnBus() {
             mOwnerId = Bus.own_name(BusType.SESSION,
                                         "org.mpris.MediaPlayer2.WebMusic.instance1",
@@ -91,13 +91,13 @@ namespace WebMusic.Webextension.Plugins {
                                          OnNameLost);
             return mOwnerId != 0;
         }
-        
+
         private void ReleaseBus() {
 
             if(mRootId != 0) {
                 mConnection.unregister_object(mRootId);
             }
-            
+
             if(mPlayerId != 0) {
                 mConnection.unregister_object(mPlayerId);
             }
@@ -105,18 +105,18 @@ namespace WebMusic.Webextension.Plugins {
             if(mOwnerId != 0) {
                 Bus.unown_name(mOwnerId);
             }
-            
+
             mOwnerId = 0;
             mRootId = 0;
             mPlayerId = 0;
         }
-        
+
         private void OnBusAcquired(DBusConnection connection, string name) {
             this.mConnection = connection;
             try {
                 mRootId = connection.register_object("/org/mpris/MediaPlayer2", mRoot);
                 mPlayerId = connection.register_object("/org/mpris/MediaPlayer2", mMprisPlayer);
-            } 
+            }
             catch(IOError e) {
                 stdout.printf("%s\n", e.message);
             }
@@ -124,16 +124,16 @@ namespace WebMusic.Webextension.Plugins {
 
         private void OnNameAcquired(DBusConnection connection, string name) {
             debug("DBus: Name %s acquired.", name);
-        }    
+        }
 
         private void OnNameLost(DBusConnection connection, string name) {
             debug("DBus: Name %s lost.", name);
         }
-        
+
         private void SendPropertyChange(Variant dict) {
-            
+
             var invalidated_builder = new VariantBuilder(new VariantType("as"));
-          
+
             Variant[] arg_tuple = {
                 new Variant("s", INTERFACE_NAME),
                 dict,
@@ -143,9 +143,9 @@ namespace WebMusic.Webextension.Plugins {
 
             try {
                 this.mConnection.emit_signal(null,
-                                 "/org/mpris/MediaPlayer2", 
-                                 "org.freedesktop.DBus.Properties", 
-                                 "PropertiesChanged", 
+                                 "/org/mpris/MediaPlayer2",
+                                 "org.freedesktop.DBus.Properties",
+                                 "PropertiesChanged",
                                  args
                 );
             }
@@ -153,9 +153,9 @@ namespace WebMusic.Webextension.Plugins {
                 critical("Error emmitting PropertiesChanged DBus signal. (%s)", e.message);
             }
         }
-        
+
         private void OnMetadataChanged(string artist, string track, string album, string artUrl) {
-        
+
             if(!this.Enable || mConnection.closed)
                 return;
 
@@ -163,30 +163,30 @@ namespace WebMusic.Webextension.Plugins {
             Variant variant = mMprisPlayer.Metadata;
             var builder = new VariantBuilder(VariantType.DICTIONARY);
             builder.add("{sv}", "Metadata", variant);
-            
-            this.SendPropertyChange(builder.end());  
+
+            this.SendPropertyChange(builder.end());
         }
-        
+
         private void OnPlayercontrolChanged(bool canGoNext, bool canGoPrev, bool canShuffle,
                         bool canRepeat, bool shuffle, bool like, PlayStatus playStatus, Repeat loopStatus) {
-        
+
             if(!this.Enable || mConnection.closed)
                 return;
-        
+
             HashTable<string,Variant> dict = new HashTable<string,Variant>(str_hash, str_equal);
             dict.insert("CanGoNext",      new Variant.boolean(canGoNext));
             dict.insert("CanGoPrevious",  new Variant.boolean(canGoPrev));
             dict.insert("Shuffle",        new Variant.boolean(shuffle));
             dict.insert("PlaybackStatus", new Variant.string(playStatus.to_string()));
             dict.insert("LoopStatus", new Variant.string(loopStatus.to_string()));
-            
+
             this.SendPropertyChange(dict);
         }
     }
 
     [DBus(name = "org.mpris.MediaPlayer2")]
     private class MprisRoot : GLib.Object {
-        
+
         public bool CanQuit          { get { return true;  } }
         public bool CanRaise         { get { return true;  } }
         public bool HasTrackList     { get { return false; } }
@@ -194,33 +194,33 @@ namespace WebMusic.Webextension.Plugins {
 
         private BrowserDBus mBrowser;
         private Service     mService;
-        
+
         public MprisRoot(BrowserDBus browser, Service service) {
             mBrowser = browser;
             mService = service;
         }
-        
+
         //TODO Support fullscreen
         public bool Fullscreen {
             get { return false; }
             set { }
         }
-        
-        public string DesktopEntry { 
+
+        public string DesktopEntry {
             owned get {
                 return "webmusic";
             }
         }
-        
+
         //TODO Send property change if identity changes!
         public string Identity {
             owned get { return _("WebMusic") + " (%s)".printf(mService.Name); }
         }
-        
+
         public string[] SupportedUriSchemes {
             owned get { return {}; }
         }
-        
+
         public string[] SupportedMimeTypes {
             owned get {return {}; }
         }
@@ -232,7 +232,7 @@ namespace WebMusic.Webextension.Plugins {
                 warning("Could not quit application due to a DBus error. (%s)", e.message);
             }
         }
-        
+
         public void Raise() {
             try {
                 mBrowser.Raise();
@@ -251,15 +251,15 @@ namespace WebMusic.Webextension.Plugins {
             mPlayer = player;
         }
 
-        public string PlaybackStatus 
-        { 
+        public string PlaybackStatus
+        {
             owned get { return mPlayer.PlaybackStatus.to_string(); }
         }
-        
+
         public string LoopStatus {
             owned get { return mPlayer.LoopStatus.to_string(); }
-            set { 
-            
+            set {
+
                 switch(value) {
                     case "None":
                         mPlayer.LoopStatus = Repeat.NONE;
@@ -275,33 +275,33 @@ namespace WebMusic.Webextension.Plugins {
                         mPlayer.LoopStatus = Repeat.NONE;
                         break;
                 }
-            
+
             }
         }
-        
+
         public double Rate {
-            get { return 1.0; } 
-            set {  } 
+            get { return 1.0; }
+            set {  }
         }
-        
+
         public bool Shuffle {
             get { return mPlayer.Shuffle; }
             set { mPlayer.Shuffle = value; }
         }
-        
+
         public double Volume {
             get { return 1; }
             set {  }
         }
-        
+
         public int64 Position {
             get { return 1; }
             set {  }
         }
-        
+
         public double MinimumRate   { get { return 1.0;   } }
         public double MaximumRate   { get { return 1.0;   } }
-        
+
         private HashTable<string,Variant> _metadata = new HashTable<string,Variant>(str_hash, str_equal);
         public HashTable<string,Variant> Metadata { //a{sv}
             owned get {
@@ -310,39 +310,39 @@ namespace WebMusic.Webextension.Plugins {
                 return _metadata;
             }
         }
-        
+
         public bool   CanGoNext     { get { return mPlayer.CanGoNext;     } }
         public bool   CanGoPrevious { get { return mPlayer.CanGoPrevious; } }
         public bool   CanPlay       { get { return mPlayer.CanPlay;       } }
         public bool   CanPause      { get { return mPlayer.CanPause;      } }
         public bool   CanSeek       { get { return mPlayer.CanSeek;       } }
         public bool   CanControl    { get { return mPlayer.CanControl;    } }
-        
+
         public signal void Seeked(int64 Position);
-        
+
         public void Next() {
             mPlayer.Next();
         }
-        
+
         public void Previous() {
             mPlayer.Previous();
         }
-        
+
         public void Pause() {
             mPlayer.Pause();
         }
-        
+
         public void Stop() {
             mPlayer.Stop();
         }
-        
+
         public void Play() {
             mPlayer.Play();
         }
-        
+
         public void Seek(int64 offset){}
         public void SetPosition(ObjectPath TrackId, int64 Position){}
-        
+
         public void PlayPause() {
             if(mPlayer.PlaybackStatus != PlayStatus.PLAY) {
                 this.Play();
@@ -350,17 +350,17 @@ namespace WebMusic.Webextension.Plugins {
                 this.Pause();
             }
         }
-        
+
         public void SetMetadata(string artist, string track, string album, string artUrl) {
 
             _metadata = new HashTable<string,Variant>(str_hash, str_equal);
             _metadata.insert("xesam:title",  new Variant.string(track));
             _metadata.insert("mpris:artUrl", new Variant.string(artUrl));
-            
+
             if(artist.length > 0) {
                 _metadata.insert("xesam:artist", new Variant.string(artist));
             }
-            
+
             if(album.length > 0) {
                 _metadata.insert("xesam:album", new Variant.string(album));
             }

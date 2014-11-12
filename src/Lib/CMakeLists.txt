@@ -8,8 +8,8 @@
  #
  #   This program is distributed in the hope that it will be useful,
  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
- #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
- #   
+ #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ #
  #   You should have received a copy of the GNU General Public License
  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  #
@@ -42,8 +42,8 @@ set_target_properties(share PROPERTIES
 install(TARGETS share DESTINATION "${PKG_LIBDIR}")
 
 #add_custom_command(OUTPUT libshare-0.1.gir
-#                   COMMAND ${GIR_COMPILER}  
-#                        --shared-library=libshare.so 
+#                   COMMAND ${GIR_COMPILER}
+#                        --shared-library=libshare.so
 #                        --output=${CMAKE_CURRENT_BINARY_DIR}/libshare-0.1.typelib
 #                        ${CMAKE_CURRENT_BINARY_DIR}/libshare-0.1.gir
 #                   DEPENDS share)

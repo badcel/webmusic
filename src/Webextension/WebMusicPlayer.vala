@@ -8,8 +8,8 @@
  *
  *   This program is distributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
- *   
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -31,7 +31,7 @@ namespace WebMusic.Webextension {
         private PlayStatus mPlayStatus = PlayStatus.STOP;
         private Repeat     mLoopStatus = Repeat.NONE;
 
-        private delegate void CacheFinishedDelegate(string artist, string track, 
+        private delegate void CacheFinishedDelegate(string artist, string track,
                                                     string album, string artUrl, string fileName);
 
         protected abstract string GetArtist();
@@ -46,7 +46,7 @@ namespace WebMusic.Webextension {
         private string _Album  { get; set; }
 
         protected void StartCheckDom() {
-            if(mTimerId == 0) {        
+            if(mTimerId == 0) {
                 mTimerId = Timeout.add_seconds(1, checkDom);
             }
         }
@@ -57,13 +57,13 @@ namespace WebMusic.Webextension {
                 mTimerId = 0;
             }
         }
-        
+
         protected void Reset() {
             _Artist = "";
             _Track  = "";
             _ArtUrl = "";
             _Album  = "";
-            
+
             mCanNext    = false;
             mCanPrev    = false;
             mCanShuffle = false;
@@ -80,29 +80,29 @@ namespace WebMusic.Webextension {
         }
 
         private void CheckMetaData() {
-            
+
             string artist = this.GetArtist();
             string track  = this.GetTrack();
             string artUrl = this.GetArtUrl();
             string album  = this.GetAlbum();
-            
+
             if(artist.length == 0 || track.length == 0)
                 return;
-                
+
             if(artist     != this._Artist
                 || track  != this._Track
                 || artUrl != this._ArtUrl
                 || album  != this._Album) {
-                
+
                 string nartUrl = artUrl.replace("https://", "http://");
                 this.CacheCover(artist, track, album, nartUrl, SendMetadataChanged);
-                
+
                 this._Artist = artist;
                 this._Track  = track;
                 this._ArtUrl = artUrl;
                 this._Album = album;
             }
-            
+
         }
 
         private void CheckPlayerControls() {
@@ -119,7 +119,7 @@ namespace WebMusic.Webextension {
                 || this.mCanShuffle != canShuffle
                 || this.mShuffle    != shuffle
                 || this.mLike       != like
-                || this.mPlayStatus != playStatus            
+                || this.mPlayStatus != playStatus
                 || this.mLoopStatus != loopStatus) {
 
                 this.PlayercontrolChanged(canNext, canPrev, canShuffle,
@@ -135,13 +135,13 @@ namespace WebMusic.Webextension {
             }
         }
 
-        private void SendMetadataChanged(string artist, string track, 
+        private void SendMetadataChanged(string artist, string track,
                                         string album, string artUrl, string fileName) {
             string nfileName = "file://" + fileName;
             this.MetadataChanged(artist, track, album, nfileName);
         }
 
-        private void CacheCover(string artist, string track, string album, 
+        private void CacheCover(string artist, string track, string album,
                                 string artUrl, CacheFinishedDelegate dele) {
             //TODO Consider file extension, don't name everything as jpg
             //TODO Cache by album name, not by track name (if possible)
@@ -151,13 +151,13 @@ namespace WebMusic.Webextension {
 
             if(!cachedImage.query_exists()) {
 
-                var onlineImage = File.new_for_uri(artUrl);            
+                var onlineImage = File.new_for_uri(artUrl);
                 onlineImage.load_contents_async.begin(null, (obj, res) => {
                     try {
                         uint8[] contents;
                         string etag_out;
 
-                        onlineImage.load_contents_async.end(res, out contents, out etag_out);			            
+                        onlineImage.load_contents_async.end(res, out contents, out etag_out);
 
                         FileOutputStream os = cachedImage.append_to(FileCreateFlags.NONE);
                         os.write(contents);
@@ -175,7 +175,7 @@ namespace WebMusic.Webextension {
                 //Image already cached, everything OK
                 dele(artist, track, album, artUrl, fileName);
             }
-        
+
         }
     }
 }

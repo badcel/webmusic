@@ -8,8 +8,8 @@
  *
  *   This program is distributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
- *   
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -19,15 +19,15 @@ using WebMusic.Lib;
 namespace WebMusic.Browser.Osd {
 
     public class CoverStage : GtkClutter.Embed {
-    
+
         private Clutter.Stage    mStage;
         private Clutter.Actor    mCoverActor;
         private Clutter.Image    mImage;
         private ControlsActor    mControlsActor;
-        
+
         public void Init(IPlayer player, Service service) {
-        
-            mImage = new Clutter.Image();        
+
+            mImage = new Clutter.Image();
             mCoverActor = new Clutter.Actor();
 
             mControlsActor = new ControlsActor(player, service);
@@ -43,35 +43,35 @@ namespace WebMusic.Browser.Osd {
                 this.ShowControls(true);
                 return false;
             });
-            
+
             mStage = (Clutter.Stage) this.get_stage();
             mStage.background_color = Clutter.Color.from_string("white");
             mStage.layout_manager = new Clutter.BinLayout();
             mStage.add_child(mCoverActor);
             mStage.add_child(mControlsActor);
-            
+
             this.enter_notify_event.connect((event) => {
                 this.ShowControls(true);
                 return false;
             });
-            
+
             this.leave_notify_event.connect((event) => {
                 this.ShowControls(false);
                 return false;
             });
         }
-        
+
         public void ShowControls(bool show) {
             if(mControlsActor != null) {
                 mControlsActor.BlendIn(show);
-            }        
+            }
         }
-        
+
         public void LoadStockIcon(string name) {
             try {
                 Gtk.IconTheme theme = Gtk.IconTheme.get_default();
                 Gdk.Pixbuf? pixbuf = theme.load_icon_for_scale(name, 128, 1, Gtk.IconLookupFlags.FORCE_SIZE);
-                
+
                 if(pixbuf == null) {
                     critical("No icon named %s found in icon theme.", name);
                 } else {
@@ -81,7 +81,7 @@ namespace WebMusic.Browser.Osd {
                 critical("Could not load stock icon %s. (%s)", name, e.message);
             }
         }
-        
+
         public void LoadImage(string coverPath) {
             try {
                 Gdk.Pixbuf pixbuf = new Gdk.Pixbuf.from_file(coverPath);
@@ -90,7 +90,7 @@ namespace WebMusic.Browser.Osd {
                 critical("Could not load pixbuf from path %s. (%s)", coverPath, e.message);
             }
         }
-        
+
         private void SetPixbuf(Gdk.Pixbuf pixbuf) throws Error {
 
                 mImage.set_data(pixbuf.get_pixels(),
@@ -99,11 +99,11 @@ namespace WebMusic.Browser.Osd {
 
                 mCoverActor.content = mImage;
                 mCoverActor.set_size(pixbuf.width, pixbuf.height);
-                
+
                 this.set_size_request((int)mCoverActor.width + 10, (int)mCoverActor.height + 10);
                 mCoverActor.set_position(5, 5);
         }
-    
+
     }
 
 }

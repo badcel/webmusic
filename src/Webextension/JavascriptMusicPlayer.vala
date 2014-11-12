@@ -8,8 +8,8 @@
  *
  *   This program is distributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
- *   
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -20,28 +20,28 @@ namespace WebMusic.Webextension {
 
     [DBus(name = "org.WebMusic.Webextension.Player")]
     private class JavascriptMusicPlayer : WebMusicPlayer {
-       
+
        private const int REQUIRED_API_VERSION = 1;
-       
+
         private JavascriptContext mContext;
         private Service mService;
         private bool mIntegrationReady = false;
         private bool mShuffle = false;
         private bool mLike = false;
-        
+
         public JavascriptMusicPlayer(Service service, JavascriptContext context) {
             mService = service;
-            
+
             mContext = context;
             mContext.ContextChanged.connect(OnContextChanged);
-            
+
             this.InjectApi();
         }
-        
+
         ~JavascriptMusicPlayer() {
             StopCheckDom();
-        }    
-        
+        }
+
         protected override string GetArtist() {
             if(mIntegrationReady) {
                 return mContext.CallFunctionAsString("GetArtist");
@@ -49,15 +49,15 @@ namespace WebMusic.Webextension {
                 return "";
             }
         }
-        
+
         protected override string GetTrack()  {
-            if(mIntegrationReady) {      
+            if(mIntegrationReady) {
                 return mContext.CallFunctionAsString("GetTrack");
             } else {
                 return "";
             }
         }
-        
+
         protected override string GetAlbum() {
             if(mIntegrationReady) {
                 return mContext.CallFunctionAsString("GetAlbum");
@@ -65,7 +65,7 @@ namespace WebMusic.Webextension {
                 return "";
             }
         }
-        
+
         protected override string GetArtUrl() {
             if(mIntegrationReady) {
                 return mContext.CallFunctionAsString("GetArtUrl");
@@ -73,7 +73,7 @@ namespace WebMusic.Webextension {
                 return "";
             }
         }
-        
+
         protected override bool GetReady() {
             if(mIntegrationReady) {
                 return mContext.CallFunctionAsBoolean("GetReady");
@@ -81,9 +81,9 @@ namespace WebMusic.Webextension {
                 return false;
             }
         }
-        
+
         public override PlayStatus PlaybackStatus {
-            get { 
+            get {
                 if(mIntegrationReady) {
                     return (PlayStatus) mContext.CallFunctionAsInteger("GetPlaybackStatus");
                 } else {
@@ -91,9 +91,9 @@ namespace WebMusic.Webextension {
                 }
             }
         }
-        
+
         public override bool CanGoNext {
-            get { 
+            get {
                 if(mIntegrationReady) {
                     return mContext.CallFunctionAsBoolean("GetCanGoNext");
                 } else {
@@ -101,9 +101,9 @@ namespace WebMusic.Webextension {
                 }
             }
         }
-        
+
         public override bool CanGoPrevious {
-            get { 
+            get {
                 if(mIntegrationReady) {
                     return mContext.CallFunctionAsBoolean("GetCanGoPrevious");
                 } else {
@@ -111,17 +111,17 @@ namespace WebMusic.Webextension {
                 }
             }
         }
-        
-        
+
+
         public override bool CanPlay    { get { return mIntegrationReady;  } }
         public override bool CanPause   { get { return mIntegrationReady;  } }
-        public override bool CanSeek    { get { return false; } }   
+        public override bool CanSeek    { get { return false; } }
         public override bool CanControl { get { return mIntegrationReady;  } }
-        
+
         public override bool Shuffle {
             get {
                 bool ret = false;
-                
+
                 if(mIntegrationReady && mService.SupportsShuffle) {
                     ret = mContext.CallFunctionAsBoolean("GetShuffle");
                 }
@@ -134,11 +134,11 @@ namespace WebMusic.Webextension {
                 }
             }
         }
-        
+
         public override bool Like {
             get {
                 bool ret = false;
-                
+
                 if(mIntegrationReady && mService.SupportsLike) {
                     ret = mContext.CallFunctionAsBoolean("GetLike");
                 }
@@ -151,19 +151,19 @@ namespace WebMusic.Webextension {
                 }
             }
         }
-        
+
         public override bool CanShuffle {
             get {
                 bool ret = false;
-                
+
                 if(mIntegrationReady && mService.SupportsShuffle) {
                     ret = mContext.CallFunctionAsBoolean("CanShuffle");
                 }
-                
+
                 return ret;
             }
         }
-        
+
         public override Repeat LoopStatus {
             get {
                 Repeat loopStatus = Repeat.NONE;
@@ -174,7 +174,7 @@ namespace WebMusic.Webextension {
             }
             set { /*TODO, JavascriptContext misses support for parameters */ }
         }
-        
+
         public override void Next() {
             if(mIntegrationReady) {
                 Idle.add(() => {
@@ -183,7 +183,7 @@ namespace WebMusic.Webextension {
                 });
             }
         }
-        
+
         public override void Previous() {
             if(mIntegrationReady) {
                 Idle.add(() => {
@@ -192,7 +192,7 @@ namespace WebMusic.Webextension {
                 });
             }
         }
-        
+
         public override void Pause() {
             if(mIntegrationReady) {
                 Idle.add(() => {
@@ -201,11 +201,11 @@ namespace WebMusic.Webextension {
                 });
             }
         }
-        
+
         public override void Stop() {
             Pause();
         }
-        
+
         public override void Play() {
             if(mIntegrationReady) {
                 Idle.add(() => {
@@ -214,7 +214,7 @@ namespace WebMusic.Webextension {
                 });
             }
         }
-        
+
         private void InjectApi() {
             if(mService.ApiVersion != REQUIRED_API_VERSION) {
                 mIntegrationReady = false;
@@ -223,7 +223,7 @@ namespace WebMusic.Webextension {
             } else if(mService.IntegratesService) {
                 string serviceFile;
                 string path = mService.IntegrationFilePath;
-                
+
                 try {
                     FileUtils.get_contents(path, out serviceFile);
                 } catch(FileError e) {
@@ -231,10 +231,10 @@ namespace WebMusic.Webextension {
                     critical("Could not load content of service file (%s). " +
                             "Integration disabled. (%s)", path, e.message);
                 }
-                
+
                 debug("Injecting %s: %s", mService.Ident, path);
-                
-                //TODO Check for file errors        
+
+                //TODO Check for file errors
                 mContext.EvaluateScript(serviceFile, path, 1);
                 mIntegrationReady = true;
                 StartCheckDom();
@@ -243,12 +243,12 @@ namespace WebMusic.Webextension {
                 debug("No integration supported for service %s.", mService.Name);
                 StopCheckDom();
             }
-            
+
             if(!mIntegrationReady) {
                 Reset();
             }
         }
-        
+
         private void OnContextChanged() {
             this.InjectApi();
         }

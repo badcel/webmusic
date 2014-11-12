@@ -8,8 +8,8 @@
  *
  *   This program is distributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
- *   
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -21,7 +21,7 @@ namespace WebMusic.Browser {
 
     [DBus(name = "org.WebMusic.Browser")]
     public class WebMusic : Gtk.Application {
-        
+
         private AppWindow mAppWindow;
         private Browser   mBrowser;
         private Settings  mSettings;
@@ -33,50 +33,50 @@ namespace WebMusic.Browser {
         private const ActionEntry[] mActions = {
             { "preferences", AppPreferences},
             { "about"      , AppAbout},
-            { "quit"       , AppQuit}		
+            { "quit"       , AppQuit}
         };
-        
+
         public const string HOMEPAGE = "http://webmusic.tiede.org";
         public const string HOMEPAGE_SERVICES = "http://webmusic.tiede.org/#Services";
 
-	    private const GLib.OptionEntry[] mOptions = {
-		    { "version", 0, 0, OptionArg.NONE, ref mShowVersion, 
-		        N_("Show version number"), null },
-		    { "service", 'S', 0, OptionArg.STRING, ref mService, 
-		        N_("Define the service to use for application startup"), N_("SERVICE") },
-		    /*{ "search", 's', 0, OptionArg.STRING, ref mQueryService, 
-		        N_("Search service for SEARCH_TERM"), N_("SEARCH_TERM") },*/
-		    { "list-services", 'l', 0, OptionArg.NONE, ref mListServices, 
-		        N_("List all supported services"), null },
-		    { null }
-	    };
+        private const GLib.OptionEntry[] mOptions = {
+            { "version", 0, 0, OptionArg.NONE, ref mShowVersion,
+            N_("Show version number"), null },
+            { "service", 'S', 0, OptionArg.STRING, ref mService,
+            N_("Define the service to use for application startup"), N_("SERVICE") },
+            /*{ "search", 's', 0, OptionArg.STRING, ref mQueryService,
+            N_("Search service for SEARCH_TERM"), N_("SEARCH_TERM") },*/
+            { "list-services", 'l', 0, OptionArg.NONE, ref mListServices,
+            N_("List all supported services"), null },
+            { null }
+        };
 
-	    public WebMusic() {
-		    Object(application_id: "org.WebMusic",
-			                flags: ApplicationFlags.FLAGS_NONE);
-	    }
-	
+        public WebMusic() {
+            Object(application_id: "org.WebMusic",
+                            flags: ApplicationFlags.FLAGS_NONE);
+        }
+
         public void Raise() {
             mAppWindow.present_with_time((uint32) TimeVal().tv_sec);
         }
-        
+
         public void Quit() {
             this.AppQuit(null, null);
         }
-        
+
         public string GetCurrentService() {
             return mBrowser.CurrentService.Ident;
         }
 
         protected override void startup() {
-        
+
             base.startup();
-        
+
             this.add_action_entries(mActions, this);
-	        	
+
             var b = new Gtk.Builder();
             b.set_translation_domain(Config.GETTEXT_PACKAGE);
-	        
+
             try {
                 b.add_from_resource("/org/WebMusic/Browser/ui/application-menu.ui");
             } catch(Error e) {
@@ -84,7 +84,7 @@ namespace WebMusic.Browser {
             }
 
             this.app_menu = b.get_object("app-menu") as MenuModel;
-            
+
             var coverDir = File.new_for_path(Directory.GetAlbumArtDir());
             if(!coverDir.query_exists()) {
                 try {
@@ -94,7 +94,7 @@ namespace WebMusic.Browser {
                             Directory.GetAlbumArtDir(), e.message);
                 }
             }
-            
+
             mSettings = new Settings("org.WebMusic.Browser");
         }
 
@@ -107,18 +107,18 @@ namespace WebMusic.Browser {
                     strService = mService;
                 } else {
                     strService = mSettings.get_string("last-used-service");
-                    
+
                     if(strService.length == 0) {
                         strService = "deezer";
                     }
                 }
-                
+
                 service = new Service(strService);
-                
+
                 mSettings.set_string("last-used-service", strService);
-                
+
                 //TODO What if the service is disabled?
-                
+
                 mAppWindow = new AppWindow(this, service, mSettings);
                 mAppWindow.show_all();
 
@@ -130,8 +130,8 @@ namespace WebMusic.Browser {
                     } catch(Error e) {
                         error("Could not register application via dbus. (%s)", e.message);
                     }
-                }		
-                
+                }
+
             } catch(ServiceError e)  {
                 string err = _("Startup service %s file could not be loaded. Application shuts down. (%s)")
                                 .printf(strService, e.message);
@@ -140,14 +140,14 @@ namespace WebMusic.Browser {
                 quit();
             }
         }
-	
+
         private void AppPreferences(SimpleAction action, Variant? parameter) {
             var preferences = new PreferencesDialog();
             preferences.set_transient_for(mAppWindow);
             preferences.ClearData.connect(OnClearData);
             preferences.present();
         }
-	
+
         private void OnClearData(DataToClear data) {
 
             if(DataToClear.CLEAR_COOKIES in data) {
@@ -158,7 +158,7 @@ namespace WebMusic.Browser {
                 var albumArt = File.new_for_path(Directory.GetAlbumArtDir());
                 albumArt.enumerate_children_async.begin(
                 "standard::*",
-                FileQueryInfoFlags.NOFOLLOW_SYMLINKS, 
+                FileQueryInfoFlags.NOFOLLOW_SYMLINKS,
                 Priority.DEFAULT, null, (obj, res) => {
                     try {
                     FileEnumerator enumerator = albumArt.enumerate_children_async.end(res);
@@ -183,7 +183,7 @@ namespace WebMusic.Browser {
                 mBrowser.ClearWebkitCache();
             }
         }
-	
+
         private void AppAbout(SimpleAction action, Variant? parameter) {
             AboutDialog.Show(mAppWindow);
         }

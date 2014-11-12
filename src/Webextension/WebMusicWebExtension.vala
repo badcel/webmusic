@@ -8,8 +8,8 @@
  *
  *   This program is distributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
- *   
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -18,16 +18,16 @@ using WebKit;
 using WebMusic.Lib;
 using WebMusic.Webextension.Plugins;
 
-namespace WebMusic.Webextension {    
+namespace WebMusic.Webextension {
     private WebMusicControler Controler;
-    
+
     [DBus(name = "org.WebMusic.Browser")]
     private interface BrowserDBus : GLib.Object {
         public abstract void Quit() throws IOError;
         public abstract void Raise() throws IOError;
         public abstract string GetCurrentService() throws IOError;
     }
-    
+
     private class WebMusicControler {
 
         private HashTable<string, IPlugin> mPlugins;
@@ -36,7 +36,7 @@ namespace WebMusic.Webextension {
         private JavascriptMusicPlayer mPlayer;
         private Settings mSettings;
         private Service mService;
-        
+
         public WebMusicControler() {
             try {
                 mBrowser = Bus.get_proxy_sync(BusType.SESSION, "org.WebMusic", "/org/WebMusic");
@@ -45,7 +45,7 @@ namespace WebMusic.Webextension {
             }
             mSettings = new Settings("org.WebMusic.Webextension");
         }
-        
+
         public void DocumentLoaded(WebPage page) {
 
             string name = "";
@@ -58,17 +58,17 @@ namespace WebMusic.Webextension {
                 Reset();
                 return;
             }
-            
+
             if(name.length == 0) {
                 critical("Can not load service, the service name is empty. " +
                         "Reload page to try again.");
                 Reset();
                 return;
             }
-            
-            Frame f = page.get_main_frame();    
+
+            Frame f = page.get_main_frame();
             unowned JSCore.GlobalContext context = (JSCore.GlobalContext)f.get_javascript_global_context();
-            
+
             try {
                 if(mPlayer == null) {
                     //First run initialize
@@ -82,7 +82,7 @@ namespace WebMusic.Webextension {
                 } else {
                     //Refresh objects
                     mService.Load(name);
-                    mContext.SetContext(context);                
+                    mContext.SetContext(context);
                 }
             } catch(ServiceError e) {
                 critical("Service file for %s could not be loaded. " +
@@ -91,34 +91,34 @@ namespace WebMusic.Webextension {
                 Reset();
             }
         }
-        
+
         private void InitializePlugins() {
-        
+
             mPlugins = new HashTable<string, IPlugin>(str_hash, str_equal);
             mPlugins.insert("mpris", new Mpris(mBrowser, mService));
             mPlugins.insert("notifications", new WebMusic.Webextension.Plugins.Notification());
-            
+
             foreach(IPlugin plugin in mPlugins.get_values()) {
                 plugin.RegisterPlayer(mPlayer);
             }
-            
+
             mSettings.changed.connect(OnSettingsChanged);
-            
+
             mPlugins["mpris"].Enable = mSettings.get_boolean("enable-mpris");
             mPlugins["notifications"].Enable = mSettings.get_boolean("enable-notifications");
-        
+
         }
-        
+
         private void OnSettingsChanged(string key) {
             string index = key.replace("enable-", "");
             mPlugins[index].Enable = mSettings.get_boolean(key);
         }
-        
+
         private void OnMetadataChanged(string artist, string track, string album, string artUrl) {
             string by = artist.length > 0? _("by %s").printf(artist) + " " : "";
             string from = album.length > 0? _("from %s").printf(album): "";
 
-            stdout.printf(_("Now playing %s") + " " + by + from +"\n", track, album, artist);        
+            stdout.printf(_("Now playing %s") + " " + by + from +"\n", track, album, artist);
         }
 
         private void Reset() {
@@ -132,12 +132,12 @@ namespace WebMusic.Webextension {
 
 private void webkit_web_extension_initialize(WebKit.WebExtension extension) {
 
-	Intl.textdomain(Config.GETTEXT_PACKAGE);
-	Intl.bindtextdomain(Config.GETTEXT_PACKAGE, Config.LOCALE_DIR);
+    Intl.textdomain(Config.GETTEXT_PACKAGE);
+    Intl.bindtextdomain(Config.GETTEXT_PACKAGE, Config.LOCALE_DIR);
 
     WebMusic.Webextension.Controler = new WebMusic.Webextension.WebMusicControler();
 
-    extension.page_created.connect((extension, page) =>{ 
+    extension.page_created.connect((extension, page) =>{
         page.document_loaded.connect((page) => {
             WebMusic.Webextension.Controler.DocumentLoaded(page);
         });

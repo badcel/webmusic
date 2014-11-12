@@ -8,8 +8,8 @@
  *
  *   This program is distributed in the hope that it will be useful,
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
- *   
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ *
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -18,30 +18,30 @@ using WebMusic.Lib;
 
 namespace WebMusic.Browser.Osd {
 
-    public class ControlsActor : GtkClutter.Actor {        
-        
+    public class ControlsActor : GtkClutter.Actor {
+
         private CoverToolbar mCoverToolbar;
         private const uint8 OPACITY = 220;
 
         public ControlsActor(IPlayer player, Service service) {
-            
+
             mCoverToolbar = new CoverToolbar(player, service);
             Gdk.RGBA trans = {0, 0, 0, 0};
             this.get_widget().override_background_color(Gtk.StateFlags.NORMAL, trans);
-            
+
             @set("contents", mCoverToolbar, "opacity", OPACITY);
         }
-        
+
         public void BlendIn(bool blend) {
-            
+
             this.save_easing_state();
             this.set_easing_duration(500);
             uint8 opacity = blend? OPACITY : 0;
             this.set_opacity(opacity);
             this.restore_easing_state();
-        
+
         }
-        
+
         [GtkTemplate (ui = "/org/WebMusic/Browser/ui/osd.ui")]
         private class CoverToolbar : Gtk.Toolbar {
 
@@ -53,7 +53,7 @@ namespace WebMusic.Browser.Osd {
 
             [GtkChild]
             private Gtk.ToggleToolButton mBtnRepeat;
-            
+
             [GtkChild]
             private Gtk.ToggleToolButton mBtnLike;
 
@@ -63,7 +63,7 @@ namespace WebMusic.Browser.Osd {
 
                 var context = this.get_style_context();
                 context.add_class(Gtk.STYLE_CLASS_INLINE_TOOLBAR);
-                
+
                 mService.ServiceLoaded.connect(() => {
                     this.InitButtons();
                 });
@@ -76,18 +76,18 @@ namespace WebMusic.Browser.Osd {
             }
 
             private void InitButtons() {
-            
+
                 mBtnShuffle.active = mPlayer.Shuffle;
                 mBtnShuffle.visible = mService.SupportsShuffle;
 
                 mBtnRepeat.visible = mService.SupportsLoopStatus;
-                
+
                 mBtnLike.active = mPlayer.Like;
                 mBtnLike.visible = mService.SupportsLike;
                 mBtnLike.sensitive = true; //Like button is always available
 
-                if(!mService.SupportsLoopStatus 
-                    && !mService.SupportsShuffle 
+                if(!mService.SupportsLoopStatus
+                    && !mService.SupportsShuffle
                     && !mService.SupportsLike) {
                     this.visible = false;
                 } else {
@@ -99,7 +99,7 @@ namespace WebMusic.Browser.Osd {
             private void OnBtnShuffleToggled() {
                 mPlayer.Shuffle = mBtnShuffle.active;
             }
-            
+
             [GtkCallback]
             private void OnBtnLikeToggled() {
                 mPlayer.Like = mBtnLike.active;
@@ -116,14 +116,14 @@ namespace WebMusic.Browser.Osd {
 
                 mBtnShuffle.sensitive = canShuffle;
                 mBtnShuffle.active = shuffle;
-                                
+
                 mBtnRepeat.sensitive = canRepeat;
 
                 mBtnLike.active = like;
-                                            
+
             }
         }
-    
+
     }
 
 }

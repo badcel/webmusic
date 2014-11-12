@@ -8,8 +8,8 @@
  #
  #   This program is distributed in the hope that it will be useful,
  #   but WITHOUT ANY WARRANTY; without even the implied warranty of
- #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
- #   
+ #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ #
  #   You should have received a copy of the GNU General Public License
  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  #
@@ -28,7 +28,7 @@ OPTIONS
 PACKAGES
     glib-2.0
     gtk+-3.0
-    libnotify 
+    libnotify
     WebKit2WebExtension-4.0
 CUSTOM_VAPIS
     ${CMAKE_BINARY_DIR}/src/Lib/libshare.vapi
@@ -45,5 +45,5 @@ target_link_libraries(webextension share ${GLIB_LDFLAGS} ${WEBEXTENSION_LDFLAGS}
 set_target_properties(webextension PROPERTIES
                       COMPILE_FLAGS "${GLIB_CFLAGS} ${GTK_CFLAGS} ${WEBEXTENSION_CFLAGS} ${NOTIFY_CFLAGS} ${COMMON_CFLAGS}"
                       INCLUDE_DIRECTORIES "${CMAKE_BINARY_DIR}/src/Lib")
-                      
+
 install(TARGETS webextension DESTINATION "${PKG_LIBDIR}")
