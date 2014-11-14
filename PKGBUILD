@@ -1,4 +1,4 @@
-pkgname=WebMusic
+pkgname=webmusic
 pkgver=0.1
 pkgrel=1
 pkgdesc="A web based music player that integrates your favourite music service into the desktop"
@@ -8,8 +8,8 @@ license=(GPL3)
 depends=(libnotify webkitgtk dconf clutter-gtk)
 makedepends=(cmake vala intltool)
 
-source=(WebMusic.tar.gz)
-md5sums=('1f714b88cec80ed38f770e95708a16d8')
+source=(https://github.com/badcel/webmusic/archive/webmusic-${pkgver}.tar.gz)
+sha256sums=('00000000000000000000000000000000')
 
 build() {
   cd "$srcdir/$pkgname"
