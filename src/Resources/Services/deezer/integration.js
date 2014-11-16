@@ -31,7 +31,8 @@ WebMusicApi.GetAlbum = function(){
 };
 
 WebMusicApi.GetArtUrl = function(){
-    return document.getElementById("naboo_menu_infos_cover").src;
+    var coverId = dzPlayer.getCurrentSong().ALB_PICTURE;
+    return "http://cdn-images.deezer.com/images/cover/" + coverId + "/300x300-000000-80-0-0.jpg";
 };
 
 WebMusicApi.GetPlaybackStatus = function(){
