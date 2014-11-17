@@ -163,8 +163,7 @@ namespace WebMusic.Browser
 
         private void CreateWidgets(Service service) {
 
-            var imgMiniMode = new Gtk.Image.from_icon_name("emblem-system-symbolic",
-                                                       Gtk.IconSize.MENU);
+            var imgMiniMode = new Gtk.Image.from_icon_name("open-menu-symbolic", Gtk.IconSize.MENU);
 
             var b = new Gtk.Builder();
             b.set_translation_domain(Config.GETTEXT_PACKAGE);
