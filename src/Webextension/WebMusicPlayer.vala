@@ -142,15 +142,29 @@ namespace WebMusic.Webextension {
         }
 
         private void CacheCover(string artist, string track, string album,
-                                string artUrl, CacheFinishedDelegate dele) {
-            //TODO Consider file extension, don't name everything as jpg
-            //TODO Cache by album name, not by track name (if possible)
-            string fileName = Directory.GetAlbumArtDir() + (artist + "_" + track + ".jpg").replace(" ", "_");
+                                string artUrl, CacheFinishedDelegate dele) {           
 
-            File cachedImage = File.new_for_path(fileName);
+            if(artUrl.length == 0) {
+                debug("No art url for %s by %s from %s.".printf(track, artist, album));
+                dele(artist, track, album, artUrl, "");
+                return;
+            }
+            
+            string fExtension = artUrl.substring(artUrl.last_index_of_char('.'));
+            string fArtist    = artist.length > 0 ? artist + "_" : "";
+            string fName      = album.length  > 0 ? album : track;
 
+            if(fName.length == 0) {
+                //No track or album given. Generate id which is useable only one time
+                string date = new DateTime.now_utc().to_string();
+                fName = GLib.Checksum.compute_for_string(ChecksumType.MD5, date, date.length);
+            }
+
+            string fileName = Directory.GetAlbumArtDir() + (fArtist + fName + fExtension).replace(" ", "_");
+
+            var cachedImage = File.new_for_path(fileName);
             if(!cachedImage.query_exists()) {
-
+                
                 var onlineImage = File.new_for_uri(artUrl);
                 onlineImage.load_contents_async.begin(null, (obj, res) => {
                     try {
