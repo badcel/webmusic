@@ -117,8 +117,6 @@ namespace WebMusic.Browser {
 
                 mSettings.set_string("last-used-service", strService);
 
-                //TODO What if the service is disabled?
-
                 mAppWindow = new AppWindow(this, service, mSettings);
                 mAppWindow.show_all();
 
