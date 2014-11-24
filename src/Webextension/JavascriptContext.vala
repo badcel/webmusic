@@ -154,7 +154,7 @@ namespace WebMusic.Webextension {
             JSCore.Value? exception = null;
 
             JSCore.String str = val.to_string_copy(context, exception);
-            string ret = string.nfill(str.get_length() + 1, ' ');
+            string ret = string.nfill(str.get_maximum_utf8_c_string_size(), ' ');
             str.get_utf8_c_string(ret, ret.length);
 
             return ret;
