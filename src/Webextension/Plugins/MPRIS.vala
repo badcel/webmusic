@@ -41,6 +41,7 @@ namespace WebMusic.Webextension.Plugins {
         private bool mEnable;
 
         private Player mPlayer = null;
+        private Service mService = null;
         private MprisRoot mRoot = null;
         private MprisPlayer mMprisPlayer = null;
 
@@ -60,6 +61,9 @@ namespace WebMusic.Webextension.Plugins {
         }
 
         public Mpris(BrowserDBus browser, Service service) {
+            mService = service;
+            mService.ServiceLoaded.connect(OnServiceChanged);
+
             mRoot = new MprisRoot(browser, service);
         }
 
@@ -151,6 +155,14 @@ namespace WebMusic.Webextension.Plugins {
             }
             catch(Error e) {
                 critical("Error emmitting PropertiesChanged DBus signal. (%s)", e.message);
+            }
+        }
+
+        private void OnServiceChanged() {
+            if(!mService.IntegratesService) {
+                OnMetadataChanged("", "", "", "");
+                OnPlayercontrolChanged(false, false, false, false, false, false,
+                                        PlayStatus.STOP, Repeat.NONE);
             }
         }
 
