@@ -70,7 +70,7 @@ namespace WebMusic.Browser.Osd {
         public void LoadStockIcon(string name) {
             try {
                 Gtk.IconTheme theme = Gtk.IconTheme.get_default();
-                Gdk.Pixbuf? pixbuf = theme.load_icon_for_scale(name, 128, 1, Gtk.IconLookupFlags.FORCE_SIZE);
+                Gdk.Pixbuf? pixbuf = theme.load_icon_for_scale(name, 300, 1, Gtk.IconLookupFlags.FORCE_SIZE);
 
                 if(pixbuf == null) {
                     critical("No icon named %s found in icon theme.", name);
