@@ -160,7 +160,8 @@ namespace WebMusic.Webextension {
                 fName = GLib.Checksum.compute_for_string(ChecksumType.MD5, date, date.length);
             }
 
-            string fileName = Directory.GetAlbumArtDir() + (fArtist + fName + fExtension).replace(" ", "_");
+            string fileName = (fArtist + fName + fExtension).replace(" ", "_").replace("/", "_");
+            fileName = Directory.GetAlbumArtDir() + fileName;
 
             var cachedImage = File.new_for_path(fileName);
             if(!cachedImage.query_exists()) {
