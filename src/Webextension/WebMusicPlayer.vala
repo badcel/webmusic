@@ -175,6 +175,7 @@ namespace WebMusic.Webextension {
 
                         FileOutputStream os = cachedImage.append_to(FileCreateFlags.NONE);
                         os.write(contents);
+                        os.close();
 
                     } catch (Error e) {
                         warning("Could not load cover. (%s)", e.message);
