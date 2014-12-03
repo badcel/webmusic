@@ -49,20 +49,17 @@ namespace WebMusic.Browser.Osd {
             private Service mService;
 
             [GtkChild]
-            private Gtk.ToggleToolButton mBtnShuffle;
+            private Gtk.ToggleButton mBtnShuffle;
 
             [GtkChild]
-            private Gtk.ToggleToolButton mBtnRepeat;
+            private Gtk.ToggleButton mBtnRepeat;
 
             [GtkChild]
-            private Gtk.ToggleToolButton mBtnLike;
+            private Gtk.ToggleButton mBtnLike;
 
             public CoverToolbar(IPlayer player, Service service) {
                 mPlayer = player;
                 mService = service;
-
-                var context = this.get_style_context();
-                context.add_class(Gtk.STYLE_CLASS_INLINE_TOOLBAR);
 
                 mService.ServiceLoaded.connect(() => {
                     this.InitButtons();
