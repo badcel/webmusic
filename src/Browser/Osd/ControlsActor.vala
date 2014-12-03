@@ -68,8 +68,6 @@ namespace WebMusic.Browser.Osd {
                     this.InitButtons();
                 });
 
-                this.get_style_context().add_class("osd");
-
                 this.InitButtons();
 
                 mPlayer.PlayercontrolChanged.connect(OnPlayercontrolChanged);
