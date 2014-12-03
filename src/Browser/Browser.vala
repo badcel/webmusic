@@ -60,7 +60,6 @@ namespace WebMusic.Browser
             mService = service;
 
             this.create_widgets();
-            mCoverStage.Init(mPlayer, mService);
 
             mPlayer.MetadataChanged.connect(OnMetadataChanged);
             mPlayer.PlayercontrolChanged.connect(OnPlayercontrolChanged);
@@ -136,6 +135,9 @@ namespace WebMusic.Browser
             mWebView.load_changed.connect(OnLoadChanged);
 
             mWebViewBox.pack_start(this.mWebView);
+
+            mCoverStage.Init(mPlayer, mService);
+            SetCover(""); //Set default cover to initialize size of object
         }
 
         private void SetCover(string fileName) {
