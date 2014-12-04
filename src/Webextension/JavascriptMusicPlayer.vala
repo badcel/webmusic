@@ -226,18 +226,20 @@ namespace WebMusic.Webextension {
 
                 try {
                     FileUtils.get_contents(path, out serviceFile);
+
+                    debug("Injecting %s: %s", mService.Ident, path);
+
+                    mContext.EvaluateScript(serviceFile, path, 1);
+                    mIntegrationReady = true;
+                    StartCheckDom();
+
                 } catch(FileError e) {
+                    mIntegrationReady = false;
                     StopCheckDom();
                     critical("Could not load content of service file (%s). " +
                             "Integration disabled. (%s)", path, e.message);
                 }
 
-                debug("Injecting %s: %s", mService.Ident, path);
-
-                //TODO Check for file errors
-                mContext.EvaluateScript(serviceFile, path, 1);
-                mIntegrationReady = true;
-                StartCheckDom();
             } else {
                 mIntegrationReady = false;
                 debug("No integration supported for service %s.", mService.Name);
