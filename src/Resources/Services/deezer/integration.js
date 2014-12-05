@@ -15,7 +15,7 @@
  */
 
 WebMusicApi.GetReady = function() {
-    return document.contains(document.getElementById("user_logged")) && dzPlayer.getCurrentSong() != null;
+    return dzPlayer.playerLoaded && dzPlayer.getCurrentSong() != null;
 };
 
 WebMusicApi.GetArtist = function(){
@@ -36,31 +36,31 @@ WebMusicApi.GetArtUrl = function(){
 };
 
 WebMusicApi.GetPlaybackStatus = function(){
-    return dzPlayer.isPlaying() ? 1: 2;
+    return dzPlayer.isPlaying() ? 1 : 2;
 };
 
 WebMusicApi.GetCanGoNext = function(){
-    return playercontrol.nextButtonActive();
+    return dzPlayer.getNextSong() != null;
 };
 
 WebMusicApi.GetCanGoPrevious = function(){
-    return playercontrol.prevButtonActive();
+    return dzPlayer.getPrevSong() != null;
 };
 
 WebMusicApi.Next = function(){
-    playercontrol.doAction('next');
+    dzPlayer.control.nextSong();
 };
 
 WebMusicApi.Previous = function(){
-    playercontrol.doAction('prev');
+    dzPlayer.control.prevSong();
 };
 
 WebMusicApi.Pause = function(){
-    playercontrol.doAction('pause');
+    dzPlayer.control.pause();
 };
 
 WebMusicApi.Play = function(){
-    playercontrol.doAction('play');
+    dzPlayer.control.play();
 };
 
 WebMusicApi.GetShuffle = function(){
@@ -68,19 +68,21 @@ WebMusicApi.GetShuffle = function(){
 };
 
 WebMusicApi.ToggleShuffle = function() {
-    playercontrol.doAction('shuffle');
+    dzPlayer.control.setShuffle(!dzPlayer.shuffle);
 };
 
 WebMusicApi.CanShuffle = function() {
-    return !playercontrol.$btnRandom.hasClass("disabled");
+    return false;
+    //return !playercontrol.$btnRandom.hasClass("disabled");
 };
 
 WebMusicApi.GetLike = function(){
-    return playercontrol.$btnLoved.hasClass("selected");
+    return false;
+    //return playercontrol.$btnLoved.hasClass("selected");
 };
 
 WebMusicApi.ToggleLike = function() {
-    playercontrol.$btnLoved.click();
+    //playercontrol.$btnLoved.click();
 };
 
 WebMusicApi.GetLoopStatus = function(){
