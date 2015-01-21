@@ -72,17 +72,15 @@ WebMusicApi.ToggleShuffle = function() {
 };
 
 WebMusicApi.CanShuffle = function() {
-    return false;
-    //return !playercontrol.$btnRandom.hasClass("disabled");
+    return document.querySelector(".control-shuffle") != null;
 };
 
 WebMusicApi.GetLike = function(){
-    return false;
-    //return playercontrol.$btnLoved.hasClass("selected");
+    return document.querySelector(".icon-love-circle").classList.contains("active");
 };
 
 WebMusicApi.ToggleLike = function() {
-    //playercontrol.$btnLoved.click();
+    document.querySelector(".icon-love-circle").click();
 };
 
 WebMusicApi.GetLoopStatus = function(){

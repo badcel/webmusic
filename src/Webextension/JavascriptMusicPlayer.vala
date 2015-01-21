@@ -147,7 +147,10 @@ namespace WebMusic.Webextension {
             }
             set {
                 if(mIntegrationReady && mService.SupportsLike && mLike != value) {
-                    mContext.CallFunction("ToggleLike");
+                    Idle.add(() => {
+                        mContext.CallFunction("ToggleLike");
+                        return false;
+                    });
                 }
             }
         }
