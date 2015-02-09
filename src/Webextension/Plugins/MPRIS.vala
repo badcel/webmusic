@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 2010 Andreas Obergrusberger
  *  Copyright (C) 2010 - 2012 Jörn Magens
- *  Copyright (C) 2014 Marcel Tiede
+ *  Copyright (C) 2014, 2015 Marcel Tiede
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
