@@ -224,9 +224,8 @@ namespace WebMusic.Webextension.Plugins {
             }
         }
 
-        //TODO Send property change if identity changes!
         public string Identity {
-            owned get { return _("WebMusic") + " (%s)".printf(mService.Name); }
+            owned get { return _("WebMusic"); }
         }
 
         public string[] SupportedUriSchemes {
