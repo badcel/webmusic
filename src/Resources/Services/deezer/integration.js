@@ -36,7 +36,7 @@ WebMusicApi.GetArtUrl = function(){
 };
 
 WebMusicApi.GetPlaybackStatus = function(){
-    return dzPlayer.isPlaying() ? 1 : 2;
+    return dzPlayer.isPlaying() ? 1 : 0;
 };
 
 WebMusicApi.GetCanGoNext = function(){
@@ -55,7 +55,7 @@ WebMusicApi.Previous = function(){
     dzPlayer.control.prevSong();
 };
 
-WebMusicApi.Pause = function(){
+WebMusicApi.Stop = function(){
     dzPlayer.control.pause();
 };
 
