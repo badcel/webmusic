@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2014  Marcel Tiede
+ *   Copyright (C) 2014, 2015  Marcel Tiede
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -113,10 +113,10 @@ namespace WebMusic.Webextension {
         }
 
 
-        public override bool CanPlay    { get { return mIntegrationReady;  } }
-        public override bool CanPause   { get { return mIntegrationReady;  } }
+        public override bool CanPlay    { get { return mIntegrationReady; } }
+        public override bool CanPause   { get { return mService.SupportsPause; } }
         public override bool CanSeek    { get { return false; } }
-        public override bool CanControl { get { return mIntegrationReady;  } }
+        public override bool CanControl { get { return mIntegrationReady; } }
 
         public override bool Shuffle {
             get {
@@ -197,16 +197,25 @@ namespace WebMusic.Webextension {
         }
 
         public override void Pause() {
-            if(mIntegrationReady) {
-                Idle.add(() => {
-                    mContext.CallFunction("Pause");
-                    return false;
-                });
+            if(!mService.SupportsPause) {
+                Stop();
+            } else {
+                if(mIntegrationReady) {
+                    Idle.add(() => {
+                        mContext.CallFunction("Pause");
+                        return false;
+                    });
+                }
             }
         }
 
         public override void Stop() {
-            Pause();
+            if(mIntegrationReady) {
+                Idle.add(() => {
+                    mContext.CallFunction("Stop");
+                    return false;
+                });
+            }
         }
 
         public override void Play() {

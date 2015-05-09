@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2014  Marcel Tiede
+ *   Copyright (C) 2014, 2015  Marcel Tiede
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -38,6 +38,7 @@ namespace WebMusic.Lib {
         private bool   mSupportsShuffle        = false;
         private bool   mSupportsLoopStatus     = false;
         private bool   mSupportsLike           = false;
+        private bool   mSupportsPause          = false;
 
         public Service(string name) throws ServiceError {
             this.Load(name);
@@ -101,6 +102,10 @@ namespace WebMusic.Lib {
 
         public bool SupportsLike {
             get { return mSupportsLike; }
+        }
+
+        public bool SupportsPause {
+            get { return mSupportsPause; }
         }
 
         public string to_string() {
@@ -216,6 +221,10 @@ namespace WebMusic.Lib {
                     mSupportsLike = keyFile.get_boolean(ident, "SupportsLike");
                 }
 
+                if(keyFile.has_key(ident, "SupportsPause")) {
+                    mSupportsPause = keyFile.get_boolean(ident, "SupportsPause");
+                }
+
             } catch(KeyFileError e) {
                 warning("Failed to look up optional key from ini file. " +
                         "Certain features may be disabled. (%s)", e.message);
@@ -233,6 +242,7 @@ namespace WebMusic.Lib {
             mSupportsShuffle        = false;
             mSupportsLoopStatus     = false;
             mSupportsLike           = false;
+            mSupportsPause          = false;
         }
     }
 
