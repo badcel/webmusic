@@ -17,7 +17,7 @@
     <property name="can_focus">False</property>
     <property name="icon_name">media-playlist-shuffle</property>
   </object>
-  <template class="WebMusicBrowserOsdControlsActorCoverToolbar" parent="GtkToolbar">
+  <template class="WebMusicBrowserWidgetsOsdControlsActorCoverToolbar" parent="GtkToolbar">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="orientation">vertical</property>
@@ -34,6 +34,7 @@
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="orientation">vertical</property>
+            <property name="width_request">50</property>
             <style><class name="linked"/></style>
             <child>
               <object class="GtkToggleButton" id="mBtnShuffle">
@@ -43,7 +44,7 @@
                 <property name="receives_default">False</property>
                 <property name="image">mImageShuffle</property>
                 <property name="use_underline">True</property>
-                <signal name="toggled" handler="OnBtnShuffleToggled" object="WebMusicBrowserOsdControlsActorCoverToolbar" swapped="no"/>
+                <signal name="toggled" handler="OnBtnShuffleToggled" object="WebMusicBrowserWidgetsOsdControlsActorCoverToolbar" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -52,14 +53,15 @@
               </packing>
             </child>
             <child>
-              <object class="GtkToggleButton" id="mBtnRepeat">
+              <object class="WebMusicBrowserWidgetsUiRepeatButton" id="mBtnRepeat">
                 <property name="visible">True</property>
                 <property name="sensitive">False</property>
                 <property name="can_focus">False</property>
                 <property name="receives_default">False</property>
                 <property name="image">mImageRepeat</property>
                 <property name="use_underline">True</property>
-                <signal name="toggled" handler="OnBtnRepeatToggled" object="WebMusicBrowserOsdControlsActorCoverToolbar" swapped="no"/>
+                <property name="always_show_image">True</property>
+                <signal name="clicked" handler="OnBtnRepeatRepeatStateChanged" object="WebMusicBrowserWidgetsOsdControlsActorCoverToolbar" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -76,7 +78,7 @@
                 <property name="image">mImageLike</property>
                 <property name="use_underline">True</property>
                 <property name="always_show_image">True</property>
-                <signal name="toggled" handler="OnBtnLikeToggled" object="WebMusicBrowserOsdControlsActorCoverToolbar" swapped="no"/>
+                <signal name="toggled" handler="OnBtnLikeToggled" object="WebMusicBrowserWidgetsOsdControlsActorCoverToolbar" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>

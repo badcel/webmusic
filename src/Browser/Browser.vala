@@ -15,7 +15,7 @@
  */
 
 using WebMusic.Lib;
-using WebMusic.Browser.Osd;
+using WebMusic.Browser.Widgets.Osd;
 using WebKit;
 using GLib;
 
@@ -93,7 +93,7 @@ namespace WebMusic.Browser
             if(!mService.IntegratesService) {
                 SetCover("");
                 OnPlayercontrolChanged(false, false, false, false, false, false,
-                                        PlayStatus.STOP, Repeat.NONE);
+                                        PlayStatus.STOP, RepeatStatus.NONE);
             }
         }
 
@@ -102,7 +102,7 @@ namespace WebMusic.Browser
         }
 
         private void OnPlayercontrolChanged(bool canGoNext, bool canGoPrev, bool canShuffle,
-                            bool canRepeat, bool shuffle, bool like, PlayStatus playStatus, Repeat loopStatus) {
+                            bool canRepeat, bool shuffle, bool like, PlayStatus playStatus, RepeatStatus repeat) {
 
             mBtnNext.sensitive = mService.IntegratesService && canGoNext;
             mBtnPrev.sensitive = mService.IntegratesService && canGoPrev;

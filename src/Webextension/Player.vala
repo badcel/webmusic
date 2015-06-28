@@ -27,7 +27,7 @@ namespace WebMusic.Webextension {
         public signal void MetadataChanged(string artist, string track, string album, string artUrl);
         public signal void PlayercontrolChanged(bool canGoNext, bool canGoPrev, bool canShuffle,
                                                 bool canRepeat, bool shuffle, bool like,
-                                                PlayStatus playStatus, Repeat loopStatus);
+                                                PlayStatus playStatus, RepeatStatus repeat);
 
         public Player() {
             OwnBus();
@@ -37,8 +37,8 @@ namespace WebMusic.Webextension {
             ReleaseBus();
         }
 
-        public abstract Repeat     LoopStatus     { get; set; }
-        public abstract PlayStatus PlaybackStatus { get; }
+        public abstract RepeatStatus Repeat         { get; set; }
+        public abstract PlayStatus   PlaybackStatus { get; }
 
         public abstract bool Shuffle        { get; set; }
         public abstract bool Like           { get; set; }
@@ -49,6 +49,7 @@ namespace WebMusic.Webextension {
         public abstract bool CanSeek        { get; }
         public abstract bool CanControl     { get; }
         public abstract bool CanShuffle     { get; }
+        public abstract bool CanRepeat      { get; }
 
         public virtual void Next(){}
         public virtual void Previous(){}

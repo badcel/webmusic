@@ -36,7 +36,7 @@ namespace WebMusic.Lib {
         private string mIntegrationFilePath    = "";
         private string mSearchProviderFilePath = "";
         private bool   mSupportsShuffle        = false;
-        private bool   mSupportsLoopStatus     = false;
+        private bool   mSupportsRepeat         = false;
         private bool   mSupportsLike           = false;
         private bool   mSupportsPause          = false;
 
@@ -96,8 +96,8 @@ namespace WebMusic.Lib {
             get { return mSupportsShuffle; }
         }
 
-        public bool SupportsLoopStatus {
-            get { return mSupportsLoopStatus; }
+        public bool SupportsRepeat {
+            get { return mSupportsRepeat; }
         }
 
         public bool SupportsLike {
@@ -213,8 +213,8 @@ namespace WebMusic.Lib {
                     mSupportsShuffle = keyFile.get_boolean(ident, "SupportsShuffle");
                 }
 
-                if(keyFile.has_key(ident, "SupportsLoopStatus")) {
-                    mSupportsLoopStatus = keyFile.get_boolean(ident, "SupportsLoopStatus");
+                if(keyFile.has_key(ident, "SupportsRepeat")) {
+                    mSupportsRepeat = keyFile.get_boolean(ident, "SupportsRepeat");
                 }
 
                 if(keyFile.has_key(ident, "SupportsLike")) {
@@ -240,7 +240,7 @@ namespace WebMusic.Lib {
             mIntegrationFilePath    = "";
             mSearchProviderFilePath = "";
             mSupportsShuffle        = false;
-            mSupportsLoopStatus     = false;
+            mSupportsRepeat         = false;
             mSupportsLike           = false;
             mSupportsPause          = false;
         }

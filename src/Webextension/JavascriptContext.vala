@@ -99,7 +99,7 @@ namespace WebMusic.Webextension {
             this.ContextChanged();
         }
 
-        public unowned JSCore.Value CallFunction(string name) {
+        public unowned JSCore.Value CallFunction(string name, Variant? parameter) {
             JSCore.Value? exception;
             unowned JSCore.Value ret = null;
 
@@ -118,26 +118,31 @@ namespace WebMusic.Webextension {
                 //TODO: Raise Exception
             } else {
                 void*[] params = new void*[0];
+                if(parameter != null) {
+                    params = new void*[1];
+                    params[0] = GetValueFromVariant(parameter, mContext);
+                }
+
                 ret = func.call_as_function(mContext, func, (JSCore.Value[]) params, out exception);
             }
 
             return ret;
         }
 
-        public string CallFunctionAsString(string name) {
-            unowned JSCore.Value? ret = CallFunction(name);
+        public string CallFunctionAsString(string name, Variant? parameter) {
+            unowned JSCore.Value? ret = CallFunction(name, parameter);
             return GetUTF8StringFromValue(ret, mContext);;
         }
 
-        public int CallFunctionAsInteger(string name) {
+        public int CallFunctionAsInteger(string name, Variant? parameter) {
             JSCore.Value? exception = null;
-            unowned JSCore.Value? ret = CallFunction(name);
+            unowned JSCore.Value? ret = CallFunction(name, parameter);
 
             return (int)ret.to_number(mContext, exception);
         }
 
-        public bool CallFunctionAsBoolean(string name) {
-            unowned JSCore.Value? ret = CallFunction(name);
+        public bool CallFunctionAsBoolean(string name, Variant? parameter) {
+            unowned JSCore.Value? ret = CallFunction(name, parameter);
             return ret.to_boolean(mContext);
         }
 
@@ -148,6 +153,44 @@ namespace WebMusic.Webextension {
                                        out exception);
 
 
+        }
+
+        public static JSCore.Value GetValueFromVariant(Variant? variant, JSCore.Context context) {
+
+            if (variant == null) {
+		        return new JSCore.Value.null(context);
+            }
+
+            if (variant.is_of_type(VariantType.STRING)) {
+	            return new JSCore.Value.string(context, new JSCore.String.with_utf8_c_string(variant.get_string()));
+            }
+
+            if (variant.is_of_type(VariantType.BOOLEAN)) {
+	            return new JSCore.Value.boolean(context, variant.get_boolean());
+	        }
+
+            if (variant.is_of_type(VariantType.DOUBLE)) {
+	            return new JSCore.Value.number(context, variant.get_double());
+            }
+
+            if (variant.is_of_type(VariantType.INT32)) {
+	            return new JSCore.Value.number(context, (double) variant.get_int32());
+            }
+
+            if (variant.is_of_type(VariantType.UINT32)) {
+	            return new JSCore.Value.number(context, (double) variant.get_uint32());
+            }
+
+            if (variant.is_of_type(VariantType.INT64)) {
+	            return new JSCore.Value.number(context, (double) variant.get_int64());
+            }
+
+            if (variant.is_of_type(VariantType.UINT64)) {
+	            return new JSCore.Value.number(context, (double) variant.get_uint64());
+            }
+
+            warning("Given variant type could not be converted into a JSCore.Value");
+            return new JSCore.Value.null(context);
         }
 
         private static string GetUTF8StringFromValue(JSCore.Value val, JSCore.Context context){

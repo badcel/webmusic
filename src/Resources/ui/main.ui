@@ -134,7 +134,7 @@
             <property name="orientation">vertical</property>
             <property name="spacing">5</property>
             <child>
-              <object class="WebMusicBrowserOsdCoverStage" id="mCoverStage">
+              <object class="WebMusicBrowserWidgetsOsdCoverStage" id="mCoverStage">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="halign">center</property>

@@ -44,7 +44,7 @@ namespace WebMusic.Webextension {
 
         protected override string GetArtist() {
             if(mIntegrationReady) {
-                return mContext.CallFunctionAsString("GetArtist");
+                return mContext.CallFunctionAsString("GetArtist", null);
             } else {
                 return "";
             }
@@ -52,7 +52,7 @@ namespace WebMusic.Webextension {
 
         protected override string GetTrack()  {
             if(mIntegrationReady) {
-                return mContext.CallFunctionAsString("GetTrack");
+                return mContext.CallFunctionAsString("GetTrack", null);
             } else {
                 return "";
             }
@@ -60,7 +60,7 @@ namespace WebMusic.Webextension {
 
         protected override string GetAlbum() {
             if(mIntegrationReady) {
-                return mContext.CallFunctionAsString("GetAlbum");
+                return mContext.CallFunctionAsString("GetAlbum", null);
             } else {
                 return "";
             }
@@ -68,7 +68,7 @@ namespace WebMusic.Webextension {
 
         protected override string GetArtUrl() {
             if(mIntegrationReady) {
-                return mContext.CallFunctionAsString("GetArtUrl");
+                return mContext.CallFunctionAsString("GetArtUrl", null);
             } else {
                 return "";
             }
@@ -76,7 +76,7 @@ namespace WebMusic.Webextension {
 
         protected override bool GetReady() {
             if(mIntegrationReady) {
-                return mContext.CallFunctionAsBoolean("GetReady");
+                return mContext.CallFunctionAsBoolean("GetReady", null);
             } else {
                 return false;
             }
@@ -85,7 +85,7 @@ namespace WebMusic.Webextension {
         public override PlayStatus PlaybackStatus {
             get {
                 if(mIntegrationReady) {
-                    return (PlayStatus) mContext.CallFunctionAsInteger("GetPlaybackStatus");
+                    return (PlayStatus) mContext.CallFunctionAsInteger("GetPlaybackStatus", null);
                 } else {
                     return PlayStatus.STOP;
                 }
@@ -95,7 +95,7 @@ namespace WebMusic.Webextension {
         public override bool CanGoNext {
             get {
                 if(mIntegrationReady) {
-                    return mContext.CallFunctionAsBoolean("GetCanGoNext");
+                    return mContext.CallFunctionAsBoolean("GetCanGoNext", null);
                 } else {
                     return false;
                 }
@@ -105,7 +105,7 @@ namespace WebMusic.Webextension {
         public override bool CanGoPrevious {
             get {
                 if(mIntegrationReady) {
-                    return mContext.CallFunctionAsBoolean("GetCanGoPrevious");
+                    return mContext.CallFunctionAsBoolean("GetCanGoPrevious", null);
                 } else {
                     return false;
                 }
@@ -123,14 +123,14 @@ namespace WebMusic.Webextension {
                 bool ret = false;
 
                 if(mIntegrationReady && mService.SupportsShuffle) {
-                    ret = mContext.CallFunctionAsBoolean("GetShuffle");
+                    ret = mContext.CallFunctionAsBoolean("GetShuffle", null);
                 }
                 mShuffle = ret;
                 return ret;
             }
             set {
                 if(mIntegrationReady && mService.SupportsShuffle && mShuffle != value) {
-                    mContext.CallFunction("ToggleShuffle");
+                    mContext.CallFunction("ToggleShuffle", null);
                 }
             }
         }
@@ -140,7 +140,7 @@ namespace WebMusic.Webextension {
                 bool ret = false;
 
                 if(mIntegrationReady && mService.SupportsLike) {
-                    ret = mContext.CallFunctionAsBoolean("GetLike");
+                    ret = mContext.CallFunctionAsBoolean("GetLike", null);
                 }
                 mLike = ret;
                 return ret;
@@ -148,7 +148,7 @@ namespace WebMusic.Webextension {
             set {
                 if(mIntegrationReady && mService.SupportsLike && mLike != value) {
                     Idle.add(() => {
-                        mContext.CallFunction("ToggleLike");
+                        mContext.CallFunction("ToggleLike", null);
                         return false;
                     });
                 }
@@ -160,28 +160,48 @@ namespace WebMusic.Webextension {
                 bool ret = false;
 
                 if(mIntegrationReady && mService.SupportsShuffle) {
-                    ret = mContext.CallFunctionAsBoolean("CanShuffle");
+                    ret = mContext.CallFunctionAsBoolean("CanShuffle", null);
                 }
 
                 return ret;
             }
         }
 
-        public override Repeat LoopStatus {
+        public override bool CanRepeat {
             get {
-                Repeat loopStatus = Repeat.NONE;
-                if(mIntegrationReady && mService.SupportsLoopStatus) {
-                    loopStatus = (Repeat)mContext.CallFunctionAsInteger("GetLoopStatus");
+                bool ret = false;
+
+                if(mIntegrationReady && mService.SupportsRepeat) {
+                    ret = mContext.CallFunctionAsBoolean("CanRepeat", null);
                 }
-                return loopStatus;
+
+                return ret;
             }
-            set { /*TODO, JavascriptContext misses support for parameters */ }
+        }
+
+        public override RepeatStatus Repeat {
+            get {
+                RepeatStatus repeat = RepeatStatus.NONE;
+                if(mIntegrationReady && mService.SupportsRepeat) {
+                    repeat = (RepeatStatus)mContext.CallFunctionAsInteger("GetRepeat", null);
+                }
+                return repeat;
+            }
+            set {
+                if(mIntegrationReady && mService.SupportsRepeat) {
+                    Idle.add(() => {
+                        Variant v = new Variant.int32((int32)value);
+                        mContext.CallFunction("SetRepeat", v);
+                        return false;
+                    });
+                }
+            }
         }
 
         public override void Next() {
             if(mIntegrationReady) {
                 Idle.add(() => {
-                    mContext.CallFunction("Next");
+                    mContext.CallFunction("Next", null);
                     return false;
                 });
             }
@@ -190,7 +210,7 @@ namespace WebMusic.Webextension {
         public override void Previous() {
             if(mIntegrationReady) {
                 Idle.add(() => {
-                    mContext.CallFunction("Previous");
+                    mContext.CallFunction("Previous", null);
                     return false;
                 });
             }
@@ -202,7 +222,7 @@ namespace WebMusic.Webextension {
             } else {
                 if(mIntegrationReady) {
                     Idle.add(() => {
-                        mContext.CallFunction("Pause");
+                        mContext.CallFunction("Pause", null);
                         return false;
                     });
                 }
@@ -212,7 +232,7 @@ namespace WebMusic.Webextension {
         public override void Stop() {
             if(mIntegrationReady) {
                 Idle.add(() => {
-                    mContext.CallFunction("Stop");
+                    mContext.CallFunction("Stop", null);
                     return false;
                 });
             }
@@ -221,7 +241,7 @@ namespace WebMusic.Webextension {
         public override void Play() {
             if(mIntegrationReady) {
                 Idle.add(() => {
-                    mContext.CallFunction("Play");
+                    mContext.CallFunction("Play", null);
                     return false;
                 });
             }

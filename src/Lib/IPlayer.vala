@@ -40,7 +40,7 @@ namespace WebMusic.Lib {
         }
     }
 
-    public enum Repeat {
+    public enum RepeatStatus {
         NONE,     // INT = 0
         PLAYLIST, // INT = 1
         TRACK;    // INT = 2
@@ -49,13 +49,13 @@ namespace WebMusic.Lib {
             string ret = "";
 
             switch(this) {
-                case Repeat.NONE:
+                case RepeatStatus.NONE:
                     ret = "None";
                     break;
-                case Repeat.TRACK:
+                case RepeatStatus.TRACK:
                     ret = "Track";
                     break;
-                case Repeat.PLAYLIST:
+                case RepeatStatus.PLAYLIST:
                     ret = "Playlist";
                     break;
             }
@@ -70,11 +70,11 @@ namespace WebMusic.Lib {
         public signal void MetadataChanged(string artist, string track, string album, string artUrl);
         public signal void PlayercontrolChanged(bool canGoNext, bool canGoPrev, bool canShuffle,
                                                 bool canRepeat, bool shuffle, bool like,
-                                                PlayStatus playStatus, Repeat loopStatus);
+                                                PlayStatus playStatus, RepeatStatus repeat);
 
         public abstract bool   Shuffle        { get; set; }
         public abstract bool   Like           { get; set; }
-        public abstract Repeat LoopStatus     { get; set; }
+        public abstract RepeatStatus Repeat   { get; set; }
 
         public abstract void Next()     throws IOError;
         public abstract void Previous() throws IOError;

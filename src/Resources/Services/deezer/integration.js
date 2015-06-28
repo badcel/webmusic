@@ -18,52 +18,52 @@ WebMusicApi.GetReady = function() {
     return dzPlayer.playerLoaded && dzPlayer.getCurrentSong() != null;
 };
 
-WebMusicApi.GetArtist = function(){
+WebMusicApi.GetArtist = function() {
     return dzPlayer.getCurrentSong().ART_NAME;
 };
 
-WebMusicApi.GetTrack = function(){
+WebMusicApi.GetTrack = function() {
     return dzPlayer.getCurrentSong().SNG_TITLE;
 };
 
-WebMusicApi.GetAlbum = function(){
+WebMusicApi.GetAlbum = function() {
     return dzPlayer.getCurrentSong().ALB_TITLE;
 };
 
-WebMusicApi.GetArtUrl = function(){
+WebMusicApi.GetArtUrl = function() {
     var coverId = dzPlayer.getCurrentSong().ALB_PICTURE;
     return "http://cdn-images.deezer.com/images/cover/" + coverId + "/300x300-000000-80-0-0.jpg";
 };
 
-WebMusicApi.GetPlaybackStatus = function(){
+WebMusicApi.GetPlaybackStatus = function() {
     return dzPlayer.isPlaying() ? 1 : 0;
 };
 
-WebMusicApi.GetCanGoNext = function(){
+WebMusicApi.GetCanGoNext = function() {
     return dzPlayer.getNextSong() != null;
 };
 
-WebMusicApi.GetCanGoPrevious = function(){
+WebMusicApi.GetCanGoPrevious = function() {
     return dzPlayer.getPrevSong() != null;
 };
 
-WebMusicApi.Next = function(){
+WebMusicApi.Next = function() {
     dzPlayer.control.nextSong();
 };
 
-WebMusicApi.Previous = function(){
+WebMusicApi.Previous = function() {
     dzPlayer.control.prevSong();
 };
 
-WebMusicApi.Stop = function(){
+WebMusicApi.Stop = function() {
     dzPlayer.control.pause();
 };
 
-WebMusicApi.Play = function(){
+WebMusicApi.Play = function() {
     dzPlayer.control.play();
 };
 
-WebMusicApi.GetShuffle = function(){
+WebMusicApi.GetShuffle = function() {
     return dzPlayer.shuffle;
 };
 
@@ -75,7 +75,12 @@ WebMusicApi.CanShuffle = function() {
     return document.querySelector(".control-shuffle") != null;
 };
 
-WebMusicApi.GetLike = function(){
+WebMusicApi.CanRepeat = function() {
+    return document.querySelector(".control-repeat") != null
+            || document.querySelector(".control-repeat-one") != null;
+};
+
+WebMusicApi.GetLike = function() {
     return document.querySelector(".icon-love-circle").classList.contains("active");
 };
 
@@ -83,6 +88,13 @@ WebMusicApi.ToggleLike = function() {
     document.querySelector(".icon-love-circle").click();
 };
 
-WebMusicApi.GetLoopStatus = function(){
-    return dzPlayer.repeat;
+WebMusicApi.GetRepeat = function() {
+    return dzPlayer.getRepeat();
+};
+
+WebMusicApi.SetRepeat = function(status) {
+    // 0 = No repeat
+    // 1 = Repeat playlist
+    // 2 = Repeat track
+    dzPlayer.control.setRepeat(status);
 };

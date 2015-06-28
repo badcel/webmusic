@@ -15,8 +15,9 @@
  */
 
 using WebMusic.Lib;
+using WebMusic.Browser.Widgets.Ui;
 
-namespace WebMusic.Browser.Osd {
+namespace WebMusic.Browser.Widgets.Osd {
 
     public class ControlsActor : GtkClutter.Actor {
 
@@ -52,7 +53,7 @@ namespace WebMusic.Browser.Osd {
             private Gtk.ToggleButton mBtnShuffle;
 
             [GtkChild]
-            private Gtk.ToggleButton mBtnRepeat;
+            private RepeatButton mBtnRepeat;
 
             [GtkChild]
             private Gtk.ToggleButton mBtnLike;
@@ -75,13 +76,13 @@ namespace WebMusic.Browser.Osd {
                 mBtnShuffle.active = mPlayer.Shuffle;
                 mBtnShuffle.visible = mService.SupportsShuffle;
 
-                mBtnRepeat.visible = mService.SupportsLoopStatus;
+                mBtnRepeat.visible = mService.SupportsRepeat;
 
                 mBtnLike.active = mPlayer.Like;
                 mBtnLike.visible = mService.SupportsLike;
                 mBtnLike.sensitive = true; //Like button is always available
 
-                if(!mService.SupportsLoopStatus
+                if(!mService.SupportsRepeat
                     && !mService.SupportsShuffle
                     && !mService.SupportsLike) {
                     this.visible = false;
@@ -101,18 +102,18 @@ namespace WebMusic.Browser.Osd {
             }
 
             [GtkCallback]
-            private void OnBtnRepeatToggled() {
-                //TODO
-                stdout.printf("REPEAT\n");
+            private void OnBtnRepeatRepeatStateChanged() {
+                mPlayer.Repeat = mBtnRepeat.RepeatState;
             }
 
             private void OnPlayercontrolChanged(bool canGoNext, bool canGoPrev, bool canShuffle,
-                        bool canRepeat, bool shuffle, bool like, PlayStatus playStatus, Repeat loopStatus) {
+                        bool canRepeat, bool shuffle, bool like, PlayStatus playStatus, RepeatStatus repeat) {
 
                 mBtnShuffle.sensitive = canShuffle;
                 mBtnShuffle.active = shuffle;
 
                 mBtnRepeat.sensitive = canRepeat;
+                mBtnRepeat.RepeatState = repeat;
 
                 mBtnLike.active = like;
 

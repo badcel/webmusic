@@ -16,7 +16,7 @@
 
 using WebMusic.Lib;
 
-namespace WebMusic.Browser.Osd {
+namespace WebMusic.Browser.Widgets.Osd {
 
     public class CoverStage : GtkClutter.Embed {
 

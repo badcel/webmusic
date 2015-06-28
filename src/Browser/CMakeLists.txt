@@ -25,8 +25,9 @@ vala_precompile(VALA_C
     Dialogs/ClearDataDialog.vala
     Dialogs/AboutDialog.vala
     Dialogs/ErrorDialog.vala
-    Osd/CoverStage.vala
-    Osd/ControlsActor.vala
+    Widgets/Osd/CoverStage.vala
+    Widgets/Osd/ControlsActor.vala
+    Widgets/Ui/RepeatButton.vala
 OPTIONS
     ${VALAFLAGS}
 PACKAGES

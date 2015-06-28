@@ -25,11 +25,12 @@ namespace WebMusic.Webextension {
         private bool mCanNext          = false;
         private bool mCanPrev          = false;
         private bool mCanShuffle       = false;
+        private bool mCanRepeat        = false;
         private bool mShuffle          = false;
         private bool mLike             = false;
 
         private PlayStatus mPlayStatus = PlayStatus.STOP;
-        private Repeat     mLoopStatus = Repeat.NONE;
+        private RepeatStatus mRepeat = RepeatStatus.NONE;
 
         private delegate void CacheFinishedDelegate(string artist, string track,
                                                     string album, string artUrl, string fileName);
@@ -67,6 +68,7 @@ namespace WebMusic.Webextension {
             mCanNext    = false;
             mCanPrev    = false;
             mCanShuffle = false;
+            mCanRepeat  = false;
             mShuffle    = false;
             mLike       = false;
         }
@@ -109,29 +111,32 @@ namespace WebMusic.Webextension {
             bool canNext          = this.CanGoNext;
             bool canPrev          = this.CanGoPrevious;
             bool canShuffle       = this.CanShuffle;
+            bool canRepeat        = this.CanRepeat;
             bool shuffle          = this.Shuffle;
             bool like             = this.Like;
             PlayStatus playStatus = this.PlaybackStatus;
-            Repeat loopStatus     = this.LoopStatus;
+            RepeatStatus repeat   = this.Repeat;
 
             if(this.mCanNext        != canNext
                 || this.mCanPrev    != canPrev
                 || this.mCanShuffle != canShuffle
+                || this.mCanRepeat  != canRepeat
                 || this.mShuffle    != shuffle
                 || this.mLike       != like
                 || this.mPlayStatus != playStatus
-                || this.mLoopStatus != loopStatus) {
+                || this.mRepeat != repeat) {
 
                 this.PlayercontrolChanged(canNext, canPrev, canShuffle,
-                    false, shuffle, like, playStatus, loopStatus);
+                    canRepeat, shuffle, like, playStatus, repeat);
 
                 this.mCanNext    = canNext;
                 this.mCanPrev    = canPrev;
                 this.mCanShuffle = canShuffle;
+                this.mCanRepeat  = canRepeat;
                 this.mShuffle    = shuffle;
                 this.mLike       = like;
                 this.mPlayStatus = playStatus;
-                this.mLoopStatus = loopStatus;
+                this.mRepeat     = repeat;
             }
         }
 

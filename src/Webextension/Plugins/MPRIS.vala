@@ -162,7 +162,7 @@ namespace WebMusic.Webextension.Plugins {
             if(!mService.IntegratesService) {
                 OnMetadataChanged("", "", "", "");
                 OnPlayercontrolChanged(false, false, false, false, false, false,
-                                        PlayStatus.STOP, Repeat.NONE);
+                                        PlayStatus.STOP, RepeatStatus.NONE);
             }
         }
 
@@ -180,7 +180,7 @@ namespace WebMusic.Webextension.Plugins {
         }
 
         private void OnPlayercontrolChanged(bool canGoNext, bool canGoPrev, bool canShuffle,
-                        bool canRepeat, bool shuffle, bool like, PlayStatus playStatus, Repeat loopStatus) {
+                        bool canRepeat, bool shuffle, bool like, PlayStatus playStatus, RepeatStatus repeat) {
 
             if(!this.Enable || mConnection.closed)
                 return;
@@ -190,7 +190,7 @@ namespace WebMusic.Webextension.Plugins {
             dict.insert("CanGoPrevious",  new Variant.boolean(canGoPrev));
             dict.insert("Shuffle",        new Variant.boolean(shuffle));
             dict.insert("PlaybackStatus", new Variant.string(playStatus.to_string()));
-            dict.insert("LoopStatus", new Variant.string(loopStatus.to_string()));
+            dict.insert("LoopStatus", new Variant.string(repeat.to_string()));
 
             this.SendPropertyChange(dict);
         }
@@ -268,22 +268,22 @@ namespace WebMusic.Webextension.Plugins {
         }
 
         public string LoopStatus {
-            owned get { return mPlayer.LoopStatus.to_string(); }
+            owned get { return mPlayer.Repeat.to_string(); }
             set {
 
                 switch(value) {
                     case "None":
-                        mPlayer.LoopStatus = Repeat.NONE;
+                        mPlayer.Repeat = RepeatStatus.NONE;
                         break;
                     case "Track":
-                        mPlayer.LoopStatus = Repeat.TRACK;
+                        mPlayer.Repeat = RepeatStatus.TRACK;
                         break;
                     case "Playlist":
-                        mPlayer.LoopStatus = Repeat.PLAYLIST;
+                        mPlayer.Repeat = RepeatStatus.PLAYLIST;
                         break;
                     default:
                         stdout.printf("Unknown Loopstatus string %s", value);
-                        mPlayer.LoopStatus = Repeat.NONE;
+                        mPlayer.Repeat = RepeatStatus.NONE;
                         break;
                 }
 
