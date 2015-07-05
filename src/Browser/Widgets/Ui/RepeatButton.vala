@@ -20,26 +20,25 @@ namespace WebMusic.Browser.Widgets.Ui {
 
     public class RepeatButton : Gtk.Button {
 
-        private static int NUM_STATES = 3;
-
-        private int mCurState = 0;
+        private RepeatStatus mCurState = RepeatStatus.NONE;
 
         construct {
             this.clicked.connect(this.OnClicked);
         }
 
         public RepeatStatus RepeatState {
-            get { return (RepeatStatus) this.mCurState; }
+            get { return this.mCurState; }
             set {
                 this.UpdateState(value);
-                this.mCurState = (int) value;
+                this.mCurState = value;
             }
         }
 
         private void OnClicked() {
-            int newState = ++this.mCurState;
+            int newState = (int)this.mCurState;
+            newState++;
 
-            if(newState >= NUM_STATES) {
+            if(newState >= RepeatStatus.n_values()) {
                 newState = 0;
             }
             RepeatStatus rState = (RepeatStatus) newState;

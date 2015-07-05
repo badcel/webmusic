@@ -62,6 +62,11 @@ namespace WebMusic.Lib {
 
             return ret;
         }
+
+        public static uint n_values() {
+            EnumClass enumc = (EnumClass)typeof(RepeatStatus).class_ref();
+    		return enumc.n_values;
+        }
     }
 
     [DBus(name = "org.WebMusic.Webextension.Player")]
