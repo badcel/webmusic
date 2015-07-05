@@ -44,7 +44,7 @@ WebMusicApi.GetCanGoNext = function() {
 };
 
 WebMusicApi.GetCanGoPrevious = function() {
-    return dzPlayer.getPrevSong() != null;
+    return !document.querySelector(".control-prev").hasAttribute("disabled");
 };
 
 WebMusicApi.Next = function() {
