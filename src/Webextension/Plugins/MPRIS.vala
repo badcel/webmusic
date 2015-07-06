@@ -282,7 +282,7 @@ namespace WebMusic.Webextension.Plugins {
                         mPlayer.Repeat = RepeatStatus.PLAYLIST;
                         break;
                     default:
-                        stdout.printf("Unknown Loopstatus string %s", value);
+                        warning("Unknown loopstatus string '%s'", value);
                         mPlayer.Repeat = RepeatStatus.NONE;
                         break;
                 }
