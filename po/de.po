@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-11-07 18:37+0100\n"
+"POT-Creation-Date: 2015-07-07 09:54+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,13 +17,13 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../data/webmusic.desktop.in.h:1 ../src/Browser/AppWindow.vala:216
+#: ../data/webmusic.desktop.in.h:1 ../src/Browser/AppWindow.vala:215
 #: ../src/Browser/Dialogs/AboutDialog.vala:56
 msgid "WebMusic"
 msgstr "WebMusic"
 
-#: ../data/webmusic.desktop.in.h:2 ../src/Browser/WebMusic.vala:201
-#: ../src/Browser/AppWindow.vala:222
+#: ../data/webmusic.desktop.in.h:2 ../src/Browser/WebMusic.vala:199
+#: ../src/Browser/AppWindow.vala:221
 msgid "Listen to your music"
 msgstr "Höre deine Musik"
 
@@ -47,7 +47,7 @@ msgstr "SERVICE"
 msgid "List all supported services"
 msgstr "Liste aller unterstützten Services anzeigen"
 
-#: ../src/Browser/WebMusic.vala:136
+#: ../src/Browser/WebMusic.vala:134
 #, c-format
 msgid ""
 "Startup service %s file could not be loaded. Application shuts down. (%s)"
@@ -55,7 +55,7 @@ msgstr ""
 "Die start Service-Datei %s konnte nicht geladen werden. Anwendung wird nun "
 "beendet. (%s)"
 
-#: ../src/Browser/WebMusic.vala:202 ../src/Browser/Dialogs/AboutDialog.vala:37
+#: ../src/Browser/WebMusic.vala:200 ../src/Browser/Dialogs/AboutDialog.vala:37
 msgid ""
 "A web based music player that integrates your favourite music service into "
 "the desktop."
@@ -63,14 +63,14 @@ msgstr ""
 "Ein webbasierter Musikspieler der ihren bevorzugten Musikdienst in den "
 "Desktop integriert."
 
-#: ../src/Browser/AppWindow.vala:218
+#: ../src/Browser/AppWindow.vala:217
 #: ../src/Webextension/WebMusicWebExtension.vala:118
 #: ../src/Webextension/Plugins/Notification.vala:49
 #, c-format
 msgid "by %s"
 msgstr "von %s"
 
-#: ../src/Browser/AppWindow.vala:219
+#: ../src/Browser/AppWindow.vala:218
 #: ../src/Webextension/WebMusicWebExtension.vala:119
 #: ../src/Webextension/Plugins/Notification.vala:50
 #, c-format
@@ -87,6 +87,18 @@ msgstr "Angetrieben von WebKit %d.%d.%d\n"
 #, c-format
 msgid "Now playing %s"
 msgstr "Spielt gerade %s"
+
+#: ../src/Webextension/Plugins/Notification.vala:65
+msgid "Previous"
+msgstr "Zurück"
+
+#: ../src/Webextension/Plugins/Notification.vala:69
+msgid "Pause"
+msgstr "Pause"
+
+#: ../src/Webextension/Plugins/Notification.vala:74
+msgid "Next"
+msgstr "Weiter"
 
 #: ../src/Resources/ui/main.ui.h:1
 msgid "More"
@@ -210,4 +222,3 @@ msgid ""
 msgstr ""
 "Sie können diese Aktion nicht rückgängig machen. Die von Ihnen ausgewählten "
 "Daten werden unwiederruflich gelöscht."
-
