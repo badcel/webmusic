@@ -102,7 +102,7 @@ namespace WebMusic.Webextension.Plugins {
                     mPlayer.Previous();
                     break;
                 default:
-                    critical("Unknown Notification action: %s", action);
+                    warning("Unknown notification action: %s", action);
                     break;
             }
 
