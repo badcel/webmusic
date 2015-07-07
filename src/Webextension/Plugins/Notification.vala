@@ -62,16 +62,16 @@ namespace WebMusic.Webextension.Plugins {
 
                 if(mPlayer.CanGoPrevious)
                 {
-                    mNotification.add_action("media-skip-backward", "Prev", CheckNotificationAction);
+                    mNotification.add_action("media-skip-backward", _("Previous"), CheckNotificationAction);
                 }
 
                 if(mPlayer.PlaybackStatus == PlayStatus.PLAY) {
-                    mNotification.add_action("media-playback-pause", "Pause", CheckNotificationAction);
+                    mNotification.add_action("media-playback-pause", _("Pause"), CheckNotificationAction);
                 }
 
                 if(mPlayer.CanGoNext)
                 {
-                    mNotification.add_action("media-skip-forward", "Next", CheckNotificationAction);
+                    mNotification.add_action("media-skip-forward", _("Next"), CheckNotificationAction);
                 }
 
                 if(f.length > 0) {
