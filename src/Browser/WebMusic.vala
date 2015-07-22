@@ -25,10 +25,10 @@ namespace WebMusic.Browser {
         private AppWindow mAppWindow;
         private Browser   mBrowser;
         private Settings  mSettings;
-        private static bool mShowVersion   = false;
-        //private static bool mQueryService  = false;
-        private static bool mListServices  = false;
-        private static string? mService    = null;
+        private static bool mShowVersion      = false;
+        private static bool mListServices     = false;
+        private static string? mQueryService  = null;
+        private static string? mService       = null;
 
         private const ActionEntry[] mActions = {
             { "preferences", AppPreferences},
@@ -41,13 +41,13 @@ namespace WebMusic.Browser {
 
         private const GLib.OptionEntry[] mOptions = {
             { "version", 0, 0, OptionArg.NONE, ref mShowVersion,
-            N_("Show version number"), null },
+                N_("Show version number"), null },
             { "service", 'S', 0, OptionArg.STRING, ref mService,
-            N_("Define the service to use for application startup"), N_("SERVICE") },
-            /*{ "search", 's', 0, OptionArg.STRING, ref mQueryService,
-            N_("Search service for SEARCH_TERM"), N_("SEARCH_TERM") },*/
+                N_("Define the service to use for application startup"), N_("SERVICE") },
+            { "search", 's', 0, OptionArg.STRING, ref mQueryService,
+                N_("Search service for SEARCH_TERM"), N_("SEARCH_TERM") },
             { "list-services", 'l', 0, OptionArg.NONE, ref mListServices,
-            N_("List all supported services"), null },
+                N_("List all supported services"), null },
             { null }
         };
 
@@ -121,6 +121,18 @@ namespace WebMusic.Browser {
                 mAppWindow.show_all();
 
                 mBrowser = mAppWindow.GetBrowser();
+
+                string uri = service.Url;
+                if(mQueryService != null) {
+                    if(!service.HasSearchUrl) {
+                        warning(_("The service %s does not support a search function.")
+                                .printf(service.Name));
+                    } else {
+                        uri = service.SearchUrl.printf(mQueryService);
+                    }
+                }
+
+                mBrowser.LoadUri(uri);
 
                 if(this.get_is_registered()) {
                     try {
@@ -211,21 +223,6 @@ namespace WebMusic.Browser {
                 stdout.printf("%s %s\n", Config.PACKAGE, Config.VERSION);
                 return 1;
             }
-
-            //TODO
-            /*if(mQueryService) {
-
-                if(mService != null) {
-                    //Preselect service
-                } else {
-                    //Use default
-                }
-
-                //TODO Check if search is supported for service
-
-                stdout.printf("TODO\n");
-                return 1;
-            }*/
 
             if(mListServices) {
                 Service[] services = Service.GetServices();

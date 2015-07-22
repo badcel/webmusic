@@ -65,7 +65,7 @@ namespace WebMusic.Browser
             mPlayer.PlayercontrolChanged.connect(OnPlayercontrolChanged);
             mService.ServiceLoaded.connect(OnServiceChanged);
 
-            mWebView.load_uri(mService.Url);
+
         }
 
         public Service CurrentService {
@@ -85,6 +85,10 @@ namespace WebMusic.Browser
         public void ShowCoverPage(bool showCoverPage) {
             mInfoBar.visible = !mService.IntegratesService;
             this.page = showCoverPage? 1 : 2;
+        }
+
+        public void LoadUri(string uri) {
+            mWebView.load_uri(uri);
         }
 
         private void OnServiceChanged() {
