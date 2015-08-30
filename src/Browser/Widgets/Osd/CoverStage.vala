@@ -44,6 +44,11 @@ namespace WebMusic.Browser.Widgets.Osd {
                 return false;
             });
 
+            mControlsActor.get_contents().enter_notify_event.connect((event) => {
+                this.ShowControls(true);
+                return false;
+            });
+
             mStage = (Clutter.Stage) this.get_stage();
             mStage.background_color = Clutter.Color.from_string("white");
             mStage.layout_manager = new Clutter.BinLayout();
