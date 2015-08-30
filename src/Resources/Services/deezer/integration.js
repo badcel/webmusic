@@ -81,11 +81,11 @@ WebMusicApi.CanRepeat = function() {
 };
 
 WebMusicApi.GetLike = function() {
-    return document.querySelector(".icon-love-circle").classList.contains("active");
+    return document.querySelector(".player-actions .icon-love").classList.contains("active");
 };
 
 WebMusicApi.ToggleLike = function() {
-    document.querySelector(".icon-love-circle").click();
+    document.querySelector(".player-actions .icon-love").parentNode.parentNode.click();
 };
 
 WebMusicApi.GetRepeat = function() {
