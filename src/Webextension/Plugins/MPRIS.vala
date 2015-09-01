@@ -78,6 +78,7 @@ namespace WebMusic.Webextension.Plugins {
             //TODO Connect if dbus name aquired and disconnect if dbus name lost
             mPlayer.MetadataChanged.connect(OnMetadataChanged);
             mPlayer.PlayercontrolChanged.connect(OnPlayercontrolChanged);
+            mPlayer.PropertiesChanged.connect(OnPropertiesChanged);
 
             //TODO Check what to do if player gets inactive (signal if no integration available)
 
@@ -194,6 +195,14 @@ namespace WebMusic.Webextension.Plugins {
 
             this.SendPropertyChange(dict);
         }
+
+        private void OnPropertiesChanged(HashTable<string,Variant> dict) {
+
+            if(!this.Enable || mConnection.closed)
+                return;
+
+            this.SendPropertyChange(dict);
+        }
     }
 
     [DBus(name = "org.mpris.MediaPlayer2")]
@@ -301,8 +310,8 @@ namespace WebMusic.Webextension.Plugins {
         }
 
         public double Volume {
-            get { return 1; }
-            set {  }
+            get { return mPlayer.Volume; }
+            set { mPlayer.Volume = value; }
         }
 
         public int64 Position {

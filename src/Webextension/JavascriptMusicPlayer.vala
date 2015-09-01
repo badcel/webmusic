@@ -155,6 +155,26 @@ namespace WebMusic.Webextension {
             }
         }
 
+        public override double Volume {
+            get {
+                double ret = 1;
+
+                if(mIntegrationReady && mService.SupportsVolume) {
+                    ret = mContext.CallFunctionAsDouble("GetVolume", null);
+                }
+                return ret;
+            }
+            set {
+                if(mIntegrationReady && mService.SupportsVolume) {
+                    Idle.add(() => {
+                        Variant v = new Variant.double(value);
+                        mContext.CallFunction("SetVolume", v);
+                        return false;
+                    });
+                }
+            }
+        }
+
         public override bool CanShuffle {
             get {
                 bool ret = false;

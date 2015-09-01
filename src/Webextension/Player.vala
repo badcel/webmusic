@@ -52,6 +52,8 @@ namespace WebMusic.Webextension {
         public abstract bool CanShuffle     { get; }
         public abstract bool CanRepeat      { get; }
 
+        public abstract double Volume       { get; set; }
+
         public virtual void Next(){}
         public virtual void Previous(){}
         public virtual void Pause(){}

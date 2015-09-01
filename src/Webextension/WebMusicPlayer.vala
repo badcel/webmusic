@@ -29,6 +29,8 @@ namespace WebMusic.Webextension {
         private bool mShuffle          = false;
         private bool mLike             = false;
 
+        private double mVolume         = 1;
+
         private PlayStatus mPlayStatus = PlayStatus.STOP;
         private RepeatStatus mRepeat = RepeatStatus.NONE;
 
@@ -116,6 +118,7 @@ namespace WebMusic.Webextension {
             bool like             = this.Like;
             PlayStatus playStatus = this.PlaybackStatus;
             RepeatStatus repeat   = this.Repeat;
+            double volume         = this.Volume;
 
             if(this.mCanNext        != canNext
                 || this.mCanPrev    != canPrev
@@ -137,6 +140,13 @@ namespace WebMusic.Webextension {
                 this.mLike       = like;
                 this.mPlayStatus = playStatus;
                 this.mRepeat     = repeat;
+            }
+
+            if(this.mVolume != volume) {
+                HashTable<string,Variant> dict = new HashTable<string,Variant>(str_hash, str_equal);
+                dict.insert("Volume", new Variant.double(volume));
+                this.PropertiesChanged(dict);
+                this.mVolume = volume;
             }
         }
 
