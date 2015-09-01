@@ -24,6 +24,7 @@ namespace WebMusic.Webextension {
         private uint mOwnerId;
         private unowned DBusConnection mConnection;
 
+        public signal void PropertiesChanged(HashTable<string,Variant> dict);
         public signal void MetadataChanged(string artist, string track, string album, string artUrl);
         public signal void PlayercontrolChanged(bool canGoNext, bool canGoPrev, bool canShuffle,
                                                 bool canRepeat, bool shuffle, bool like,
