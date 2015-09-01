@@ -123,3 +123,19 @@ WebMusicApi.SetVolume = function(volume) {
     dzPlayer.control.setVolume(volume);
 };
 
+//
+// Necessary functions if seeking is supported
+//
+WebMusicApi.GetTrackLength = function() {
+    return dzPlayer.getCurrentSong().DURATION * 1000000;
+};
+
+WebMusicApi.GetTrackPosition = function() {
+    return dzPlayer.position * 1000000;
+};
+
+WebMusicApi.SetTrackPosition = function(position) {
+    var percent = (position/1000000) / dzPlayer.getCurrentSong().DURATION;
+    dzPlayer.control.seek(percent);
+};
+
