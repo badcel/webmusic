@@ -112,3 +112,14 @@ WebMusicApi.ToggleLike = function() {
     document.querySelector(".player-actions .icon-love").parentNode.parentNode.click();
 };
 
+//
+// Necessary functions if setting volume is supported
+//
+WebMusicApi.GetVolume = function() {
+    return dzPlayer.volume;
+};
+
+WebMusicApi.SetVolume = function(volume) {
+    dzPlayer.control.setVolume(volume);
+};
+
