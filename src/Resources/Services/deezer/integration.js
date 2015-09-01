@@ -14,6 +14,9 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+//
+// General functions needed for minimal integration
+//
 WebMusicApi.GetReady = function() {
     return dzPlayer.playerLoaded && dzPlayer.getCurrentSong() != null;
 };
@@ -63,6 +66,14 @@ WebMusicApi.Play = function() {
     dzPlayer.control.play();
 };
 
+
+//
+// Necessary functions if shuffle is supported
+//
+WebMusicApi.CanShuffle = function() {
+    return document.querySelector(".control-shuffle") != null;
+};
+
 WebMusicApi.GetShuffle = function() {
     return dzPlayer.shuffle;
 };
@@ -71,21 +82,12 @@ WebMusicApi.ToggleShuffle = function() {
     dzPlayer.control.setShuffle(!dzPlayer.shuffle);
 };
 
-WebMusicApi.CanShuffle = function() {
-    return document.querySelector(".control-shuffle") != null;
-};
-
+//
+// Necessary functions if repeat is supported
+//
 WebMusicApi.CanRepeat = function() {
     return document.querySelector(".control-repeat") != null
             || document.querySelector(".control-repeat-one") != null;
-};
-
-WebMusicApi.GetLike = function() {
-    return document.querySelector(".player-actions .icon-love").classList.contains("active");
-};
-
-WebMusicApi.ToggleLike = function() {
-    document.querySelector(".player-actions .icon-love").parentNode.parentNode.click();
 };
 
 WebMusicApi.GetRepeat = function() {
@@ -98,3 +100,15 @@ WebMusicApi.SetRepeat = function(status) {
     // 2 = Repeat track
     dzPlayer.control.setRepeat(status);
 };
+
+//
+// Necessary functions if like is supported
+//
+WebMusicApi.GetLike = function() {
+    return document.querySelector(".player-actions .icon-love").classList.contains("active");
+};
+
+WebMusicApi.ToggleLike = function() {
+    document.querySelector(".player-actions .icon-love").parentNode.parentNode.click();
+};
+
