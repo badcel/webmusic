@@ -141,6 +141,13 @@ namespace WebMusic.Webextension {
             return (int)ret.to_number(mContext, exception);
         }
 
+        public double CallFunctionAsDouble(string name, Variant? parameter) {
+            JSCore.Value? exception = null;
+            unowned JSCore.Value? ret = CallFunction(name, parameter);
+
+            return (double)ret.to_number(mContext, exception);
+        }
+
         public bool CallFunctionAsBoolean(string name, Variant? parameter) {
             unowned JSCore.Value? ret = CallFunction(name, parameter);
             return ret.to_boolean(mContext);
