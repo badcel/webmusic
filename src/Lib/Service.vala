@@ -40,6 +40,7 @@ namespace WebMusic.Lib {
         private bool   mSupportsLike           = false;
         private bool   mSupportsPause          = false;
         private bool   mSupportsVolume         = false;
+        private bool   mSupportsSeek           = false;
 
         public Service(string name) throws ServiceError {
             this.Load(name);
@@ -111,6 +112,10 @@ namespace WebMusic.Lib {
 
         public bool SupportsVolume {
             get { return mSupportsVolume; }
+        }
+
+        public bool SupportsSeek {
+            get { return mSupportsSeek; }
         }
 
         public string to_string() {
@@ -234,6 +239,10 @@ namespace WebMusic.Lib {
                     mSupportsVolume = keyFile.get_boolean(ident, "SupportsVolume");
                 }
 
+                if(keyFile.has_key(ident, "SupportsSeek")) {
+                    mSupportsSeek = keyFile.get_boolean(ident, "SupportsSeek");
+                }
+
             } catch(KeyFileError e) {
                 warning("Failed to look up optional key from ini file. " +
                         "Certain features may be disabled. (%s)", e.message);
@@ -253,6 +262,7 @@ namespace WebMusic.Lib {
             mSupportsLike           = false;
             mSupportsPause          = false;
             mSupportsVolume         = false;
+            mSupportsSeek           = false;
         }
     }
 

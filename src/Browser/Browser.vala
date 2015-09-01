@@ -101,7 +101,8 @@ namespace WebMusic.Browser
             }
         }
 
-        private void OnMetadataChanged(string artist, string track, string album, string artUrl) {
+        private void OnMetadataChanged(string artist, string track, string album,
+                                        string artUrl, int64 length) {
             this.SetCover(artUrl);
         }
 

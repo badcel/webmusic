@@ -66,6 +66,14 @@ namespace WebMusic.Webextension {
             }
         }
 
+        protected override int64 GetTrackLength() {
+            if(mIntegrationReady && mService.SupportsSeek) {
+                return mContext.CallFunctionAsInteger("GetTrackLength", null);
+            } else {
+                return 0;
+            }
+        }
+
         protected override string GetArtUrl() {
             if(mIntegrationReady) {
                 return mContext.CallFunctionAsString("GetArtUrl", null);
@@ -115,7 +123,7 @@ namespace WebMusic.Webextension {
 
         public override bool CanPlay    { get { return mIntegrationReady; } }
         public override bool CanPause   { get { return mService.SupportsPause; } }
-        public override bool CanSeek    { get { return false; } }
+        public override bool CanSeek    { get { return mService.SupportsSeek; } }
         public override bool CanControl { get { return mIntegrationReady; } }
 
         public override bool Shuffle {
@@ -171,6 +179,23 @@ namespace WebMusic.Webextension {
                         mContext.CallFunction("SetVolume", v);
                         return false;
                     });
+                }
+            }
+        }
+
+        public override int64 Position {
+            get {
+                int64 ret = 0;
+
+                if(mIntegrationReady && mService.SupportsSeek) {
+                    ret = (int64) mContext.CallFunctionAsDouble("GetTrackPosition", null);
+                }
+                return ret;
+            }
+            set {
+                if(mIntegrationReady && mService.SupportsSeek) {
+                    Variant v = new Variant.int64(value);
+                    mContext.CallFunction("SetTrackPosition", v);
                 }
             }
         }

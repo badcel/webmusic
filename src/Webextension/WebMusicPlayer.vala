@@ -29,24 +29,28 @@ namespace WebMusic.Webextension {
         private bool mShuffle          = false;
         private bool mLike             = false;
 
-        private double mVolume         = 1;
+        private double mVolume         = 0;
+        private int64  mTrackPosition  = 0;
 
         private PlayStatus mPlayStatus = PlayStatus.STOP;
         private RepeatStatus mRepeat = RepeatStatus.NONE;
 
         private delegate void CacheFinishedDelegate(string artist, string track,
-                                                    string album, string artUrl, string fileName);
+                                                    string album, string artUrl,
+                                                    int64 length, string fileName);
 
         protected abstract string GetArtist();
         protected abstract string GetTrack();
         protected abstract string GetArtUrl();
         protected abstract string GetAlbum();
+        protected abstract int64  GetTrackLength();
         protected abstract bool   GetReady();
 
-        private string _Artist { get; set; }
-        private string _Track  { get; set; }
-        private string _ArtUrl { get; set; }
-        private string _Album  { get; set; }
+        private string _Artist      { get; set; }
+        private string _Track       { get; set; }
+        private string _ArtUrl      { get; set; }
+        private string _Album       { get; set; }
+        private int64  _TrackLength { get; set; }
 
         protected void StartCheckDom() {
             if(mTimerId == 0) {
@@ -66,6 +70,7 @@ namespace WebMusic.Webextension {
             _Track  = "";
             _ArtUrl = "";
             _Album  = "";
+            _TrackLength = 0;
 
             mCanNext    = false;
             mCanPrev    = false;
@@ -79,8 +84,36 @@ namespace WebMusic.Webextension {
             if(GetReady()) {
                 CheckPlayerControls();
                 CheckMetaData();
+                CheckProperties();
             }
             return true;
+        }
+
+        private void CheckProperties() {
+            HashTable<string,Variant> dict = new HashTable<string,Variant>(str_hash, str_equal);
+            bool propertyChanged = false;
+
+            double volume = this.Volume;
+
+            if(this.mVolume != volume) {
+                dict.insert("Volume", new Variant.double(volume));
+                this.mVolume = volume;
+                propertyChanged = true;
+            }
+
+            if(propertyChanged) {
+                this.PropertiesChanged(dict);
+            }
+
+            // Check if the player seeked to a different positon
+            // A window of +/- 2 seconds is used to detect seeking
+            int64 pos = this.Position;
+            if(this.mTrackPosition + 2000000 < pos
+                || this.mTrackPosition -2000000 > pos) {
+
+                this.Seeked(pos);
+            }
+            this.mTrackPosition = pos;
         }
 
         private void CheckMetaData() {
@@ -89,6 +122,7 @@ namespace WebMusic.Webextension {
             string track  = this.GetTrack();
             string artUrl = this.GetArtUrl();
             string album  = this.GetAlbum();
+            int64  length = this.GetTrackLength();
 
             if(artist.length == 0 || track.length == 0)
                 return;
@@ -96,15 +130,17 @@ namespace WebMusic.Webextension {
             if(artist     != this._Artist
                 || track  != this._Track
                 || artUrl != this._ArtUrl
-                || album  != this._Album) {
+                || album  != this._Album
+                || length != this._TrackLength) {
 
                 string nartUrl = artUrl.replace("https://", "http://");
-                this.CacheCover(artist, track, album, nartUrl, SendMetadataChanged);
+                this.CacheCover(artist, track, album, nartUrl, length, SendMetadataChanged);
 
-                this._Artist = artist;
-                this._Track  = track;
-                this._ArtUrl = artUrl;
-                this._Album = album;
+                this._Artist      = artist;
+                this._Track       = track;
+                this._ArtUrl      = artUrl;
+                this._Album       = album;
+                this._TrackLength = length;
             }
 
         }
@@ -118,7 +154,6 @@ namespace WebMusic.Webextension {
             bool like             = this.Like;
             PlayStatus playStatus = this.PlaybackStatus;
             RepeatStatus repeat   = this.Repeat;
-            double volume         = this.Volume;
 
             if(this.mCanNext        != canNext
                 || this.mCanPrev    != canPrev
@@ -141,27 +176,22 @@ namespace WebMusic.Webextension {
                 this.mPlayStatus = playStatus;
                 this.mRepeat     = repeat;
             }
-
-            if(this.mVolume != volume) {
-                HashTable<string,Variant> dict = new HashTable<string,Variant>(str_hash, str_equal);
-                dict.insert("Volume", new Variant.double(volume));
-                this.PropertiesChanged(dict);
-                this.mVolume = volume;
-            }
         }
 
         private void SendMetadataChanged(string artist, string track,
-                                        string album, string artUrl, string fileName) {
+                                        string album, string artUrl,
+                                        int64 length, string fileName) {
+
             string nfileName = "file://" + fileName;
-            this.MetadataChanged(artist, track, album, nfileName);
+            this.MetadataChanged(artist, track, album, nfileName, length);
         }
 
         private void CacheCover(string artist, string track, string album,
-                                string artUrl, CacheFinishedDelegate dele) {           
+                                string artUrl, int64 length, CacheFinishedDelegate dele) {
 
             if(artUrl.length == 0) {
                 debug("No art url for %s by %s from %s.".printf(track, artist, album));
-                dele(artist, track, album, artUrl, "");
+                dele(artist, track, album, artUrl, length, "");
                 return;
             }
             
@@ -198,13 +228,13 @@ namespace WebMusic.Webextension {
                         //Error, no Image obtained
                         fileName = "";
                     }
-                    dele(artist, track, album, artUrl, fileName);
+                    dele(artist, track, album, artUrl, length, fileName);
                 });
             }
             else
             {
                 //Image already cached, everything OK
-                dele(artist, track, album, artUrl, fileName);
+                dele(artist, track, album, artUrl, length, fileName);
             }
 
         }

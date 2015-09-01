@@ -161,18 +161,19 @@ namespace WebMusic.Webextension.Plugins {
 
         private void OnServiceChanged() {
             if(!mService.IntegratesService) {
-                OnMetadataChanged("", "", "", "");
+                OnMetadataChanged("", "", "", "", 0);
                 OnPlayercontrolChanged(false, false, false, false, false, false,
                                         PlayStatus.STOP, RepeatStatus.NONE);
             }
         }
 
-        private void OnMetadataChanged(string artist, string track, string album, string artUrl) {
+        private void OnMetadataChanged(string artist, string track, string album,
+                                        string artUrl, int64 length) {
 
             if(!this.Enable || mConnection.closed)
                 return;
 
-            mMprisPlayer.SetMetadata(artist, track, album, artUrl);
+            mMprisPlayer.SetMetadata(artist, track, album, artUrl, length);
             Variant variant = mMprisPlayer.Metadata;
             var builder = new VariantBuilder(VariantType.DICTIONARY);
             builder.add("{sv}", "Metadata", variant);
@@ -265,10 +266,13 @@ namespace WebMusic.Webextension.Plugins {
     [DBus(name = "org.mpris.MediaPlayer2.Player")]
     private class MprisPlayer : GLib.Object {
 
+        public signal void Seeked(int64 position);
+
         private Player mPlayer;
 
         public MprisPlayer(Player player) {
             mPlayer = player;
+            mPlayer.Seeked.connect(OnSeeked);
         }
 
         public string PlaybackStatus
@@ -315,8 +319,7 @@ namespace WebMusic.Webextension.Plugins {
         }
 
         public int64 Position {
-            get { return 1; }
-            set {  }
+            get { return mPlayer.Position; }
         }
 
         public double MinimumRate   { get { return 1.0;   } }
@@ -337,8 +340,6 @@ namespace WebMusic.Webextension.Plugins {
         public bool   CanPause      { get { return mPlayer.CanPause;      } }
         public bool   CanSeek       { get { return mPlayer.CanSeek;       } }
         public bool   CanControl    { get { return mPlayer.CanControl;    } }
-
-        public signal void Seeked(int64 Position);
 
         public void Next() {
             mPlayer.Next();
@@ -361,7 +362,11 @@ namespace WebMusic.Webextension.Plugins {
         }
 
         public void Seek(int64 offset){}
-        public void SetPosition(ObjectPath TrackId, int64 Position){}
+
+        public void SetPosition(ObjectPath TrackId, int64 Position){
+            mPlayer.Position = Position;
+            this.Seeked(Position);
+        }
 
         public void PlayPause() {
             if(mPlayer.PlaybackStatus != PlayStatus.PLAY) {
@@ -371,11 +376,16 @@ namespace WebMusic.Webextension.Plugins {
             }
         }
 
-        public void SetMetadata(string artist, string track, string album, string artUrl) {
+        public void SetMetadata(string artist, string track, string album,
+                                string artUrl, int64 length) {
 
             _metadata = new HashTable<string,Variant>(str_hash, str_equal);
             _metadata.insert("xesam:title",  new Variant.string(track));
             _metadata.insert("mpris:artUrl", new Variant.string(artUrl));
+
+            if(length > 0){
+                _metadata.insert("mpris:length", new Variant.int64(length));
+            }
 
             if(artist.length > 0) {
                 _metadata.insert("xesam:artist", new Variant.string(artist));
@@ -384,6 +394,10 @@ namespace WebMusic.Webextension.Plugins {
             if(album.length > 0) {
                 _metadata.insert("xesam:album", new Variant.string(album));
             }
+        }
+
+        private void OnSeeked(int64 position) {
+            this.Seeked(position); // Forward signal
         }
     }
 

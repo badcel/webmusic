@@ -72,7 +72,8 @@ namespace WebMusic.Lib {
     [DBus(name = "org.WebMusic.Webextension.Player")]
     public interface IPlayer : GLib.Object {
 
-        public signal void MetadataChanged(string artist, string track, string album, string artUrl);
+        public signal void MetadataChanged(string artist, string track, string album,
+                                            string artUrl, int64 length);
         public signal void PlayercontrolChanged(bool canGoNext, bool canGoPrev, bool canShuffle,
                                                 bool canRepeat, bool shuffle, bool like,
                                                 PlayStatus playStatus, RepeatStatus repeat);
