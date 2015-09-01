@@ -62,7 +62,11 @@ namespace WebMusic.Webextension {
         public virtual void Previous(){}
         public virtual void Pause(){}
         public virtual void Stop(){}
-        public virtual void Play(){}
+
+        public virtual void Play() {
+            // If Playback is started send seeked signal to avoid desync via DBus
+            this.Seeked(this.Position);
+        }
 
         public void PlayPause() {
             if(this.PlaybackStatus != PlayStatus.PLAY) {

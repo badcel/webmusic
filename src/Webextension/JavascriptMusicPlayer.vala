@@ -287,6 +287,7 @@ namespace WebMusic.Webextension {
             if(mIntegrationReady) {
                 Idle.add(() => {
                     mContext.CallFunction("Play", null);
+                    base.Play();
                     return false;
                 });
             }
