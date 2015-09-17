@@ -41,10 +41,8 @@ namespace WebMusic.Browser.Widgets.Ui {
             if(newState >= RepeatStatus.n_values()) {
                 newState = 0;
             }
-            RepeatStatus rState = (RepeatStatus) newState;
-            this.UpdateState(rState);
 
-            this.RepeatState = rState;
+            this.RepeatState = (RepeatStatus) newState;
         }
 
         private void UpdateState(RepeatStatus state) {
