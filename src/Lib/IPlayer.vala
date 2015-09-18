@@ -22,6 +22,10 @@ namespace WebMusic.Lib {
         PAUSE;  // INT = 2
 
         public string to_string() {
+
+            //Strings are compatible to the MPRIS dbus-specification.
+            //Do not change!
+
             string ret = "";
 
             switch(this) {
@@ -46,6 +50,10 @@ namespace WebMusic.Lib {
         TRACK;    // INT = 2
 
         public string to_string() {
+
+            //Strings are compatible to the MPRIS dbus-specification.
+            //Do not change!
+
             string ret = "";
 
             switch(this) {
