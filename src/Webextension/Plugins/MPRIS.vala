@@ -283,22 +283,12 @@ namespace WebMusic.Webextension.Plugins {
         public string LoopStatus {
             owned get { return mPlayer.Repeat.to_string(); }
             set {
+                RepeatStatus status;
 
-                switch(value) {
-                    case "None":
-                        mPlayer.Repeat = RepeatStatus.NONE;
-                        break;
-                    case "Track":
-                        mPlayer.Repeat = RepeatStatus.TRACK;
-                        break;
-                    case "Playlist":
-                        mPlayer.Repeat = RepeatStatus.PLAYLIST;
-                        break;
-                    default:
-                        warning("Unknown loopstatus string '%s'", value);
-                        mPlayer.Repeat = RepeatStatus.NONE;
-                        break;
+                if(!RepeatStatus.try_parse_name(value, out status)) {
+                    warning("Unknown loopstatus string '%s'", value);
                 }
+                mPlayer.Repeat = status;
 
             }
         }

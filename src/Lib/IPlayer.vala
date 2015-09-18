@@ -63,6 +63,28 @@ namespace WebMusic.Lib {
             return ret;
         }
 
+        public static bool try_parse_name(string name, out RepeatStatus result = null) {
+
+            bool ret = true;
+            switch(name) {
+                case "None":
+                    result = RepeatStatus.NONE;
+                    break;
+                case "Track":
+                    result = RepeatStatus.TRACK;
+                    break;
+                case "Playlist":
+                    result = RepeatStatus.PLAYLIST;
+                    break;
+                default:
+                    result = RepeatStatus.NONE;
+                    ret = false;
+                    break;
+            }
+
+            return ret;
+        }
+
         public static uint n_values() {
             EnumClass enumc = (EnumClass)typeof(RepeatStatus).class_ref();
     		return enumc.n_values;
