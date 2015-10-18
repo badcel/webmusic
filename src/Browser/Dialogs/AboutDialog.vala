@@ -54,7 +54,7 @@ namespace WebMusic.Browser.Dialogs {
 
             Gtk.show_about_dialog (parent,
                 "program-name", _("WebMusic"),
-                "version", Config.VERSION,
+                "version", Config.PACKAGE_VERSION,
                 "copyright", "Copyright © 2014 Marcel Tiede",
                 "comments", comments,
                 "logo", logo,

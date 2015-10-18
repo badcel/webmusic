@@ -18,8 +18,6 @@ project(WebMusic C)
 cmake_minimum_required(VERSION 2.8)
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
 
-set(VERSION 0.1)
-
 include(FindVala)
 include(UseVala)
 include(WebMusic)
@@ -47,13 +45,17 @@ webmusic_find_program(GIR_COMPILER g-ir-compiler)
 option(MAKE_LOCAL_INSTALL  "Allow to install in an arbitary location" OFF)
 
 set(PACKAGE "webmusic")
+set(PACKAGE_NAME "org.WebMusic")
+set(PACKAGE_VERSION 0.1)
+
 set(PKG_DATADIR "${CMAKE_INSTALL_FULL_DATADIR}/${PACKAGE}")
 set(PKG_LIBDIR "${CMAKE_INSTALL_FULL_LIBDIR}/${PACKAGE}")
 set(GETTEXT_PACKAGE "${PACKAGE}")
 
 set(COMMON_CFLAGS "-w")
 set(COMMON_CFLAGS "${COMMON_CFLAGS} -DPACKAGE=\\\"${PACKAGE}\\\"")
-set(COMMON_CFLAGS "${COMMON_CFLAGS} -DVERSION=\\\"${VERSION}\\\"")
+set(COMMON_CFLAGS "${COMMON_CFLAGS} -DPACKAGE_NAME=\\\"${PACKAGE_NAME}\\\"")
+set(COMMON_CFLAGS "${COMMON_CFLAGS} -DPACKAGE_VERSION=\\\"${PACKAGE_VERSION}\\\"")
 set(COMMON_CFLAGS "${COMMON_CFLAGS} -DPKG_DATA_DIR=\\\"${PKG_DATADIR}\\\"")
 set(COMMON_CFLAGS "${COMMON_CFLAGS} -DPKG_LIB_DIR=\\\"${PKG_LIBDIR}\\\"")
 set(COMMON_CFLAGS "${COMMON_CFLAGS} -DGETTEXT_PACKAGE=\\\"${GETTEXT_PACKAGE}\\\"")

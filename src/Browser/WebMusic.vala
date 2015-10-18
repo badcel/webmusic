@@ -220,7 +220,7 @@ namespace WebMusic.Browser {
             }
 
             if(mShowVersion) {
-                stdout.printf("%s %s\n", Config.PACKAGE, Config.VERSION);
+                stdout.printf("%s %s\n", Config.PACKAGE, Config.PACKAGE_VERSION);
                 return 1;
             }
 
