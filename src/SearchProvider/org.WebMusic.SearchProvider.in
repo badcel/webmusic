@@ -1,0 +1,7 @@
+#!@GJS@
+imports.package.init({ name: "org.WebMusic",
+                        version: "@PACKAGE_VERSION@",
+                        prefix: "@CMAKE_INSTALL_PREFIX@",
+                        libdir: "@CMAKE_INSTALL_FULL_LIBDIR@" });
+imports.package.run(imports.service);
+

@@ -1,0 +1,4 @@
+[D-BUS Service]
+Name=@PACKAGE_NAME@.SearchProvider
+Exec=@JS_PKG_DATA_DIR@/@PACKAGE_NAME@.SearchProvider
+
