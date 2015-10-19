@@ -17,4 +17,5 @@
 add_subdirectory(Lib)
 add_subdirectory(Browser)
 add_subdirectory(Webextension)
+add_subdirectory(SearchProvider)
 install(DIRECTORY Resources/Services DESTINATION "${PKG_DATADIR}")

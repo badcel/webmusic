@@ -37,3 +37,8 @@ if(GTK_UPDATE_ICON_CACHE AND NOT MAKE_LOCAL_INSTALL)
             \"\${CMAKE_INSTALL_FULL_DATADIR}/icons/hicolor\")
 ")
 endif()
+
+set(WEBMUSIC_DBUS_SERVICE_DIR "${CMAKE_INSTALL_FULL_DATADIR}/dbus-1/services")
+webmusic_merge_po(desktop org.WebMusic.SearchProvider.service ${WEBMUSIC_DBUS_SERVICE_DIR})
+
+webmusic_gresource(org.WebMusic.SearchProvider.data.gresource ${JS_PKG_DATADIR})
