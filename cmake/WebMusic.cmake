@@ -47,3 +47,13 @@ function(webmusic_find_program VAR PROGRAM)
     endif()
 endfunction()
 
+function(webmusic_gresource OUTPUT DESTINATION)
+
+    add_custom_target(${OUTPUT} ALL
+        ${GLIB_COMPILE_RESOURCES}
+            --sourcedir=${CMAKE_CURRENT_SOURCE_DIR}
+            --target=${CMAKE_CURRENT_BINARY_DIR}/${OUTPUT}
+            ${CMAKE_CURRENT_SOURCE_DIR}/${OUTPUT}.xml)
+
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${OUTPUT} DESTINATION ${DESTINATION})
+endfunction()
