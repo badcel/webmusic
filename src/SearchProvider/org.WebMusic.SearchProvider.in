@@ -1,5 +1,5 @@
 #!@GJS@
-imports.package.init({ name: "org.WebMusic",
+imports.package.init({ name: "org.WebMusic.SearchProvider",
                         version: "@PACKAGE_VERSION@",
                         prefix: "@CMAKE_INSTALL_PREFIX@",
                         libdir: "@CMAKE_INSTALL_FULL_LIBDIR@" });
