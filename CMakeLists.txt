@@ -45,7 +45,7 @@ webmusic_find_program(GIR_COMPILER g-ir-compiler)
 webmusic_find_program(GJS gjs)
 
 option(MAKE_LOCAL_INSTALL  "Allow to install in an arbitary location" OFF)
-OPTION(SHELL_SEARCH_PROVIDER "Creates the gnome-shell search-provider" ON)
+option(SHELL_SEARCH_PROVIDER "Creates the gnome-shell search-provider" ON)
 
 set(PACKAGE "webmusic")
 set(PACKAGE_NAME "org.WebMusic")
@@ -73,6 +73,8 @@ set(GSETTINGS_INSTALL_DIR "${CMAKE_INSTALL_FULL_DATADIR}/glib-2.0/schemas")
 
 set(VALAFLAGS ${VALAFLAGS} --target-glib=2.38)
 set(VALAFLAGS ${VALAFLAGS} --gresources=${CMAKE_SOURCE_DIR}/src/Resources/webmusic.gresource.xml)
+
+message(STATUS "THIS COMPILES ${PACKAGE} VERSION ${PACKAGE_VERSION}")
 
 if(MAKE_LOCAL_INSTALL)
     message(STATUS "[OPTION] LOCAL INSTALL IS ENABLED")
