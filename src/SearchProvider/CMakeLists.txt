@@ -14,6 +14,7 @@
  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  #
 
-webmusic_configure(PROGRAMS desktop org.WebMusic.SearchProvider ${JS_PKG_DATADIR})
-webmusic_gresource(org.WebMusic.SearchProvider.src.gresource ${JS_PKG_DATADIR})
-
+if(SHELL_SEARCH_PROVIDER)
+    webmusic_configure(PROGRAMS desktop org.WebMusic.SearchProvider ${JS_PKG_DATADIR})
+    webmusic_gresource(org.WebMusic.SearchProvider.src.gresource ${JS_PKG_DATADIR})
+endif()

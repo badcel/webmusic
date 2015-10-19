@@ -38,11 +38,15 @@ if(GTK_UPDATE_ICON_CACHE AND NOT MAKE_LOCAL_INSTALL)
 ")
 endif()
 
-set(WEBMUSIC_DBUS_SERVICE_DIR "${CMAKE_INSTALL_FULL_DATADIR}/dbus-1/services")
-webmusic_configure(FILES desktop org.WebMusic.SearchProvider.service ${WEBMUSIC_DBUS_SERVICE_DIR})
+if(SHELL_SEARCH_PROVIDER)
 
-webmusic_gresource(org.WebMusic.SearchProvider.data.gresource ${JS_PKG_DATADIR})
+    set(WEBMUSIC_DBUS_SERVICE_DIR "${CMAKE_INSTALL_FULL_DATADIR}/dbus-1/services")
+    webmusic_configure(FILES desktop org.WebMusic.SearchProvider.service ${WEBMUSIC_DBUS_SERVICE_DIR})
 
-set(WEBMUSIC_SEARCHPROVIDER_DIR "${CMAKE_INSTALL_FULL_DATADIR}/gnome-shell/search-providers")
-install(FILES org.WebMusic.SearchProvider.search-provider.ini
-        DESTINATION "${WEBMUSIC_SEARCHPROVIDER_DIR}")
+    webmusic_gresource(org.WebMusic.SearchProvider.data.gresource ${JS_PKG_DATADIR})
+
+    set(WEBMUSIC_SEARCHPROVIDER_DIR "${CMAKE_INSTALL_FULL_DATADIR}/gnome-shell/search-providers")
+    install(FILES org.WebMusic.SearchProvider.search-provider.ini
+            DESTINATION "${WEBMUSIC_SEARCHPROVIDER_DIR}")
+
+endif()
