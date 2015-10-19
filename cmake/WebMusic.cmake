@@ -25,7 +25,7 @@ macro(webmusic_check_modules)
   set(${ARGV0}_LDFLAGS "${WEBMUSIC_STRIPPED}")
 endmacro()
 
-function(webmusic_merge_po STYLE OUTPUT DESTINATION)
+function(webmusic_configure TYPE STYLE OUTPUT DESTINATION)
     configure_file(${OUTPUT}.in ${OUTPUT}.vars @ONLY)
     add_custom_target(${OUTPUT} ALL
                     ${INTLTOOL_MERGE}
@@ -33,7 +33,7 @@ function(webmusic_merge_po STYLE OUTPUT DESTINATION)
                         ${CMAKE_SOURCE_DIR}/po
                         ${CMAKE_CURRENT_BINARY_DIR}/${OUTPUT}.vars
                         ${CMAKE_CURRENT_BINARY_DIR}/${OUTPUT})
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${OUTPUT} DESTINATION ${DESTINATION})
+  install(${TYPE} ${CMAKE_CURRENT_BINARY_DIR}/${OUTPUT} DESTINATION ${DESTINATION})
 endfunction()
 
 function(webmusic_find_program VAR PROGRAM)

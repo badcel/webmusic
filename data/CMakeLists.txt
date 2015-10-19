@@ -26,7 +26,7 @@ else()
     set(WEBMUSIC_DESKTOP_DIR "${CMAKE_INSTALL_FULL_DATADIR}/applications")
     set(WEBMUSIC_LOCAL_BINDIR "")
 endif()
-webmusic_merge_po(desktop webmusic.desktop ${WEBMUSIC_DESKTOP_DIR})
+webmusic_configure(FILES desktop webmusic.desktop ${WEBMUSIC_DESKTOP_DIR})
 
 install(DIRECTORY icons/hicolor DESTINATION "${CMAKE_INSTALL_FULL_DATADIR}/icons")
 
@@ -39,6 +39,6 @@ if(GTK_UPDATE_ICON_CACHE AND NOT MAKE_LOCAL_INSTALL)
 endif()
 
 set(WEBMUSIC_DBUS_SERVICE_DIR "${CMAKE_INSTALL_FULL_DATADIR}/dbus-1/services")
-webmusic_merge_po(desktop org.WebMusic.SearchProvider.service ${WEBMUSIC_DBUS_SERVICE_DIR})
+webmusic_configure(FILES desktop org.WebMusic.SearchProvider.service ${WEBMUSIC_DBUS_SERVICE_DIR})
 
 webmusic_gresource(org.WebMusic.SearchProvider.data.gresource ${JS_PKG_DATADIR})
