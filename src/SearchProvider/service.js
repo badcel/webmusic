@@ -24,8 +24,12 @@ pkg.require({ 'Gio': '2.0',
 const Gio = imports.gi.Gio;
 const GLib = imports.gi.GLib;
 const Lang = imports.lang;
-
+const Gettext = imports.gettext;
 const SearchProvider = imports.searchProvider;
+const Config = imports.config;
+
+Gettext.textdomain(Config.PACKAGE);
+Gettext.bindtextdomain(Config.PACKAGE, pkg.localedir);
 
 function initEnvironment() {
     window.getApp = function() {
@@ -82,7 +86,6 @@ const Service = new Lang.Class({
 
 function main(argv) {
     initEnvironment();
-
     return (new Service()).run(argv);
 }
 

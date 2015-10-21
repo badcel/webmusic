@@ -1,0 +1,1 @@
+const PACKAGE = "webmusic";
