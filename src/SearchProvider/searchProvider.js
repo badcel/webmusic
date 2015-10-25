@@ -18,15 +18,15 @@
 const Gio = imports.gi.Gio;
 const GLib = imports.gi.GLib;
 const Lang = imports.lang;
-
 const SearchProviderInterface = Gio.resources_lookup_data('/org/gnome/shell/ShellSearchProvider2.xml', 0).toArray().toString();
 
 const SearchProvider = new Lang.Class({
     Name: 'WebMusicSearchProvider',
 
+    _currentId : 0,
+    _terms : [],
     _init: function(application) {
         this._app = application;
-
         this._impl = Gio.DBusExportedObject.wrapJSObject(SearchProviderInterface, this);
     },
 
@@ -38,21 +38,46 @@ const SearchProvider = new Lang.Class({
         return this._impl.unexport_from_connection(connection);
     },
 
-    GetInitialResultSetAsync: function(params, invocation) {
-        let ret = [];
+    getTerm: function() {
+        var ret = '';
+        for(var i = 0; i < this._terms.length; i++) {
+            ret += this._terms[i] + ' ';
+        }
 
         return ret;
+    },
+
+    GetInitialResultSetAsync: function(terms, invocation) {
+        this._app.hold();
+        this._currentId = 0;
+
+        let ret = (++this._currentId).toString();
+        this._terms = terms;
+
+        this._app.release();
+        invocation.return_value(new GLib.Variant('(as)', [[ret]]));
     },
 
     GetSubsearchResultSet: function(previous, terms) {
-        let ret = [];
+        this._app.hold();
 
-        return ret;
+        let ret = (++this._currentId).toString();
+        this._terms = terms;
+
+        this._app.release();
+        return [ret];
     },
 
     GetResultMetas: function(identifiers) {
+        this._app.hold();
         let ret = [];
 
+        ret.push({ name: new GLib.Variant('s', _('WebMusic')),
+                   id: new GLib.Variant('s', this._currentId.toString()),
+                   description: new GLib.Variant('s', _('Search for %s').format(this.getTerm())),
+                   icon: (new Gio.ThemedIcon({ name: 'audio-x-generic' })).serialize()});
+
+        this._app.release();
         return ret;
     },
 
