@@ -36,13 +36,13 @@ PACKAGES
     WebKit2-4.0
     clutter-gtk-1.0
 CUSTOM_VAPIS
-    ${CMAKE_BINARY_DIR}/src/Lib/libshare.vapi
+    ${CMAKE_BINARY_DIR}/src/Lib/libwebmusiccommon.vapi
     ${CMAKE_SOURCE_DIR}/vapi/config.vapi
     ${CMAKE_SOURCE_DIR}/vapi/WebKitVersion.vapi
 )
 
 add_executable(webmusic ${VALA_C} ${RESOURCE_FILE})
-target_link_libraries(webmusic share ${GLIB_LDFLAGS} ${WEBKIT_LDFLAGS} ${CLUTTERGTK_LDFLAGS})
+target_link_libraries(webmusic webmusiccommon ${GLIB_LDFLAGS} ${WEBKIT_LDFLAGS} ${CLUTTERGTK_LDFLAGS})
 set_target_properties(webmusic PROPERTIES
                       COMPILE_FLAGS "${GLIB_CFLAGS} ${GTK_CFLAGS} ${WEBKIT_CFLAGS} ${CLUTTERGTK_CFLAGS} ${COMMON_CFLAGS}"
                       INCLUDE_DIRECTORIES "${CMAKE_BINARY_DIR}/src/Lib")

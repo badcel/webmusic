@@ -14,7 +14,7 @@
  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  #
 
-vala_precompile(VALA_C
+vala_precompile(VALA_C_LIB_WEBMUSIC_COMMON
     Namespace.vala
     IPlayer.vala
     Service.vala
@@ -27,25 +27,51 @@ PACKAGES
 CUSTOM_VAPIS
     ${CMAKE_SOURCE_DIR}/vapi/config.vapi
 GENERATE_VAPI
-    libshare
-GENERATE_HEADER
-    libshare
-GENERATE_GIR
-    libshare-0.1
+    libwebmusiccommon
 )
 
-add_library(share SHARED ${VALA_C})
-target_link_libraries(share ${GLIB_LDFLAGS})
-set_target_properties(share PROPERTIES
+add_library(webmusiccommon SHARED ${VALA_C_LIB_WEBMUSIC_COMMON})
+target_link_libraries(webmusiccommon ${GLIB_LDFLAGS})
+set_target_properties(webmusiccommon PROPERTIES
                       COMPILE_FLAGS "${GLIB_CFLAGS} ${COMMON_CFLAGS}")
+install(TARGETS webmusiccommon DESTINATION "${PKG_LIBDIR}")
 
-install(TARGETS share DESTINATION "${PKG_LIBDIR}")
+vala_precompile(VALA_C_LIB_SEARCH_PROVIDER
+    LibSearchProvider.vala
+OPTIONS
+    ${VALAFLAGS}
+PACKAGES
+    glib-2.0
+    gio-2.0
+CUSTOM_VAPIS
+    ${CMAKE_SOURCE_DIR}/vapi/config.vapi
+    ${CMAKE_BINARY_DIR}/src/Lib/libwebmusiccommon.vapi
+GENERATE_VAPI
+    libsearchprovider
+GENERATE_HEADER
+    libsearchprovider
+GENERATE_GIR
+    libsearchprovider-0.1
+)
 
-#add_custom_command(OUTPUT libshare-0.1.gir
-#                   COMMAND ${GIR_COMPILER}
-#                        --shared-library=libshare.so
-#                        --output=${CMAKE_CURRENT_BINARY_DIR}/libshare-0.1.typelib
-#                        ${CMAKE_CURRENT_BINARY_DIR}/libshare-0.1.gir
-#                   DEPENDS share)
+add_library(searchprovider SHARED ${VALA_C_LIB_SEARCH_PROVIDER})
+target_link_libraries(searchprovider webmusiccommon ${GLIB_LDFLAGS})
+set_target_properties(searchprovider PROPERTIES
+                      COMPILE_FLAGS "${GLIB_CFLAGS} ${COMMON_CFLAGS}"
+                      INCLUDE_DIRECTORIES "${CMAKE_BINARY_DIR}/src/Lib")
+install(TARGETS searchprovider DESTINATION "${PKG_LIBDIR}")
 
-#add_custom_target(gi ALL DEPENDS libshare-0.1.gir)
+add_custom_command(OUTPUT libsearchprovider-0.1.typelib
+    COMMAND ${GIR_COMPILER}
+       --shared-library=libsearchprovider.so
+        --output=${CMAKE_CURRENT_BINARY_DIR}/libsearchprovider-0.1.typelib
+        ${CMAKE_CURRENT_BINARY_DIR}/libsearchprovider-0.1.gir
+    DEPENDS searchprovider)
+
+add_custom_target(libsearchprovider-typelib ALL DEPENDS libsearchprovider-0.1.typelib)
+
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libsearchprovider-0.1.typelib
+    DESTINATION "${PKG_LIBDIR}/girepository-1.0")
+
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libsearchprovider-0.1.gir
+    DESTINATION "${PKG_DATADIR}/gir-1.0")
