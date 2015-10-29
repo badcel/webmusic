@@ -31,7 +31,7 @@ PACKAGES
     libnotify
     WebKit2WebExtension-4.0
 CUSTOM_VAPIS
-    ${CMAKE_BINARY_DIR}/src/Lib/libwebmusiccommon.vapi
+    ${CMAKE_BINARY_DIR}/src/Lib/libwebmusic.vapi
     ${CMAKE_SOURCE_DIR}/vapi/config.vapi
     ${CMAKE_SOURCE_DIR}/vapi/javascriptcore.vapi
 GENERATE_VAPI
@@ -41,7 +41,7 @@ GENERATE_HEADER
 )
 
 add_library(webextension SHARED ${VALA_C})
-target_link_libraries(webextension webmusiccommon ${GLIB_LDFLAGS} ${WEBEXTENSION_LDFLAGS} ${NOTIFY_LDFLAGS})
+target_link_libraries(webextension webmusic ${GLIB_LDFLAGS} ${WEBEXTENSION_LDFLAGS} ${NOTIFY_LDFLAGS})
 set_target_properties(webextension PROPERTIES
                       COMPILE_FLAGS "${GLIB_CFLAGS} ${GTK_CFLAGS} ${WEBEXTENSION_CFLAGS} ${NOTIFY_CFLAGS} ${COMMON_CFLAGS}"
                       INCLUDE_DIRECTORIES "${CMAKE_BINARY_DIR}/src/Lib")

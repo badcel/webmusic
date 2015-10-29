@@ -27,51 +27,31 @@ PACKAGES
 CUSTOM_VAPIS
     ${CMAKE_SOURCE_DIR}/vapi/config.vapi
 GENERATE_VAPI
-    libwebmusiccommon
-)
-
-add_library(webmusiccommon SHARED ${VALA_C_LIB_WEBMUSIC_COMMON})
-target_link_libraries(webmusiccommon ${GLIB_LDFLAGS})
-set_target_properties(webmusiccommon PROPERTIES
-                      COMPILE_FLAGS "${GLIB_CFLAGS} ${COMMON_CFLAGS}")
-install(TARGETS webmusiccommon DESTINATION "${PKG_LIBDIR}")
-
-vala_precompile(VALA_C_LIB_SEARCH_PROVIDER
-    LibSearchProvider.vala
-OPTIONS
-    ${VALAFLAGS}
-PACKAGES
-    glib-2.0
-    gio-2.0
-CUSTOM_VAPIS
-    ${CMAKE_SOURCE_DIR}/vapi/config.vapi
-    ${CMAKE_BINARY_DIR}/src/Lib/libwebmusiccommon.vapi
-GENERATE_VAPI
-    libsearchprovider
+    libwebmusic
 GENERATE_HEADER
-    libsearchprovider
+    libwebmusic
 GENERATE_GIR
-    libsearchprovider-0.1
+    libwebmusic-0.1
 )
 
-add_library(searchprovider SHARED ${VALA_C_LIB_SEARCH_PROVIDER})
-target_link_libraries(searchprovider webmusiccommon ${GLIB_LDFLAGS})
-set_target_properties(searchprovider PROPERTIES
-                      COMPILE_FLAGS "${GLIB_CFLAGS} ${COMMON_CFLAGS}"
-                      INCLUDE_DIRECTORIES "${CMAKE_BINARY_DIR}/src/Lib")
-install(TARGETS searchprovider DESTINATION "${PKG_LIBDIR}")
+add_library(webmusic SHARED ${VALA_C_LIB_WEBMUSIC_COMMON})
+target_link_libraries(webmusic ${GLIB_LDFLAGS})
+set_target_properties(webmusic PROPERTIES
+                      COMPILE_FLAGS "${GLIB_CFLAGS} ${COMMON_CFLAGS}")
+install(TARGETS webmusic DESTINATION "${PKG_LIBDIR}")
 
-add_custom_command(OUTPUT libsearchprovider-0.1.typelib
+
+add_custom_command(OUTPUT libwebmusic-0.1.typelib
     COMMAND ${GIR_COMPILER}
-       --shared-library=libsearchprovider.so
-        --output=${CMAKE_CURRENT_BINARY_DIR}/libsearchprovider-0.1.typelib
-        ${CMAKE_CURRENT_BINARY_DIR}/libsearchprovider-0.1.gir
-    DEPENDS searchprovider)
+       --shared-library=libwebmusic.so
+        --output=${CMAKE_CURRENT_BINARY_DIR}/libwebmusic-0.1.typelib
+        ${CMAKE_CURRENT_BINARY_DIR}/libwebmusic-0.1.gir
+    DEPENDS webmusic)
 
-add_custom_target(libsearchprovider-typelib ALL DEPENDS libsearchprovider-0.1.typelib)
+add_custom_target(libwebmusic-typelib ALL DEPENDS libwebmusic-0.1.typelib)
 
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libsearchprovider-0.1.typelib
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libwebmusic-0.1.typelib
     DESTINATION "${PKG_LIBDIR}/girepository-1.0")
 
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libsearchprovider-0.1.gir
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libwebmusic-0.1.gir
     DESTINATION "${PKG_DATADIR}/gir-1.0")
