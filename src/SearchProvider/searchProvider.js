@@ -40,7 +40,7 @@ const SearchProvider = new Lang.Class({
 
     getTerm: function() {
         var ret = '';
-        for(var i = 0; i < this._terms.length; i++) {
+        for(let i = 0; i < this._terms.length; i++) {
             ret += this._terms[i] + ' ';
         }
 
@@ -72,9 +72,9 @@ const SearchProvider = new Lang.Class({
         this._app.hold();
         let ret = [];
 
-        ret.push({ name: new GLib.Variant('s', _('WebMusic')),
+        ret.push({ name: new GLib.Variant('s', _("WebMusic")),
                    id: new GLib.Variant('s', this._currentId.toString()),
-                   description: new GLib.Variant('s', _('Search for %s').format(this.getTerm())),
+                   description: new GLib.Variant('s', _("Search for %s").format(this.getTerm())),
                    icon: (new Gio.ThemedIcon({ name: 'audio-x-generic' })).serialize()});
 
         this._app.release();

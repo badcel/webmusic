@@ -21,12 +21,13 @@ pkg.require({ 'Gio': '2.0',
               'GLib': '2.0',
               'GObject': '2.0'});
 
+const Gettext = imports.gettext;
 const Gio = imports.gi.Gio;
 const GLib = imports.gi.GLib;
 const Lang = imports.lang;
-const Gettext = imports.gettext;
-const SearchProvider = imports.searchProvider;
+
 const Config = imports.config;
+const Sp = imports.searchProvider;
 
 Gettext.textdomain(Config.PACKAGE);
 Gettext.bindtextdomain(Config.PACKAGE, pkg.localedir);
@@ -47,7 +48,7 @@ const Service = new Lang.Class({
                       inactivity_timeout: 60000 });
         GLib.set_application_name(_("WebMusic"));
 
-        this._searchProvider = new SearchProvider.SearchProvider(this);
+        this._searchProvider = new Sp.SearchProvider(this);
     },
 
     _onQuit: function() {
