@@ -41,10 +41,11 @@ CUSTOM_VAPIS
     ${CMAKE_SOURCE_DIR}/vapi/WebKitVersion.vapi
 )
 
-add_executable(webmusic ${VALA_C} ${RESOURCE_FILE})
-target_link_libraries(webmusic webmusiccommon ${GLIB_LDFLAGS} ${WEBKIT_LDFLAGS} ${CLUTTERGTK_LDFLAGS})
-set_target_properties(webmusic PROPERTIES
+add_executable(webmusic-bin ${VALA_C} ${RESOURCE_FILE})
+target_link_libraries(webmusic-bin webmusiccommon ${GLIB_LDFLAGS} ${WEBKIT_LDFLAGS} ${CLUTTERGTK_LDFLAGS})
+set_target_properties(webmusic-bin PROPERTIES
                       COMPILE_FLAGS "${GLIB_CFLAGS} ${GTK_CFLAGS} ${WEBKIT_CFLAGS} ${CLUTTERGTK_CFLAGS} ${COMMON_CFLAGS}"
-                      INCLUDE_DIRECTORIES "${CMAKE_BINARY_DIR}/src/Lib")
+                      INCLUDE_DIRECTORIES "${CMAKE_BINARY_DIR}/src/Lib"
+                      OUTPUT_NAME webmusic)
 
-install(TARGETS webmusic DESTINATION bin)
+install(TARGETS webmusic-bin DESTINATION bin)
