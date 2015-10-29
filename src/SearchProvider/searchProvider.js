@@ -18,6 +18,8 @@
 const Gio = imports.gi.Gio;
 const GLib = imports.gi.GLib;
 const Lang = imports.lang;
+const WebMusic = imports.gi.libwebmusic;
+
 const SearchProviderInterface = Gio.resources_lookup_data('/org/gnome/shell/ShellSearchProvider2.xml', 0).toArray().toString();
 
 const SearchProvider = new Lang.Class({
@@ -25,6 +27,8 @@ const SearchProvider = new Lang.Class({
 
     _currentId : 0,
     _terms : [],
+    _enable : false,
+
     _init: function(application) {
         this._app = application;
         this._impl = Gio.DBusExportedObject.wrapJSObject(SearchProviderInterface, this);
@@ -38,9 +42,20 @@ const SearchProvider = new Lang.Class({
         return this._impl.unexport_from_connection(connection);
     },
 
+    checkService: function() {
+        let settings = new Gio.Settings({schema_id: "org.WebMusic.Browser"});
+        let lastService = settings.get_string("last-used-service");
+
+        if (lastService.length > 0) {
+            let service = new WebMusic.Service();
+            service.Load(lastService);
+            this._enable = service.get_HasSearchUrl();
+        }
+    },
+
     getTerm: function() {
         var ret = '';
-        for(let i = 0; i < this._terms.length; i++) {
+        for (let i = 0; i < this._terms.length; i++) {
             ret += this._terms[i] + ' ';
         }
 
@@ -49,10 +64,16 @@ const SearchProvider = new Lang.Class({
 
     GetInitialResultSetAsync: function(terms, invocation) {
         this._app.hold();
-        this._currentId = 0;
+        this.checkService();
 
-        let ret = (++this._currentId).toString();
-        this._terms = terms;
+        let ret = '';
+
+        if (this._enable) {
+            this._currentId = 0;
+
+            ret = (++this._currentId).toString();
+            this._terms = terms;
+        }
 
         this._app.release();
         invocation.return_value(new GLib.Variant('(as)', [[ret]]));
