@@ -14,7 +14,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using WebMusic.Lib;
+using LibWebMusic;
 
 namespace WebMusic.Browser.Widgets.Osd {
 
