@@ -54,7 +54,7 @@ const SearchProvider = new Lang.Class({
     },
 
     getTerm: function() {
-        var ret = '';
+        let ret = '';
         for (let i = 0; i < this._terms.length; i++) {
             ret += this._terms[i] + ' ';
         }
@@ -66,13 +66,16 @@ const SearchProvider = new Lang.Class({
         this._app.hold();
         this.checkService();
 
+        this._currentId = 0;
+        this._terms = [];
+
         let ret = '';
 
         if (this._enable) {
-            this._currentId = 0;
-
             ret = (++this._currentId).toString();
             this._terms = terms;
+        } else {
+            log("No search function supported from current service");
         }
 
         this._app.release();
@@ -81,9 +84,12 @@ const SearchProvider = new Lang.Class({
 
     GetSubsearchResultSet: function(previous, terms) {
         this._app.hold();
+        let ret = '';
 
-        let ret = (++this._currentId).toString();
-        this._terms = terms;
+        if (this._enable) {
+            let ret = (++this._currentId).toString();
+            this._terms = terms;
+        }
 
         this._app.release();
         return [ret];
@@ -93,10 +99,12 @@ const SearchProvider = new Lang.Class({
         this._app.hold();
         let ret = [];
 
-        ret.push({ name: new GLib.Variant('s', _("WebMusic")),
-                   id: new GLib.Variant('s', this._currentId.toString()),
-                   description: new GLib.Variant('s', _("Search for %s").format(this.getTerm())),
-                   icon: (new Gio.ThemedIcon({ name: 'audio-x-generic' })).serialize()});
+        if(this._enable) {
+            ret.push({ name: new GLib.Variant('s', _("WebMusic")),
+                id: new GLib.Variant('s', this._currentId.toString()),
+                description: new GLib.Variant('s', _("Search for %s").format(this.getTerm())),
+                icon: (new Gio.ThemedIcon({ name: 'audio-x-generic' })).serialize()});
+        }
 
         this._app.release();
         return ret;
