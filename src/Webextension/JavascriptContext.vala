@@ -32,11 +32,12 @@ namespace WebMusic.Webextension {
 
 
         static const JSCore.StaticFunction[] js_funcs = {
-            { "log", logJs, JSCore.PropertyAttribute.ReadOnly },
+            { "debug", debugJs, JSCore.PropertyAttribute.ReadOnly },
+            { "warning", warningJs, JSCore.PropertyAttribute.ReadOnly },
             { null, null, 0 }
         };
 
-        public static JSCore.Value logJs (JSCore.Context ctx,
+        public static JSCore.Value debugJs (JSCore.Context ctx,
             JSCore.Object function,
             JSCore.Object thisObject,
             JSCore.Value[] arguments,
@@ -45,6 +46,18 @@ namespace WebMusic.Webextension {
             exception = null;
 
             debug("Log from JS: %s", GetUTF8StringFromValue(arguments[0], ctx));
+            return new JSCore.Value.boolean(ctx, true);
+        }
+
+        public static JSCore.Value warningJs (JSCore.Context ctx,
+            JSCore.Object function,
+            JSCore.Object thisObject,
+            JSCore.Value[] arguments,
+            out JSCore.Value exception) {
+
+            exception = null;
+
+            warning("Warning from JS: %s", GetUTF8StringFromValue(arguments[0], ctx));
             return new JSCore.Value.boolean(ctx, true);
         }
 
