@@ -50,6 +50,9 @@ const SearchProvider = new Lang.Class({
             let service = new WebMusic.Service();
             service.Load(lastService);
             this._enable = service.get_HasSearchUrl();
+            if (this._enable) {
+                log("Search for webmusic service " + lastService + " enabled.");
+            }
         }
     },
 
@@ -64,18 +67,16 @@ const SearchProvider = new Lang.Class({
 
     GetInitialResultSetAsync: function(terms, invocation) {
         this._app.hold();
-        this.checkService();
-
-        this._currentId = 0;
+        this._currentId = 1;
         this._terms = [];
 
         let ret = '';
 
+        this.checkService();
+
         if (this._enable) {
             ret = (++this._currentId).toString();
             this._terms = terms;
-        } else {
-            log("No search function supported from current service");
         }
 
         this._app.release();
@@ -87,7 +88,7 @@ const SearchProvider = new Lang.Class({
         let ret = '';
 
         if (this._enable) {
-            let ret = (++this._currentId).toString();
+            ret = (++this._currentId).toString();
             this._terms = terms;
         }
 
