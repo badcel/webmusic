@@ -25,8 +25,6 @@ namespace WebMusic.Browser {
         private AppWindow mAppWindow;
         private Browser   mBrowser;
         private Settings  mSettings;
-        private static bool mShowVersion      = false;
-        private static bool mListServices     = false;
         private static string? mQueryService  = null;
         private static string? mService       = null;
 
@@ -40,20 +38,23 @@ namespace WebMusic.Browser {
         public const string HOMEPAGE_SERVICES = "http://webmusic.tiede.org/#Services";
 
         private const GLib.OptionEntry[] mOptions = {
-            { "version", 0, 0, OptionArg.NONE, ref mShowVersion,
+            { "version", 0, 0, OptionArg.NONE, null,
                 N_("Show version number"), null },
             { "service", 'S', 0, OptionArg.STRING, ref mService,
                 N_("Define the service to use for application startup"), N_("SERVICE") },
             { "search", 's', 0, OptionArg.STRING, ref mQueryService,
                 N_("Search service for SEARCH_TERM"), N_("SEARCH_TERM") },
-            { "list-services", 'l', 0, OptionArg.NONE, ref mListServices,
+            { "list-services", 'l', 0, OptionArg.NONE, null,
                 N_("List all supported services"), null },
             { null }
         };
 
         public WebMusic() {
-            Object(application_id: "org.WebMusic",
+            Object(application_id: Config.PACKAGE_NAME,
                             flags: ApplicationFlags.FLAGS_NONE);
+
+            this.add_main_option_entries(mOptions);
+            this.handle_local_options.connect(handle_commandline_options);
         }
 
         public void Raise() {
@@ -104,6 +105,7 @@ namespace WebMusic.Browser {
                 Service service = null;
 
                 if(mService != null) {
+                    debug("Commandline specified service: %s", mService);
                     strService = mService;
                 } else {
                     strService = mSettings.get_string("last-used-service");
@@ -124,6 +126,7 @@ namespace WebMusic.Browser {
 
                 string uri = service.Url;
                 if(mQueryService != null) {
+                    debug("Commandline specified search term: %s".printf(mQueryService));
                     if(!service.HasSearchUrl) {
                         warning(_("The service %s does not support a search function.")
                                 .printf(service.Name));
@@ -149,6 +152,27 @@ namespace WebMusic.Browser {
                 ErrorDialog.run(err);
                 quit();
             }
+        }
+
+        private int handle_commandline_options(VariantDict options) {
+
+            if(options.contains("version")) {
+                stdout.printf("%s %s\n", Config.PACKAGE, Config.PACKAGE_VERSION);
+                return 0;
+            }
+
+            if(options.contains("list-services")) {
+                Service[] services = Service.GetServices();
+
+                foreach(Service service in services) {
+                    if(service.Enabled) {
+                        stdout.printf(service.to_string() + "\n");
+                    }
+                }
+                return 0;
+            }
+
+            return -1;
         }
 
         private void AppPreferences(SimpleAction action, Variant? parameter) {
@@ -208,35 +232,7 @@ namespace WebMusic.Browser {
             Intl.textdomain(Config.GETTEXT_PACKAGE);
             Intl.bindtextdomain(Config.GETTEXT_PACKAGE, Config.LOCALE_DIR);
 
-            var context = new OptionContext("- " + _("Listen to your music"));
-            context.set_summary(_("A web based music player that integrates your favourite music service into the desktop."));
-            context.add_main_entries(mOptions, Config.GETTEXT_PACKAGE);
-
-            try {
-                context.parse(ref args);
-            } catch (OptionError e) {
-                stdout.printf("%s\n\n%s", e.message, context.get_help(true, null));
-                return 1;
-            }
-
-            if(mShowVersion) {
-                stdout.printf("%s %s\n", Config.PACKAGE, Config.PACKAGE_VERSION);
-                return 1;
-            }
-
-            if(mListServices) {
-                Service[] services = Service.GetServices();
-
-                foreach(Service service in services) {
-                    if(service.Enabled) {
-                        stdout.printf(service.to_string() + "\n");
-                    }
-                }
-                return 1;
-            }
-
             GtkClutter.init (ref args);
-            Gtk.init(ref args);
             Gtk.IconTheme.get_default().append_search_path(Config.THEME_DIR);
             Gtk.Window.set_default_icon_name(Config.PACKAGE);
 

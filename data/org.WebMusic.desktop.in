@@ -5,8 +5,9 @@ _Name=WebMusic
 _Comment=Listen to your music
 
 Icon=webmusic
-Exec=@WEBMUSIC_LOCAL_BINDIR@webmusic
 Type=Application
+DBusActivatable=true
+Exec=@WEBMUSIC_LOCAL_BINDIR@webmusic
 
 StartupNotify=true
 Categories=Network;GNOME;GTK;WebBrowser;
