@@ -22,20 +22,79 @@ WebMusicApi.GetReady = function() {
 };
 
 WebMusicApi.GetArtist = function() {
-    return dzPlayer.getCurrentSong().ART_NAME;
+
+    let artist = '';
+    let currentSong = dzPlayer.getCurrentSong();
+
+    switch(currentSong.__TYPE__) {
+        case 'episode':
+            artist = currentSong.SHOW_NAME;
+            break;
+        case 'song':
+            artist = currentSong.ART_NAME;
+            break;
+        default:
+            WebMusicApi.warning('Unknown type: ' + currentSong.__TYPE__);
+    }
+
+    return artist;
 };
 
 WebMusicApi.GetTrack = function() {
-    return dzPlayer.getCurrentSong().SNG_TITLE;
+
+    let track = '';
+    let currentSong = dzPlayer.getCurrentSong();
+
+    switch(currentSong.__TYPE__) {
+        case 'episode':
+            track = currentSong.EPISODE_TITLE;
+            break;
+        case 'song':
+            track = currentSong.SNG_TITLE;
+            break;
+        default:
+            WebMusicApi.warning('Unknown type: ' + currentSong.__TYPE__);
+    }
+
+    return track;
 };
 
 WebMusicApi.GetAlbum = function() {
-    return dzPlayer.getCurrentSong().ALB_TITLE;
+
+    let album = '';
+    let currentSong = dzPlayer.getCurrentSong();
+
+    switch(currentSong.__TYPE__) {
+        case 'episode':
+            album = '';
+            break;
+        case 'song':
+            album = currentSong.ALB_TITLE;
+            break;
+        default:
+            WebMusicApi.warning('Unknown type: ' + currentSong.__TYPE__);
+    }
+
+    return album;
 };
 
 WebMusicApi.GetArtUrl = function() {
-    var coverId = dzPlayer.getCurrentSong().ALB_PICTURE;
-    return 'http://cdn-images.deezer.com/images/cover/' + coverId + '/300x300-000000-80-0-0.jpg';
+
+    let link = '';
+    let currentSong = dzPlayer.getCurrentSong();
+
+    switch(currentSong.__TYPE__) {
+        case 'episode':
+            link = 'http://cdn-images.deezer.com/images/talk/' + currentSong.SHOW_ART_MD5 + '/300x300.jpg';
+            break;
+        case 'song':
+            link = 'http://cdn-images.deezer.com/images/cover/' + currentSong.ALB_PICTURE + '/300x300-000000-80-0-0.jpg';
+            break;
+        default:
+            WebMusicApi.warning('Unknown type: ' + currentSong.__TYPE__);
+    }
+
+    return link;
 };
 
 WebMusicApi.GetPlaybackStatus = function() {
