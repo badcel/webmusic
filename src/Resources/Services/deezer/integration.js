@@ -35,7 +35,7 @@ WebMusicApi.GetAlbum = function() {
 
 WebMusicApi.GetArtUrl = function() {
     var coverId = dzPlayer.getCurrentSong().ALB_PICTURE;
-    return "http://cdn-images.deezer.com/images/cover/" + coverId + "/300x300-000000-80-0-0.jpg";
+    return 'http://cdn-images.deezer.com/images/cover/' + coverId + '/300x300-000000-80-0-0.jpg';
 };
 
 WebMusicApi.GetPlaybackStatus = function() {
@@ -47,7 +47,7 @@ WebMusicApi.GetCanGoNext = function() {
 };
 
 WebMusicApi.GetCanGoPrevious = function() {
-    return !document.querySelector(".control-prev").hasAttribute("disabled");
+    return !document.querySelector('.control-prev').hasAttribute('disabled');
 };
 
 WebMusicApi.Next = function() {
@@ -71,7 +71,7 @@ WebMusicApi.Play = function() {
 // Necessary functions if shuffle is supported
 //
 WebMusicApi.CanShuffle = function() {
-    return document.querySelector(".control-shuffle") != null;
+    return document.querySelector('.control-shuffle') != null;
 };
 
 WebMusicApi.GetShuffle = function() {
@@ -86,8 +86,8 @@ WebMusicApi.ToggleShuffle = function() {
 // Necessary functions if repeat is supported
 //
 WebMusicApi.CanRepeat = function() {
-    return document.querySelector(".control-repeat") != null
-            || document.querySelector(".control-repeat-one") != null;
+    return document.querySelector('.control-repeat') != null
+            || document.querySelector('.control-repeat-one') != null;
 };
 
 WebMusicApi.GetRepeat = function() {
@@ -105,11 +105,11 @@ WebMusicApi.SetRepeat = function(status) {
 // Necessary functions if like is supported
 //
 WebMusicApi.GetLike = function() {
-    return document.querySelector(".player-actions .icon-love").classList.contains("active");
+    return document.querySelector('.player-actions .icon-love').classList.contains('active');
 };
 
 WebMusicApi.ToggleLike = function() {
-    document.querySelector(".player-actions .icon-love").parentNode.parentNode.click();
+    document.querySelector('.player-actions .icon-love').parentNode.parentNode.click();
 };
 
 //
