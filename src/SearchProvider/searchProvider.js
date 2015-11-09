@@ -42,7 +42,7 @@ const SearchProvider = new Lang.Class({
         return this._impl.unexport_from_connection(connection);
     },
 
-    checkService: function() {
+    _checkService: function() {
         let settings = new Gio.Settings({schema_id: "org.WebMusic.Browser"});
         let lastService = settings.get_string("last-used-service");
 
@@ -56,7 +56,7 @@ const SearchProvider = new Lang.Class({
         }
     },
 
-    getTerm: function() {
+    _getTerm: function() {
         let ret = '';
         for (let i = 0; i < this._terms.length; i++) {
             ret += this._terms[i] + ' ';
@@ -72,7 +72,7 @@ const SearchProvider = new Lang.Class({
 
         let ret = '';
 
-        this.checkService();
+        this._checkService();
 
         if (this._enable) {
             ret = (++this._currentId).toString();
@@ -103,7 +103,7 @@ const SearchProvider = new Lang.Class({
         if(this._enable) {
             ret.push({ name: new GLib.Variant('s', _("WebMusic")),
                 id: new GLib.Variant('s', this._currentId.toString()),
-                description: new GLib.Variant('s', _("Search for %s").format(this.getTerm())),
+                description: new GLib.Variant('s', _("Search for %s").format(this._getTerm())),
                 icon: (new Gio.ThemedIcon({ name: 'audio-x-generic' })).serialize()});
         }
 
@@ -112,9 +112,45 @@ const SearchProvider = new Lang.Class({
     },
 
     ActivateResult: function(id, terms, timestamp) {
+        this._app.hold();
+        this._activateAction('show-search', new GLib.Variant('s', terms.join(' ')), timestamp);
     },
 
     LaunchSearch: function(terms, timestamp) {
+        this._app.hold();
+        this._activateAction('show-search', new GLib.Variant('s', terms.join(' ')), timestamp);
+    },
+
+    _activateAction: function(action, parameter, timestamp) {
+        let wrappedParam;
+
+        if (parameter) {
+            wrappedParam = [parameter];
+        } else {
+            wrappedParam = [];
+        }
+
+        Gio.DBus.session.call('org.WebMusic',
+                              '/org/WebMusic',
+                              'org.freedesktop.Application',
+                              'ActivateAction',
+                              new GLib.Variant('(sava{sv})', [action, wrappedParam,
+                                                              this._getPlatformData(timestamp)]),
+                              null,
+                              Gio.DBusCallFlags.NONE,
+                              -1, null, Lang.bind(this, function(connection, result) {
+                                  try {
+                                      connection.call_finish(result);
+                                  } catch(e) {
+                                      log('Failed to launch application: ' + e);
+                                  }
+
+                                  this._app.release();
+                              }));
+    },
+
+    _getPlatformData: function(timestamp) {
+        return {'desktop-startup-id': new GLib.Variant('s', '_TIME' + timestamp) };
     },
 });
 
