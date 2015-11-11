@@ -91,6 +91,23 @@ namespace WebMusic.Browser
             mWebView.load_uri(uri);
         }
 
+        public void Load(string? searchTerm) {
+
+            string uri = mService.Url;
+            if(searchTerm != null) {
+                debug("Commandline specified search term: %s".printf(searchTerm));
+                if(!mService.HasSearchUrl) {
+                    warning(_("The service %s does not support a search function.")
+                            .printf(mService.Name));
+                } else {
+                    uri = mService.SearchUrl.printf(searchTerm);
+                }
+            }
+
+            this.LoadUri(uri);
+
+        }
+
         private void OnServiceChanged() {
             mWebView.load_uri(mService.Url);
 
