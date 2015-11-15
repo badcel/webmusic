@@ -86,28 +86,32 @@ namespace WebMusic.Browser
 
         public void Load(string? service, string? searchTerm) {
 
-            if(service != null && service != mService.Name) {
-                debug("Specified service: %s".printf(service));
-                this.mService.Load(service);
-            }
-
-            string uri = mService.Url;
-            if(searchTerm != null) {
-                debug("Specified search term: %s".printf(searchTerm));
-                if(!mService.HasSearchUrl) {
-                    warning(_("The service %s does not support a search function.")
-                            .printf(mService.Name));
-                } else {
-                    uri = mService.SearchUrl.printf(searchTerm);
+            try {
+                if(service != null && service != mService.Name) {
+                    debug("Specified service: %s".printf(service));
+                    this.mService.Load(service);
                 }
-            }
 
-            mWebView.load_uri(uri);
+                string uri = mService.Url;
+                if(searchTerm != null) {
+                    debug("Specified search term: %s".printf(searchTerm));
+                    if(!mService.HasSearchUrl) {
+                        warning(_("The service %s does not support a search function.")
+                                .printf(mService.Name));
+                    } else {
+                        uri = mService.SearchUrl.printf(searchTerm);
+                    }
+                }
 
-            if(!mService.IntegratesService) {
-                SetCover("");
-                OnPlayercontrolChanged(false, false, false, false, false, false,
-                                        PlayStatus.STOP, RepeatStatus.NONE);
+                mWebView.load_uri(uri);
+
+                if(!mService.IntegratesService) {
+                    SetCover("");
+                    OnPlayercontrolChanged(false, false, false, false, false, false,
+                                            PlayStatus.STOP, RepeatStatus.NONE);
+                }
+            } catch(ServiceError e) {
+                error("Could not load service. (%s)".printf(e.message));
             }
 
         }

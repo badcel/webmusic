@@ -168,12 +168,15 @@ namespace WebMusic.Browser {
                 return 0;
             }
 
-            if(options.contains("search") || options.contains("service")) {
-                this.register(null);
-                this.activate_action("load", options.end());
-                return 0;
+            try {
+                if(options.contains("search") || options.contains("service")) {
+                    this.register(null);
+                    this.activate_action("load", options.end());
+                    return 0;
+                }
+            } catch(Error e) {
+                error("Could not register application. (%s)".printf(e.message));
             }
-
             return -1;
         }
 
