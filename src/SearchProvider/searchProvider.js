@@ -113,12 +113,24 @@ const SearchProvider = new Lang.Class({
 
     ActivateResult: function(id, terms, timestamp) {
         this._app.hold();
-        this._activateAction('show-search', new GLib.Variant('s', terms.join(' ')), timestamp);
+
+        let vd = this._getSearchVariantDict(terms);
+        this._activateAction('load', vd, timestamp);
     },
 
     LaunchSearch: function(terms, timestamp) {
         this._app.hold();
-        this._activateAction('show-search', new GLib.Variant('s', terms.join(' ')), timestamp);
+
+        let vd = this._getSearchVariantDict(terms);
+        this._activateAction('load', vd, timestamp);
+    },
+
+    _getSearchVariantDict : function(terms) {
+        let dictionary = new GLib.Variant('a{sv}',
+            { 'search': new GLib.Variant('s', terms.join(' '))}
+        );
+
+        return dictionary;
     },
 
     _activateAction: function(action, parameter, timestamp) {

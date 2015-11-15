@@ -26,11 +26,10 @@ namespace WebMusic.Browser {
         private Settings  mSettings;
 
         private const ActionEntry[] mActions = {
-            { "preferences" , AppPreferences},
-            { "about"       , AppAbout},
-            { "quit"        , AppQuit},
-            { "show-search" , AppShowSearch, "s"},
-            { "load-service", AppLoadService, "s"}
+            { "show-preferences", AppShowPreferences, null   , null},
+            { "show-about"      , AppShowAbout      , null   , null},
+            { "quit"            , AppQuit           , null   , null},
+            { "load"            , AppLoad           , "a{sv}", null}
         };
 
         public const string HOMEPAGE = "http://webmusic.tiede.org";
@@ -108,7 +107,7 @@ namespace WebMusic.Browser {
 
         protected override void activate () {
             this.mAppWindow = create_main_window(null);
-            this.mAppWindow.Load(null);
+            this.mAppWindow.Load(null, null);
         }
 
         private AppWindow create_main_window(string? strService) {
@@ -159,8 +158,8 @@ namespace WebMusic.Browser {
             }
 
             if(options.contains("list-services")) {
-                Service[] services = Service.GetServices();
 
+                Service[] services = Service.GetServices();
                 foreach(Service service in services) {
                     if(service.Enabled) {
                         stdout.printf(service.to_string() + "\n");
@@ -169,17 +168,16 @@ namespace WebMusic.Browser {
                 return 0;
             }
 
-            if(options.contains("search")) {
+            if(options.contains("search") || options.contains("service")) {
                 this.register(null);
-                GLib.Variant v = options.lookup_value("search", VariantType.STRING);
-                this.activate_action("show-search", v);
+                this.activate_action("load", options.end());
                 return 0;
             }
 
             return -1;
         }
 
-        private void AppPreferences(SimpleAction action, Variant? parameter) {
+        private void AppShowPreferences(SimpleAction action, Variant? parameter) {
             var preferences = new PreferencesDialog();
             preferences.set_transient_for(mAppWindow);
             preferences.ClearData.connect(OnClearData);
@@ -222,7 +220,7 @@ namespace WebMusic.Browser {
             }
         }
 
-        private void AppAbout(SimpleAction action, Variant? parameter) {
+        private void AppShowAbout(SimpleAction action, Variant? parameter) {
             AboutDialog.Show(mAppWindow);
         }
 
@@ -230,17 +228,23 @@ namespace WebMusic.Browser {
             this.quit();
         }
 
-        private void AppShowSearch(SimpleAction? action, Variant? parameter) {
+        private void AppLoad(SimpleAction? action, Variant? parameter) {
             if(parameter != null) {
-                this.mAppWindow = this.create_main_window(null);
-                this.mAppWindow.Load(parameter.get_string());
-            }
-        }
+                string? service = null;
+                string? search  = null;
 
-        private void AppLoadService(SimpleAction? action, Variant? parameter) {
-            if(parameter != null) {
-                this.mAppWindow = this.create_main_window(parameter.get_string());
-                this.mAppWindow.Load(null);
+                VariantDict dict = new VariantDict(parameter);
+
+                if(dict.contains("service")) {
+                    service = dict.lookup_value("service", VariantType.STRING).get_string();
+                }
+
+                if(dict.contains("search")) {warning("CONTAINS SEARCH");
+                    search = dict.lookup_value("search", VariantType.STRING).get_string();
+                }
+
+                this.mAppWindow = this.create_main_window(service);
+                this.mAppWindow.Load(service, search);warning("LOAD");
             }
         }
 

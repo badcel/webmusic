@@ -63,9 +63,6 @@ namespace WebMusic.Browser
 
             mPlayer.MetadataChanged.connect(OnMetadataChanged);
             mPlayer.PlayercontrolChanged.connect(OnPlayercontrolChanged);
-            mService.ServiceLoaded.connect(OnServiceChanged);
-
-
         }
 
         public Service CurrentService {
@@ -87,15 +84,16 @@ namespace WebMusic.Browser
             this.page = showCoverPage? 1 : 2;
         }
 
-        public void LoadUri(string uri) {
-            mWebView.load_uri(uri);
-        }
+        public void Load(string? service, string? searchTerm) {
 
-        public void Load(string? searchTerm) {
+            if(service != null && service != mService.Name) {
+                debug("Specified service: %s".printf(service));
+                this.mService.Load(service);
+            }
 
             string uri = mService.Url;
             if(searchTerm != null) {
-                debug("Commandline specified search term: %s".printf(searchTerm));
+                debug("Specified search term: %s".printf(searchTerm));
                 if(!mService.HasSearchUrl) {
                     warning(_("The service %s does not support a search function.")
                             .printf(mService.Name));
@@ -104,18 +102,14 @@ namespace WebMusic.Browser
                 }
             }
 
-            this.LoadUri(uri);
-
-        }
-
-        private void OnServiceChanged() {
-            mWebView.load_uri(mService.Url);
+            mWebView.load_uri(uri);
 
             if(!mService.IntegratesService) {
                 SetCover("");
                 OnPlayercontrolChanged(false, false, false, false, false, false,
                                         PlayStatus.STOP, RepeatStatus.NONE);
             }
+
         }
 
         private void OnMetadataChanged(string artist, string track, string album,
