@@ -22,7 +22,7 @@
  *  Marcel Tiede
  */
 
-using WebMusic.Lib;
+using LibWebMusic;
 using WebMusic.Webextension;
 
 namespace WebMusic.Webextension.Plugins {

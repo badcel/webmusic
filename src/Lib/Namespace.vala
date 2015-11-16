@@ -14,7 +14,6 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-[CCode (gir_namespace = "WebMusic", gir_version = "0.1")]
-namespace WebMusic
-{
+[CCode (gir_namespace = "libwebmusic", gir_version = "0.1")]
+namespace LibWebMusic {
 }

@@ -15,7 +15,7 @@
  */
 
 using WebKit;
-using WebMusic.Lib;
+using LibWebMusic;
 using WebMusic.Webextension.Plugins;
 
 namespace WebMusic.Webextension {
