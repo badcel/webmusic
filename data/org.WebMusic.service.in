@@ -1,0 +1,4 @@
+[D-BUS Service]
+Name=@PACKAGE_NAME@
+Exec=@CMAKE_INSTALL_FULL_BINDIR@/@PACKAGE@ --gapplication-service
+

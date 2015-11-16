@@ -14,6 +14,7 @@
  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  #
 
+set(WEBMUSIC_DBUS_SERVICE_DIR "${CMAKE_INSTALL_FULL_DATADIR}/dbus-1/services")
 gsettings(${CMAKE_CURRENT_SOURCE_DIR} ${GSETTINGS_INSTALL_DIR})
 
 install(FILES "about.ini"
@@ -26,7 +27,8 @@ else()
     set(WEBMUSIC_DESKTOP_DIR "${CMAKE_INSTALL_FULL_DATADIR}/applications")
     set(WEBMUSIC_LOCAL_BINDIR "")
 endif()
-webmusic_merge_po(desktop webmusic.desktop ${WEBMUSIC_DESKTOP_DIR})
+webmusic_configure(FILES desktop org.WebMusic.desktop ${WEBMUSIC_DESKTOP_DIR})
+webmusic_configure(FILES desktop org.WebMusic.service ${WEBMUSIC_DBUS_SERVICE_DIR})
 
 install(DIRECTORY icons/hicolor DESTINATION "${CMAKE_INSTALL_FULL_DATADIR}/icons")
 

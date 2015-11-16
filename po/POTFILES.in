@@ -1,5 +1,5 @@
 [encoding: UTF-8]
-data/webmusic.desktop.in
+data/org.WebMusic.desktop.in
 
 src/Browser/WebMusic.vala
 src/Browser/AppWindow.vala
