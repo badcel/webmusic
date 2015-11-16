@@ -27,25 +27,31 @@ PACKAGES
 CUSTOM_VAPIS
     ${CMAKE_SOURCE_DIR}/vapi/config.vapi
 GENERATE_VAPI
-    libshare
+    libwebmusic
 GENERATE_HEADER
-    libshare
+    libwebmusic
 GENERATE_GIR
-    libshare-0.1
+    libwebmusic-0.1
 )
 
-add_library(share SHARED ${VALA_C})
-target_link_libraries(share ${GLIB_LDFLAGS})
-set_target_properties(share PROPERTIES
+add_library(webmusic SHARED ${VALA_C})
+target_link_libraries(webmusic ${GLIB_LDFLAGS})
+set_target_properties(webmusic PROPERTIES
                       COMPILE_FLAGS "${GLIB_CFLAGS} ${COMMON_CFLAGS}")
+install(TARGETS webmusic DESTINATION "${CMAKE_INSTALL_FULL_LIBDIR}")
 
-install(TARGETS share DESTINATION "${PKG_LIBDIR}")
 
-#add_custom_command(OUTPUT libshare-0.1.gir
-#                   COMMAND ${GIR_COMPILER}
-#                        --shared-library=libshare.so
-#                        --output=${CMAKE_CURRENT_BINARY_DIR}/libshare-0.1.typelib
-#                        ${CMAKE_CURRENT_BINARY_DIR}/libshare-0.1.gir
-#                   DEPENDS share)
+add_custom_command(OUTPUT libwebmusic-0.1.typelib
+    COMMAND ${GIR_COMPILER}
+       --shared-library=libwebmusic.so
+        --output=${CMAKE_CURRENT_BINARY_DIR}/libwebmusic-0.1.typelib
+        ${CMAKE_CURRENT_BINARY_DIR}/libwebmusic-0.1.gir
+    DEPENDS webmusic)
 
-#add_custom_target(gi ALL DEPENDS libshare-0.1.gir)
+add_custom_target(libwebmusic-typelib ALL DEPENDS libwebmusic-0.1.typelib)
+
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libwebmusic-0.1.typelib
+    DESTINATION "${CMAKE_INSTALL_FULL_LIBDIR}/girepository-1.0")
+
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libwebmusic-0.1.gir
+    DESTINATION "${CMAKE_INSTALL_FULL_DATADIR}/gir-1.0")
