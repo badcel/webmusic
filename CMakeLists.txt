@@ -36,13 +36,16 @@ webmusic_check_modules(WEBKIT       REQUIRED webkit2gtk-4.0>=2.6)
 webmusic_check_modules(GLIB         REQUIRED glib-2.0>=2.40)
 webmusic_check_modules(CLUTTERGTK   REQUIRED clutter-gtk-1.0>=1.5)
 webmusic_check_modules(INTROSPECTON REQUIRED gobject-introspection-1.0>=1.40)
+webmusic_check_modules(GJS          REQUIRED gjs-1.0>=1.43)
 
 webmusic_find_program(INTLTOOL_MERGE intltool-merge)
 webmusic_find_program(GLIB_COMPILE_RESOURCES glib-compile-resources)
 webmusic_find_program(GLIB_COMPILE_SCHEMAS glib-compile-schemas)
 webmusic_find_program(GIR_COMPILER g-ir-compiler)
+webmusic_find_program(GJS gjs)
 
 option(MAKE_LOCAL_INSTALL  "Allow to install in an arbitary location" OFF)
+option(SHELL_SEARCH_PROVIDER "Creates the gnome-shell search-provider" ON)
 
 set(PACKAGE "webmusic")
 set(PACKAGE_NAME "org.WebMusic")
@@ -51,6 +54,10 @@ set(PACKAGE_VERSION 0.1)
 set(PKG_DATADIR "${CMAKE_INSTALL_FULL_DATADIR}/${PACKAGE}")
 set(PKG_LIBDIR "${CMAKE_INSTALL_FULL_LIBDIR}/${PACKAGE}")
 set(GETTEXT_PACKAGE "${PACKAGE}")
+
+set(JS_PACKAGE_NAME "org.WebMusic.SearchProvider")
+set(JS_PKG_DATADIR "${CMAKE_INSTALL_FULL_DATADIR}/${JS_PACKAGE_NAME}")
+set(JS_PKG_LIBDIR "${CMAKE_INSTALL_FULL_LIBDIR}/${JS_PACKAGE_NAME}")
 
 set(COMMON_CFLAGS "-w")
 set(COMMON_CFLAGS "${COMMON_CFLAGS} -DPACKAGE=\\\"${PACKAGE}\\\"")
@@ -68,10 +75,17 @@ set(VALAFLAGS ${VALAFLAGS} --target-glib=2.38)
 set(VALAFLAGS ${VALAFLAGS} --gresources=${CMAKE_SOURCE_DIR}/src/Resources/webmusic.gresource.xml)
 
 message(STATUS "THIS COMPILES ${PACKAGE} VERSION ${PACKAGE_VERSION}")
+
 if(MAKE_LOCAL_INSTALL)
     message(STATUS "[OPTION] LOCAL INSTALL IS ENABLED")
     set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_FULL_LIBDIR}")
     file(MAKE_DIRECTORY "${GSETTINGS_INSTALL_DIR}")
+endif()
+
+if(SHELL_SEARCH_PROVIDER)
+    message(STATUS "[OPTION] SHELL SEARCH PROVIDER IS ENABLED")
+else()
+    message(STATUS "[OPTION] SHELL SEARCH PROVIDER IS DISABLED")
 endif()
 
 add_subdirectory(src)

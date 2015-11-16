@@ -1,0 +1,4 @@
+[D-BUS Service]
+Name=@JS_PACKAGE_NAME@
+Exec=@JS_PKG_DATADIR@/@JS_PACKAGE_NAME@
+

@@ -1,5 +1,5 @@
  #
- #   Copyright (C) 2014  Marcel Tiede
+ #   Copyright (C) 2015  Marcel Tiede
  #
  #   This program is free software: you can redistribute it and/or modify
  #   it under the terms of the GNU General Public License as published by
@@ -14,8 +14,7 @@
  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  #
 
-add_subdirectory(Lib)
-add_subdirectory(Browser)
-add_subdirectory(Webextension)
-add_subdirectory(SearchProvider)
-install(DIRECTORY Resources/Services DESTINATION "${PKG_DATADIR}")
+if(SHELL_SEARCH_PROVIDER)
+    webmusic_configure(PROGRAMS desktop org.WebMusic.SearchProvider ${JS_PKG_DATADIR})
+    webmusic_gresource(org.WebMusic.SearchProvider.src.gresource ${JS_PKG_DATADIR})
+endif()
