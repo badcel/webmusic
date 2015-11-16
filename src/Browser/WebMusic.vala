@@ -23,37 +23,38 @@ namespace WebMusic.Browser {
     public class WebMusic : Gtk.Application {
 
         private AppWindow mAppWindow;
-        private Browser   mBrowser;
         private Settings  mSettings;
-        private static bool mShowVersion      = false;
-        private static bool mListServices     = false;
-        private static string? mQueryService  = null;
-        private static string? mService       = null;
 
         private const ActionEntry[] mActions = {
-            { "preferences", AppPreferences},
-            { "about"      , AppAbout},
-            { "quit"       , AppQuit}
+            { "show-preferences", AppShowPreferences, null   , null},
+            { "show-about"      , AppShowAbout      , null   , null},
+            { "quit"            , AppQuit           , null   , null},
+            { "load"            , AppLoad           , "a{sv}", null}
         };
 
         public const string HOMEPAGE = "http://webmusic.tiede.org";
         public const string HOMEPAGE_SERVICES = "http://webmusic.tiede.org/#Services";
 
         private const GLib.OptionEntry[] mOptions = {
-            { "version", 0, 0, OptionArg.NONE, ref mShowVersion,
+            { "version", 0, 0, OptionArg.NONE, null,
                 N_("Show version number"), null },
-            { "service", 'S', 0, OptionArg.STRING, ref mService,
+            { "service", 'S', 0, OptionArg.STRING, null,
                 N_("Define the service to use for application startup"), N_("SERVICE") },
-            { "search", 's', 0, OptionArg.STRING, ref mQueryService,
+            { "search", 's', 0, OptionArg.STRING, null,
                 N_("Search service for SEARCH_TERM"), N_("SEARCH_TERM") },
-            { "list-services", 'l', 0, OptionArg.NONE, ref mListServices,
+            { "list-services", 'l', 0, OptionArg.NONE, null,
                 N_("List all supported services"), null },
             { null }
         };
 
         public WebMusic() {
-            Object(application_id: "org.WebMusic",
+            Object(application_id: Config.PACKAGE_NAME,
                             flags: ApplicationFlags.FLAGS_NONE);
+
+            this.add_main_option_entries(mOptions);
+            this.add_action_entries(mActions, this);
+
+            this.handle_local_options.connect(handle_commandline_options);
         }
 
         public void Raise() {
@@ -65,14 +66,12 @@ namespace WebMusic.Browser {
         }
 
         public string GetCurrentService() {
-            return mBrowser.CurrentService.Ident;
+            return mAppWindow.GetBrowser().CurrentService.Ident;
         }
 
         protected override void startup() {
 
             base.startup();
-
-            this.add_action_entries(mActions, this);
 
             var b = new Gtk.Builder();
             b.set_translation_domain(Config.GETTEXT_PACKAGE);
@@ -96,52 +95,51 @@ namespace WebMusic.Browser {
             }
 
             mSettings = new Settings("org.WebMusic.Browser");
+
+            if(this.get_is_registered()) {
+                try {
+                    this.get_dbus_connection().register_object("/org/WebMusic", this);
+                } catch(Error e) {
+                    error("Could not register application via dbus. (%s)", e.message);
+                }
+            }
         }
 
         protected override void activate () {
-            string strService;
+            this.mAppWindow = create_main_window(null);
+            this.mAppWindow.Load(null, null);
+        }
+
+        private AppWindow create_main_window(string? strService) {
+
+            if(this.mAppWindow != null) {
+                return this.mAppWindow;
+            }
+            AppWindow appWindow = null;
+
             try {
+                string targetService;
                 Service service = null;
 
-                if(mService != null) {
-                    strService = mService;
+                if(strService != null) {
+                    debug("Commandline specified service: %s", strService);
+                    targetService = strService;
                 } else {
-                    strService = mSettings.get_string("last-used-service");
+                    targetService = mSettings.get_string("last-used-service");
 
-                    if(strService.length == 0) {
-                        strService = "deezer";
+                    if(targetService.length == 0) {
+                        targetService = "deezer";
                     }
                 }
 
-                service = new Service(strService);
+                service = new Service(targetService);
 
-                mSettings.set_string("last-used-service", strService);
+                mSettings.set_string("last-used-service", targetService);
 
-                mAppWindow = new AppWindow(this, service, mSettings);
-                mAppWindow.show_all();
+                appWindow = new AppWindow(this, service, mSettings);
+                appWindow.show_all();
 
-                mBrowser = mAppWindow.GetBrowser();
-
-                string uri = service.Url;
-                if(mQueryService != null) {
-                    if(!service.HasSearchUrl) {
-                        warning(_("The service %s does not support a search function.")
-                                .printf(service.Name));
-                    } else {
-                        uri = service.SearchUrl.printf(mQueryService);
-                    }
-                }
-
-                mBrowser.LoadUri(uri);
-
-                if(this.get_is_registered()) {
-                    try {
-                        this.get_dbus_connection().register_object("/org/WebMusic", this);
-                    } catch(Error e) {
-                        error("Could not register application via dbus. (%s)", e.message);
-                    }
-                }
-
+                return appWindow;
             } catch(ServiceError e)  {
                 string err = _("Startup service %s file could not be loaded. Application shuts down. (%s)")
                                 .printf(strService, e.message);
@@ -149,9 +147,40 @@ namespace WebMusic.Browser {
                 ErrorDialog.run(err);
                 quit();
             }
+            return appWindow;
         }
 
-        private void AppPreferences(SimpleAction action, Variant? parameter) {
+        private int handle_commandline_options(VariantDict options) {
+
+            if(options.contains("version")) {
+                stdout.printf("%s %s\n", Config.PACKAGE, Config.PACKAGE_VERSION);
+                return 0;
+            }
+
+            if(options.contains("list-services")) {
+
+                Service[] services = Service.GetServices();
+                foreach(Service service in services) {
+                    if(service.Enabled) {
+                        stdout.printf(service.to_string() + "\n");
+                    }
+                }
+                return 0;
+            }
+
+            try {
+                if(options.contains("search") || options.contains("service")) {
+                    this.register(null);
+                    this.activate_action("load", options.end());
+                    return 0;
+                }
+            } catch(Error e) {
+                error("Could not register application. (%s)".printf(e.message));
+            }
+            return -1;
+        }
+
+        private void AppShowPreferences(SimpleAction action, Variant? parameter) {
             var preferences = new PreferencesDialog();
             preferences.set_transient_for(mAppWindow);
             preferences.ClearData.connect(OnClearData);
@@ -161,7 +190,7 @@ namespace WebMusic.Browser {
         private void OnClearData(DataToClear data) {
 
             if(DataToClear.CLEAR_COOKIES in data) {
-                mBrowser.ClearWebkitCookies();
+                mAppWindow.GetBrowser().ClearWebkitCookies();
             }
 
             if(DataToClear.CLEAR_ALBUM_ART in data) {
@@ -190,16 +219,36 @@ namespace WebMusic.Browser {
             }
 
             if(DataToClear.CLEAR_INTERNET_FILES in data) {
-                mBrowser.ClearWebkitCache();
+                mAppWindow.GetBrowser().ClearWebkitCache();
             }
         }
 
-        private void AppAbout(SimpleAction action, Variant? parameter) {
+        private void AppShowAbout(SimpleAction action, Variant? parameter) {
             AboutDialog.Show(mAppWindow);
         }
 
         private void AppQuit(SimpleAction? action, Variant? parameter) {
             this.quit();
+        }
+
+        private void AppLoad(SimpleAction? action, Variant? parameter) {
+            if(parameter != null) {
+                string? service = null;
+                string? search  = null;
+
+                VariantDict dict = new VariantDict(parameter);
+
+                if(dict.contains("service")) {
+                    service = dict.lookup_value("service", VariantType.STRING).get_string();
+                }
+
+                if(dict.contains("search")) {warning("CONTAINS SEARCH");
+                    search = dict.lookup_value("search", VariantType.STRING).get_string();
+                }
+
+                this.mAppWindow = this.create_main_window(service);
+                this.mAppWindow.Load(service, search);warning("LOAD");
+            }
         }
 
         public static int main (string[] args) {
@@ -208,35 +257,7 @@ namespace WebMusic.Browser {
             Intl.textdomain(Config.GETTEXT_PACKAGE);
             Intl.bindtextdomain(Config.GETTEXT_PACKAGE, Config.LOCALE_DIR);
 
-            var context = new OptionContext("- " + _("Listen to your music"));
-            context.set_summary(_("A web based music player that integrates your favourite music service into the desktop."));
-            context.add_main_entries(mOptions, Config.GETTEXT_PACKAGE);
-
-            try {
-                context.parse(ref args);
-            } catch (OptionError e) {
-                stdout.printf("%s\n\n%s", e.message, context.get_help(true, null));
-                return 1;
-            }
-
-            if(mShowVersion) {
-                stdout.printf("%s %s\n", Config.PACKAGE, Config.VERSION);
-                return 1;
-            }
-
-            if(mListServices) {
-                Service[] services = Service.GetServices();
-
-                foreach(Service service in services) {
-                    if(service.Enabled) {
-                        stdout.printf(service.to_string() + "\n");
-                    }
-                }
-                return 1;
-            }
-
             GtkClutter.init (ref args);
-            Gtk.init(ref args);
             Gtk.IconTheme.get_default().append_search_path(Config.THEME_DIR);
             Gtk.Window.set_default_icon_name(Config.PACKAGE);
 

@@ -105,6 +105,10 @@ namespace WebMusic.Browser
             return mBrowser;
         }
 
+        public void Load(string? service, string? searchTerm) {
+            this.mBrowser.Load(service, searchTerm);
+        }
+
         private void WinMiniMode(SimpleAction action, Variant? parameter) {
             EnableMiniMode(!action.state.get_boolean());
             action.set_state(new Variant.boolean(mMiniMode));
@@ -114,6 +118,7 @@ namespace WebMusic.Browser
             try {
                 mService.Load(parameter.get_string());
                 mSettings.set_string("last-used-service", mService.Ident);
+                mBrowser.Load(parameter.get_string(), null);
                 action.set_state(parameter);
             } catch(ServiceError e) {
                 string err = "Service %s could not be loaded. (%s)"
