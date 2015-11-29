@@ -242,12 +242,12 @@ namespace WebMusic.Browser {
                     service = dict.lookup_value("service", VariantType.STRING).get_string();
                 }
 
-                if(dict.contains("search")) {warning("CONTAINS SEARCH");
+                if(dict.contains("search")) {
                     search = dict.lookup_value("search", VariantType.STRING).get_string();
                 }
 
                 this.mAppWindow = this.create_main_window(service);
-                this.mAppWindow.Load(service, search);warning("LOAD");
+                this.mAppWindow.Load(service, search);
             }
         }
 
