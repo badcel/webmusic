@@ -112,7 +112,7 @@ namespace WebMusic.Webextension {
             this.ContextChanged();
         }
 
-        public unowned JSCore.Value CallFunction(string name, Variant? parameter) {
+        public unowned JSCore.Value CallFunction(string name, Variant[]? parameter) {
             JSCore.Value? exception;
             unowned JSCore.Value ret = null;
 
@@ -132,8 +132,11 @@ namespace WebMusic.Webextension {
             } else {
                 void*[] params = new void*[0];
                 if(parameter != null) {
-                    params = new void*[1];
-                    params[0] = GetValueFromVariant(parameter, mContext);
+                    params = new void*[parameter.length];
+                    for(int i = 0; i < parameter.length; i++) {
+                        params[i] = GetValueFromVariant(parameter[i], mContext);
+
+                    }
                 }
 
                 ret = func.call_as_function(mContext, func, (JSCore.Value[]) params, out exception);
@@ -142,28 +145,45 @@ namespace WebMusic.Webextension {
             return ret;
         }
 
-        public string CallFunctionAsString(string name, Variant? parameter) {
+        public string CallFunctionAsString(string name, Variant[]? parameter) {
             unowned JSCore.Value? ret = CallFunction(name, parameter);
             return GetUTF8StringFromValue(ret, mContext);;
         }
 
-        public int CallFunctionAsInteger(string name, Variant? parameter) {
+        public int CallFunctionAsInteger(string name, Variant[]? parameter) {
             JSCore.Value? exception = null;
             unowned JSCore.Value? ret = CallFunction(name, parameter);
 
             return (int)ret.to_number(mContext, exception);
         }
 
-        public double CallFunctionAsDouble(string name, Variant? parameter) {
+        public double CallFunctionAsDouble(string name, Variant[]? parameter) {
             JSCore.Value? exception = null;
             unowned JSCore.Value? ret = CallFunction(name, parameter);
 
             return (double)ret.to_number(mContext, exception);
         }
 
-        public bool CallFunctionAsBoolean(string name, Variant? parameter) {
+        public bool CallFunctionAsBoolean(string name, Variant[]? parameter) {
             unowned JSCore.Value? ret = CallFunction(name, parameter);
             return ret.to_boolean(mContext);
+        }
+
+        public bool get_property(string name, out JSCore.Value value) {
+            bool ret = false;
+            value = new JSCore.Value.null(mContext);
+            JSCore.Value? exception;
+
+            JSCore.String jsName = new JSCore.String.with_utf8_c_string(name);
+
+            if(!mJsInterface.has_property(mContext, jsName)) {
+                ret = false;
+            } else {
+                ret = true;
+                value = mJsInterface.get_property(mContext, jsName, out exception);
+            }
+
+            return ret;
         }
 
         public void EvaluateScript(string code, string path, int line) {
@@ -211,6 +231,24 @@ namespace WebMusic.Webextension {
 
             warning("Given variant type could not be converted into a JSCore.Value");
             return new JSCore.Value.null(context);
+        }
+
+        public string GetUTF8String(JSCore.Value val) {
+            return GetUTF8StringFromValue(val, mContext);
+        }
+
+        public double GetDouble(JSCore.Value val) {
+            JSCore.Value? exception = null;
+            return (double)val.to_number(mContext, exception);
+        }
+
+        public int GetInteger(JSCore.Value val) {
+            JSCore.Value? exception = null;
+            return (int)val.to_number(mContext, exception);
+        }
+
+        public bool GetBoolean(JSCore.Value val) {
+            return val.to_boolean(mContext);
         }
 
         private static string GetUTF8StringFromValue(JSCore.Value val, JSCore.Context context){

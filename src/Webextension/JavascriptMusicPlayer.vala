@@ -44,7 +44,12 @@ namespace WebMusic.Webextension {
 
         protected override string GetArtist() {
             if(mIntegrationReady) {
-                return mContext.CallFunctionAsString("GetArtist", null);
+                JSCore.Value prop;
+                if(mContext.get_property("artist", out prop)) {
+                    return mContext.GetUTF8String(prop);
+                } else {
+                    return "";
+                }
             } else {
                 return "";
             }
@@ -52,7 +57,12 @@ namespace WebMusic.Webextension {
 
         protected override string GetTrack()  {
             if(mIntegrationReady) {
-                return mContext.CallFunctionAsString("GetTrack", null);
+                JSCore.Value prop;
+                if(mContext.get_property("track", out prop)) {
+                    return mContext.GetUTF8String(prop);
+                } else {
+                    return "";
+                }
             } else {
                 return "";
             }
@@ -60,15 +70,25 @@ namespace WebMusic.Webextension {
 
         protected override string GetAlbum() {
             if(mIntegrationReady) {
-                return mContext.CallFunctionAsString("GetAlbum", null);
+                JSCore.Value prop;
+                if(mContext.get_property("album", out prop)) {
+                    return mContext.GetUTF8String(prop);
+                } else {
+                    return "";
+                }
             } else {
                 return "";
             }
         }
 
         protected override int64 GetTrackLength() {
-            if(mIntegrationReady && mService.SupportsSeek) {
-                return mContext.CallFunctionAsInteger("GetTrackLength", null);
+            if(mIntegrationReady) {
+                JSCore.Value prop;
+                if(mContext.get_property("trackLength", out prop)) {
+                    return mContext.GetInteger(prop);
+                } else {
+                    return 0;
+                }
             } else {
                 return 0;
             }
@@ -76,7 +96,25 @@ namespace WebMusic.Webextension {
 
         protected override string GetArtUrl() {
             if(mIntegrationReady) {
-                return mContext.CallFunctionAsString("GetArtUrl", null);
+                JSCore.Value prop;
+                if(mContext.get_property("artUrl", out prop)) {
+                    return mContext.GetUTF8String(prop);
+                } else {
+                    return "";
+                }
+            } else {
+                return "";
+            }
+        }
+
+        protected override string GetUrl() {
+            if(mIntegrationReady) {
+                JSCore.Value prop;
+                if(mContext.get_property("url", out prop)) {
+                    return mContext.GetUTF8String(prop);
+                } else {
+                    return "";
+                }
             } else {
                 return "";
             }
@@ -84,7 +122,12 @@ namespace WebMusic.Webextension {
 
         protected override bool GetReady() {
             if(mIntegrationReady) {
-                return mContext.CallFunctionAsBoolean("GetReady", null);
+                JSCore.Value prop;
+                if(mContext.get_property("ready", out prop)) {
+                    return mContext.GetBoolean(prop);
+                } else {
+                    return false;
+                }
             } else {
                 return false;
             }
@@ -93,7 +136,12 @@ namespace WebMusic.Webextension {
         public override PlayStatus PlaybackStatus {
             get {
                 if(mIntegrationReady) {
-                    return (PlayStatus) mContext.CallFunctionAsInteger("GetPlaybackStatus", null);
+                    JSCore.Value prop;
+                    if(mContext.get_property("playbackStatus", out prop)) {
+                        return (PlayStatus) mContext.GetInteger(prop);
+                    } else {
+                        return PlayStatus.STOP;
+                    }
                 } else {
                     return PlayStatus.STOP;
                 }
@@ -103,7 +151,12 @@ namespace WebMusic.Webextension {
         public override bool CanGoNext {
             get {
                 if(mIntegrationReady) {
-                    return mContext.CallFunctionAsBoolean("GetCanGoNext", null);
+                    JSCore.Value prop;
+                    if(mContext.get_property("canGoNext", out prop)) {
+                        return mContext.GetBoolean(prop);
+                    } else {
+                        return false;
+                    }
                 } else {
                     return false;
                 }
@@ -113,7 +166,12 @@ namespace WebMusic.Webextension {
         public override bool CanGoPrevious {
             get {
                 if(mIntegrationReady) {
-                    return mContext.CallFunctionAsBoolean("GetCanGoPrevious", null);
+                    JSCore.Value prop;
+                    if(mContext.get_property("canGoPrevious", out prop)) {
+                        return mContext.GetBoolean(prop);
+                    } else {
+                        return false;
+                    }
                 } else {
                     return false;
                 }
@@ -121,24 +179,86 @@ namespace WebMusic.Webextension {
         }
 
 
-        public override bool CanPlay    { get { return mIntegrationReady; } }
-        public override bool CanPause   { get { return mService.SupportsPause; } }
-        public override bool CanSeek    { get { return mService.SupportsSeek; } }
-        public override bool CanControl { get { return mIntegrationReady; } }
+        public override bool CanPlay    {
+            get {
+                if(mIntegrationReady) {
+                    JSCore.Value prop;
+                    if(mContext.get_property("canPlay", out prop)) {
+                        return mContext.GetBoolean(prop);
+                    } else {
+                        return false;
+                    }
+                } else {
+                    return false;
+                }
+            }
+        }
+
+        public override bool CanPause   {
+            get {
+                if(mIntegrationReady) {
+                    JSCore.Value prop;
+                    if(mContext.get_property("canPause", out prop)) {
+                        return mContext.GetBoolean(prop);
+                    } else {
+                        return false;
+                    }
+                } else {
+                    return false;
+                }
+            }
+        }
+
+        public override bool CanSeek    {
+            get {
+                if(mIntegrationReady) {
+                    JSCore.Value prop;
+                    if(mContext.get_property("canSeek", out prop)) {
+                        return mContext.GetBoolean(prop);
+                    } else {
+                        return false;
+                    }
+                } else {
+                    return false;
+                }
+            }
+        }
+
+        public override bool CanControl {
+            get {
+                if(mIntegrationReady) {
+                    JSCore.Value prop;
+                    if(mContext.get_property("canControl", out prop)) {
+                        return mContext.GetBoolean(prop);
+                    } else {
+                        return false;
+                    }
+                } else {
+                    return false;
+                }
+            }
+        }
 
         public override bool Shuffle {
             get {
                 bool ret = false;
 
                 if(mIntegrationReady && mService.SupportsShuffle) {
-                    ret = mContext.CallFunctionAsBoolean("GetShuffle", null);
+                    JSCore.Value prop;
+                    if(mContext.get_property("shuffle", out prop)) {
+                        ret = mContext.GetBoolean(prop);
+                    } else {
+                        ret = false;
+                    }
                 }
                 mShuffle = ret;
                 return ret;
             }
             set {
                 if(mIntegrationReady && mService.SupportsShuffle && mShuffle != value) {
-                    mContext.CallFunction("ToggleShuffle", null);
+                    Variant[] args = new Variant[1];
+                    args[0] = new Variant.string("toggle-shuffle");
+                    mContext.CallFunction("ActivateAction", args);
                 }
             }
         }
@@ -148,7 +268,12 @@ namespace WebMusic.Webextension {
                 bool ret = false;
 
                 if(mIntegrationReady && mService.SupportsLike) {
-                    ret = mContext.CallFunctionAsBoolean("GetLike", null);
+                    JSCore.Value prop;
+                    if(mContext.get_property("like", out prop)) {
+                        ret = mContext.GetBoolean(prop);
+                    } else {
+                        ret = false;
+                    }
                 }
                 mLike = ret;
                 return ret;
@@ -156,7 +281,9 @@ namespace WebMusic.Webextension {
             set {
                 if(mIntegrationReady && mService.SupportsLike && mLike != value) {
                     Idle.add(() => {
-                        mContext.CallFunction("ToggleLike", null);
+                        Variant[] args = new Variant[1];
+                        args[0] = new Variant.string("toggle-like");
+                        mContext.CallFunction("ActivateAction", args);
                         return false;
                     });
                 }
@@ -167,16 +294,21 @@ namespace WebMusic.Webextension {
             get {
                 double ret = 1;
 
-                if(mIntegrationReady && mService.SupportsVolume) {
-                    ret = mContext.CallFunctionAsDouble("GetVolume", null);
+                if(mIntegrationReady) {
+                    JSCore.Value prop;
+                    if(mContext.get_property("volume", out prop)) {
+                        ret = mContext.GetDouble(prop);
+                    }
                 }
                 return ret;
             }
             set {
-                if(mIntegrationReady && mService.SupportsVolume) {
+                if(mIntegrationReady) {
                     Idle.add(() => {
-                        Variant v = new Variant.double(value);
-                        mContext.CallFunction("SetVolume", v);
+                        Variant[] args = new Variant[2];
+                        args[0] = new Variant.string("volume");
+                        args[1] = new Variant.double(value);
+                        mContext.CallFunction("ActivateAction", args);
                         return false;
                     });
                 }
@@ -187,15 +319,20 @@ namespace WebMusic.Webextension {
             get {
                 int64 ret = 0;
 
-                if(mIntegrationReady && mService.SupportsSeek) {
-                    ret = (int64) mContext.CallFunctionAsDouble("GetTrackPosition", null);
+                if(mIntegrationReady) {
+                    JSCore.Value prop;
+                    if(mContext.get_property("trackPosition", out prop)) {
+                        ret = (int64) mContext.GetDouble(prop);
+                    }
                 }
                 return ret;
             }
             set {
-                if(mIntegrationReady && mService.SupportsSeek) {
-                    Variant v = new Variant.int64(value);
-                    mContext.CallFunction("SetTrackPosition", v);
+                if(mIntegrationReady) {
+                    Variant[] args = new Variant[2];
+                    args[0] = new Variant.string("track-position");
+                    args[1] = new Variant.int64(value);
+                    mContext.CallFunction("ActivateAction", args);
                 }
             }
         }
@@ -205,7 +342,10 @@ namespace WebMusic.Webextension {
                 bool ret = false;
 
                 if(mIntegrationReady && mService.SupportsShuffle) {
-                    ret = mContext.CallFunctionAsBoolean("CanShuffle", null);
+                    JSCore.Value prop;
+                    if(mContext.get_property("canShuffle", out prop)) {
+                        ret = mContext.GetBoolean(prop);
+                    }
                 }
 
                 return ret;
@@ -217,7 +357,10 @@ namespace WebMusic.Webextension {
                 bool ret = false;
 
                 if(mIntegrationReady && mService.SupportsRepeat) {
-                    ret = mContext.CallFunctionAsBoolean("CanRepeat", null);
+                    JSCore.Value prop;
+                    if(mContext.get_property("canRepeat", out prop)) {
+                        ret = mContext.GetBoolean(prop);
+                    }
                 }
 
                 return ret;
@@ -228,15 +371,20 @@ namespace WebMusic.Webextension {
             get {
                 RepeatStatus repeat = RepeatStatus.NONE;
                 if(mIntegrationReady && mService.SupportsRepeat) {
-                    repeat = (RepeatStatus)mContext.CallFunctionAsInteger("GetRepeat", null);
+                    JSCore.Value prop;
+                    if(mContext.get_property("repeat", out prop)) {
+                        repeat = (RepeatStatus) mContext.GetInteger(prop);
+                    }
                 }
                 return repeat;
             }
             set {
                 if(mIntegrationReady && mService.SupportsRepeat) {
                     Idle.add(() => {
-                        Variant v = new Variant.int32((int32)value);
-                        mContext.CallFunction("SetRepeat", v);
+                        Variant[] args = new Variant[2];
+                        args[0] = new Variant.string("repeat");
+                        args[1] = new Variant.int32((int32)value);
+                        mContext.CallFunction("ActivateAction", args);
                         return false;
                     });
                 }
@@ -246,7 +394,9 @@ namespace WebMusic.Webextension {
         public override void Next() {
             if(mIntegrationReady) {
                 Idle.add(() => {
-                    mContext.CallFunction("Next", null);
+                    Variant[] args = new Variant[1];
+                    args[0] = new Variant.string("next");
+                    mContext.CallFunction("ActivateAction", args);
                     return false;
                 });
             }
@@ -255,29 +405,31 @@ namespace WebMusic.Webextension {
         public override void Previous() {
             if(mIntegrationReady) {
                 Idle.add(() => {
-                    mContext.CallFunction("Previous", null);
+                    Variant[] args = new Variant[1];
+                    args[0] = new Variant.string("previous");
+                    mContext.CallFunction("ActivateAction", args);
                     return false;
                 });
             }
         }
 
         public override void Pause() {
-            if(!mService.SupportsPause) {
-                Stop();
-            } else {
-                if(mIntegrationReady) {
-                    Idle.add(() => {
-                        mContext.CallFunction("Pause", null);
-                        return false;
-                    });
-                }
+            if(mIntegrationReady) {
+                Idle.add(() => {
+                    Variant[] args = new Variant[1];
+                    args[0] = new Variant.string("pause");
+                    mContext.CallFunction("ActivateAction", args);
+                    return false;
+                });
             }
         }
 
         public override void Stop() {
             if(mIntegrationReady) {
                 Idle.add(() => {
-                    mContext.CallFunction("Stop", null);
+                    Variant[] args = new Variant[1];
+                    args[0] = new Variant.string("stop");
+                    mContext.CallFunction("ActivateAction", args);
                     return false;
                 });
             }
@@ -286,8 +438,9 @@ namespace WebMusic.Webextension {
         public override void Play() {
             if(mIntegrationReady) {
                 Idle.add(() => {
-                    mContext.CallFunction("Play", null);
-                    base.Play();
+                    Variant[] args = new Variant[1];
+                    args[0] = new Variant.string("play");
+                    mContext.CallFunction("ActivateAction", args);
                     return false;
                 });
             }
@@ -309,6 +462,9 @@ namespace WebMusic.Webextension {
 
                     mContext.EvaluateScript(serviceFile, path, 1);
                     mIntegrationReady = true;
+
+                    mContext.CallFunction("init", null);
+
                     StartCheckDom();
 
                 } catch(FileError e) {

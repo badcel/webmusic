@@ -37,7 +37,7 @@ namespace WebMusic.Webextension.Plugins {
             return true;
         }
 
-        private void OnMetadataChanged(string artist, string track, string album,
+        private void OnMetadataChanged(string url, string artist, string track, string album,
                                         string fileName, int64 length){
 
             if(!this.Enable)

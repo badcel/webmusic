@@ -26,7 +26,7 @@ namespace WebMusic.Webextension {
 
         public signal void Seeked(int64 position);
         public signal void PropertiesChanged(HashTable<string,Variant> dict);
-        public signal void MetadataChanged(string artist, string track, string album,
+        public signal void MetadataChanged(string url, string artist, string track, string album,
                                             string artUrl, int64 length);
         public signal void PlayercontrolChanged(bool canGoNext, bool canGoPrev, bool canShuffle,
                                                 bool canRepeat, bool shuffle, bool like,
@@ -43,8 +43,6 @@ namespace WebMusic.Webextension {
         public abstract RepeatStatus Repeat         { get; set; }
         public abstract PlayStatus   PlaybackStatus { get; }
 
-        public abstract bool Shuffle        { get; set; }
-        public abstract bool Like           { get; set; }
         public abstract bool CanGoNext      { get; }
         public abstract bool CanGoPrevious  { get; }
         public abstract bool CanPlay        { get; }
@@ -54,9 +52,11 @@ namespace WebMusic.Webextension {
         public abstract bool CanShuffle     { get; }
         public abstract bool CanRepeat      { get; }
 
-        public abstract double Volume       { get; set; }
+        public abstract bool Shuffle        { get; set; }
+        public abstract bool Like           { get; set; }
 
-        public abstract int64 Position     { get; set; }
+        public abstract double Volume       { get; set; }
+        public abstract int64  Position     { get; set; }
 
         public virtual void Next(){}
         public virtual void Previous(){}

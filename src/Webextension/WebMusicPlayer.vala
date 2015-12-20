@@ -35,7 +35,7 @@ namespace WebMusic.Webextension {
         private PlayStatus mPlayStatus = PlayStatus.STOP;
         private RepeatStatus mRepeat = RepeatStatus.NONE;
 
-        private delegate void CacheFinishedDelegate(string artist, string track,
+        private delegate void CacheFinishedDelegate(string url, string artist, string track,
                                                     string album, string artUrl,
                                                     int64 length, string fileName);
 
@@ -43,6 +43,7 @@ namespace WebMusic.Webextension {
         protected abstract string GetTrack();
         protected abstract string GetArtUrl();
         protected abstract string GetAlbum();
+        protected abstract string GetUrl();
         protected abstract int64  GetTrackLength();
         protected abstract bool   GetReady();
 
@@ -50,6 +51,7 @@ namespace WebMusic.Webextension {
         private string _Track       { get; set; }
         private string _ArtUrl      { get; set; }
         private string _Album       { get; set; }
+        private string _Url         { get; set; }
         private int64  _TrackLength { get; set; }
 
         protected void StartCheckDom() {
@@ -70,6 +72,7 @@ namespace WebMusic.Webextension {
             _Track  = "";
             _ArtUrl = "";
             _Album  = "";
+            _Url    = "";
             _TrackLength = 0;
 
             mCanNext    = false;
@@ -94,7 +97,6 @@ namespace WebMusic.Webextension {
             bool propertyChanged = false;
 
             double volume = this.Volume;
-
             if(this.mVolume != volume) {
                 dict.insert("Volume", new Variant.double(volume));
                 this.mVolume = volume;
@@ -123,6 +125,7 @@ namespace WebMusic.Webextension {
             string artUrl = this.GetArtUrl();
             string album  = this.GetAlbum();
             int64  length = this.GetTrackLength();
+            string url    = this.GetUrl();
 
             if(artist.length == 0 || track.length == 0)
                 return;
@@ -131,16 +134,18 @@ namespace WebMusic.Webextension {
                 || track  != this._Track
                 || artUrl != this._ArtUrl
                 || album  != this._Album
-                || length != this._TrackLength) {
+                || length != this._TrackLength
+                || url    != this._Url) {
 
                 string nartUrl = artUrl.replace("https://", "http://");
-                this.CacheCover(artist, track, album, nartUrl, length, SendMetadataChanged);
+                this.CacheCover(url, artist, track, album, nartUrl, length, SendMetadataChanged);
 
                 this._Artist      = artist;
                 this._Track       = track;
                 this._ArtUrl      = artUrl;
                 this._Album       = album;
                 this._TrackLength = length;
+                this._Url         = url;
             }
 
         }
@@ -178,23 +183,23 @@ namespace WebMusic.Webextension {
             }
         }
 
-        private void SendMetadataChanged(string artist, string track,
+        private void SendMetadataChanged(string url, string artist, string track,
                                         string album, string artUrl,
                                         int64 length, string fileName) {
 
             string nfileName = "file://" + fileName;
-            this.MetadataChanged(artist, track, album, nfileName, length);
+            this.MetadataChanged(url, artist, track, album, nfileName, length);
         }
 
-        private void CacheCover(string artist, string track, string album,
+        private void CacheCover(string url, string artist, string track, string album,
                                 string artUrl, int64 length, CacheFinishedDelegate dele) {
 
             if(artUrl.length == 0) {
                 debug("No art url for %s by %s from %s.".printf(track, artist, album));
-                dele(artist, track, album, artUrl, length, "");
+                dele(url, artist, track, album, artUrl, length, "");
                 return;
             }
-            
+
             string fExtension = artUrl.substring(artUrl.last_index_of_char('.'));
             string fArtist    = artist.length > 0 ? artist + "_" : "";
             string fName      = album.length  > 0 ? album : track;
@@ -210,7 +215,7 @@ namespace WebMusic.Webextension {
 
             var cachedImage = File.new_for_path(fileName);
             if(!cachedImage.query_exists()) {
-                
+
                 var onlineImage = File.new_for_uri(artUrl);
                 onlineImage.load_contents_async.begin(null, (obj, res) => {
                     try {
@@ -228,13 +233,13 @@ namespace WebMusic.Webextension {
                         //Error, no Image obtained
                         fileName = "";
                     }
-                    dele(artist, track, album, artUrl, length, fileName);
+                    dele(url, artist, track, album, artUrl, length, fileName);
                 });
             }
             else
             {
                 //Image already cached, everything OK
-                dele(artist, track, album, artUrl, length, fileName);
+                dele(url, artist, track, album, artUrl, length, fileName);
             }
 
         }

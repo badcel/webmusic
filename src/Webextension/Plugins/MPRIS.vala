@@ -161,19 +161,19 @@ namespace WebMusic.Webextension.Plugins {
 
         private void OnServiceChanged() {
             if(!mService.IntegratesService) {
-                OnMetadataChanged("", "", "", "", 0);
+                OnMetadataChanged("", "", "", "", "", 0);
                 OnPlayercontrolChanged(false, false, false, false, false, false,
                                         PlayStatus.STOP, RepeatStatus.NONE);
             }
         }
 
-        private void OnMetadataChanged(string artist, string track, string album,
+        private void OnMetadataChanged(string url, string artist, string track, string album,
                                         string artUrl, int64 length) {
 
             if(!this.Enable || mConnection.closed)
                 return;
 
-            mMprisPlayer.SetMetadata(artist, track, album, artUrl, length);
+            mMprisPlayer.SetMetadata(url, artist, track, album, artUrl, length);
             Variant variant = mMprisPlayer.Metadata;
             var builder = new VariantBuilder(VariantType.DICTIONARY);
             builder.add("{sv}", "Metadata", variant);
@@ -366,7 +366,7 @@ namespace WebMusic.Webextension.Plugins {
             }
         }
 
-        public void SetMetadata(string artist, string track, string album,
+        public void SetMetadata(string url, string artist, string track, string album,
                                 string artUrl, int64 length) {
 
             _metadata = new HashTable<string,Variant>(str_hash, str_equal);
@@ -383,6 +383,10 @@ namespace WebMusic.Webextension.Plugins {
 
             if(album.length > 0) {
                 _metadata.insert("xesam:album", new Variant.string(album));
+            }
+
+            if(url.length > 0) {
+                _metadata.insert("xesam:url", new Variant.string(url));
             }
         }
 

@@ -14,187 +14,133 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-//
-// General functions needed for minimal integration
-//
-WebMusicApi.GetReady = function() {
-    return dzPlayer.playerLoaded && dzPlayer.getCurrentSong() != null;
-};
+"use strict";
 
-WebMusicApi.GetArtist = function() {
+(function(WebMusicApi) {
 
-    let artist = '';
-    let currentSong = dzPlayer.getCurrentSong();
+    var PlayerAction = {
+        STOP    : "stop",
+        PLAY    : "play",
+        PAUSE   : "pause",
+        NEXT    : "next",
+        PREVIOUS: "previous",
+        REPEAT  : "repeat",
+        VOLUME  : "volume",
+        TRACK_POSITION : "track-position",
+        TOGGLE_SHUFFLE : "toggle-shuffle",
+        TOGGLE_LIKE    : "toggle-like"
+    };
 
-    switch(currentSong.__TYPE__) {
-        case 'episode':
-            artist = currentSong.SHOW_NAME;
-            break;
-        case 'song':
-            artist = currentSong.ART_NAME;
-            break;
-        default:
-            WebMusicApi.warning('Unknown type: ' + currentSong.__TYPE__);
-    }
+    var PlaybackState = {
+        STOP : 0,
+        PLAY : 1,
+        PAUSE: 2,
+    };
 
-    return artist;
-};
+    WebMusicApi.init = function() {
+        WebMusicApi.ready      = false;
 
-WebMusicApi.GetTrack = function() {
+        WebMusicApi.canControl = true;
+        WebMusicApi.canPlay    = true;
+        WebMusicApi.canPause   = false;
+        WebMusicApi.canSeek    = true;
 
-    let track = '';
-    let currentSong = dzPlayer.getCurrentSong();
+        WebMusicApi.update();
+    };
 
-    switch(currentSong.__TYPE__) {
-        case 'episode':
-            track = currentSong.EPISODE_TITLE;
-            break;
-        case 'song':
-            track = currentSong.SNG_TITLE;
-            break;
-        default:
-            WebMusicApi.warning('Unknown type: ' + currentSong.__TYPE__);
-    }
+    WebMusicApi.update = function() {
 
-    return track;
-};
+        if(!WebMusicApi.ready) {
+            WebMusicApi.ready = dzPlayer.playerLoaded && dzPlayer.getCurrentSong() != null;
+            setTimeout(this.update.bind(this), 500);
+            return;
+        }
 
-WebMusicApi.GetAlbum = function() {
+        let currentSong = dzPlayer.getCurrentSong();
 
-    let album = '';
-    let currentSong = dzPlayer.getCurrentSong();
+        switch(currentSong.__TYPE__) {
+            case 'episode':
+                WebMusicApi.url    = 'http://www.deezer.com/show/' + currentSong.SHOW_ID + '#' + currentSong.EPISODE_ID;
+                WebMusicApi.artist = currentSong.SHOW_NAME;
+                WebMusicApi.track  = currentSong.EPISODE_TITLE;
+                WebMusicApi.album  = '';
+                WebMusicApi.artUrl = 'http://cdn-images.deezer.com/images/talk/' + currentSong.SHOW_ART_MD5 + '/300x300.jpg';
+                break;
+            case 'song':
+                WebMusicApi.url    = 'http://www.deezer.com/album/' + currentSong.ALB_ID + '#naboo_datagrid_track_' + currentSong.SNG_ID;
+                WebMusicApi.artist = currentSong.ART_NAME;
+                WebMusicApi.track  = currentSong.SNG_TITLE;
+                WebMusicApi.album  = currentSong.ALB_TITLE;
+                WebMusicApi.artUrl = 'http://cdn-images.deezer.com/images/cover/' + currentSong.ALB_PICTURE + '/300x300-000000-80-0-0.jpg';
+                break;
+            default:
+                WebMusicApi.warning('Deezer - Unknown type: ' + currentSong.__TYPE__);
+        }
 
-    switch(currentSong.__TYPE__) {
-        case 'episode':
-            album = '';
-            break;
-        case 'song':
-            album = currentSong.ALB_TITLE;
-            break;
-        default:
-            WebMusicApi.warning('Unknown type: ' + currentSong.__TYPE__);
-    }
+        WebMusicApi.playbackStatus = dzPlayer.isPlaying()? PlaybackState.PLAY : PlaybackState.STOP;
 
-    return album;
-};
+        WebMusicApi.canGoNext     = WebMusicApi._isButtonEnabled('next');
+        WebMusicApi.canGoPrevious = WebMusicApi._isButtonEnabled('prev');
 
-WebMusicApi.GetArtUrl = function() {
+        WebMusicApi.canShuffle    = WebMusicApi._isButtonPresent('shuffle');
+        WebMusicApi.canRepeat     = WebMusicApi._isButtonPresent('repeat') || WebMusicApi._isButtonPresent('repeat-one');
 
-    let link = '';
-    let currentSong = dzPlayer.getCurrentSong();
+        WebMusicApi.repeat        = dzPlayer.getRepeat();
+        WebMusicApi.volume        = dzPlayer.volume;
+        WebMusicApi.shuffle       = dzPlayer.shuffle;
+        WebMusicApi.like          = document.querySelector('.player-actions .icon-love').classList.contains('active');
 
-    switch(currentSong.__TYPE__) {
-        case 'episode':
-            link = 'http://cdn-images.deezer.com/images/talk/' + currentSong.SHOW_ART_MD5 + '/300x300.jpg';
-            break;
-        case 'song':
-            link = 'http://cdn-images.deezer.com/images/cover/' + currentSong.ALB_PICTURE + '/300x300-000000-80-0-0.jpg';
-            break;
-        default:
-            WebMusicApi.warning('Unknown type: ' + currentSong.__TYPE__);
-    }
+        WebMusicApi.trackLength   = currentSong.DURATION * 1000000;
+        WebMusicApi.trackPosition = dzPlayer.position * 1000000;
 
-    return link;
-};
+        setTimeout(this.update.bind(this), 500);
+    };
 
-WebMusicApi.GetPlaybackStatus = function() {
-    return dzPlayer.isPlaying() ? 1 : 0;
-};
+    WebMusicApi.ActivateAction = function(action, parameter) {
 
-WebMusicApi.GetCanGoNext = function() {
-    return dzPlayer.getNextSong() != null;
-};
+        switch(action) {
+            case PlayerAction.PLAY:
+                dzPlayer.control.play();
+                break;
+            case PlayerAction.STOP:
+            case PlayerAction.PAUSE:
+                dzPlayer.control.pause();
+                break;
+            case PlayerAction.NEXT:
+                dzPlayer.control.nextSong();
+                break;
+            case PlayerAction.PREVIOUS:
+                dzPlayer.control.prevSong();
+                break;
+            case PlayerAction.REPEAT:
+                dzPlayer.control.setRepeat(parameter);
+                break;
+            case PlayerAction.VOLUME:
+                dzPlayer.control.setVolume(parameter);
+                break;
+            case PlayerAction.TOGGLE_SHUFFLE:
+                dzPlayer.control.setShuffle(!dzPlayer.shuffle);
+                break;
+            case PlayerAction.TOGGLE_LIKE:
+                document.querySelector('.player-actions .icon-love').parentNode.parentNode.click();
+                break;
+            case PlayerAction.TRACK_POSITION:
+                let percent = (parameter / 1000000) / dzPlayer.getCurrentSong().DURATION;
+                dzPlayer.control.seek(percent);
+                break;
+            default:
+                WebMusicApi.warning('Deezer - Unknown action: ' + action);
+        }
+    };
 
-WebMusicApi.GetCanGoPrevious = function() {
-    return !document.querySelector('.control-prev').hasAttribute('disabled');
-};
+    WebMusicApi._isButtonPresent = function(name) {
+        let button = document.querySelector('.player-controls .control-' + name);
+        return button != null
+    };
 
-WebMusicApi.Next = function() {
-    dzPlayer.control.nextSong();
-};
+    WebMusicApi._isButtonEnabled = function(name) {
+        let button = document.querySelector('.player-controls .control-' + name);
+        return button == null? false : !button.disabled
+    };
 
-WebMusicApi.Previous = function() {
-    dzPlayer.control.prevSong();
-};
-
-WebMusicApi.Stop = function() {
-    dzPlayer.control.pause();
-};
-
-WebMusicApi.Play = function() {
-    dzPlayer.control.play();
-};
-
-
-//
-// Necessary functions if shuffle is supported
-//
-WebMusicApi.CanShuffle = function() {
-    return document.querySelector('.control-shuffle') != null;
-};
-
-WebMusicApi.GetShuffle = function() {
-    return dzPlayer.shuffle;
-};
-
-WebMusicApi.ToggleShuffle = function() {
-    dzPlayer.control.setShuffle(!dzPlayer.shuffle);
-};
-
-//
-// Necessary functions if repeat is supported
-//
-WebMusicApi.CanRepeat = function() {
-    return document.querySelector('.control-repeat') != null
-            || document.querySelector('.control-repeat-one') != null;
-};
-
-WebMusicApi.GetRepeat = function() {
-    return dzPlayer.getRepeat();
-};
-
-WebMusicApi.SetRepeat = function(status) {
-    // 0 = No repeat
-    // 1 = Repeat playlist
-    // 2 = Repeat track
-    dzPlayer.control.setRepeat(status);
-};
-
-//
-// Necessary functions if like is supported
-//
-WebMusicApi.GetLike = function() {
-    return document.querySelector('.player-actions .icon-love').classList.contains('active');
-};
-
-WebMusicApi.ToggleLike = function() {
-    document.querySelector('.player-actions .icon-love').parentNode.parentNode.click();
-};
-
-//
-// Necessary functions if setting volume is supported
-//
-WebMusicApi.GetVolume = function() {
-    return dzPlayer.volume;
-};
-
-WebMusicApi.SetVolume = function(volume) {
-    dzPlayer.control.setVolume(volume);
-};
-
-//
-// Necessary functions if seeking is supported
-//
-WebMusicApi.GetTrackLength = function() {
-    return dzPlayer.getCurrentSong().DURATION * 1000000;
-};
-
-WebMusicApi.GetTrackPosition = function() {
-    return dzPlayer.position * 1000000;
-};
-
-WebMusicApi.SetTrackPosition = function(position) {
-    var percent = (position/1000000) / dzPlayer.getCurrentSong().DURATION;
-    dzPlayer.control.seek(percent);
-};
-
+})(this);
