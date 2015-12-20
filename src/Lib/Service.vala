@@ -38,9 +38,6 @@ namespace LibWebMusic {
         private bool   mSupportsShuffle        = false;
         private bool   mSupportsRepeat         = false;
         private bool   mSupportsLike           = false;
-        private bool   mSupportsPause          = false;
-        private bool   mSupportsVolume         = false;
-        private bool   mSupportsSeek           = false;
 
         public Service(string name) throws ServiceError {
             this.Load(name);
@@ -63,7 +60,7 @@ namespace LibWebMusic {
         }
 
         public bool Enabled {
-            get {return mEnabled; }
+            get { return mEnabled; }
         }
 
         public string Url {
@@ -104,18 +101,6 @@ namespace LibWebMusic {
 
         public bool SupportsLike {
             get { return mSupportsLike; }
-        }
-
-        public bool SupportsPause {
-            get { return mSupportsPause; }
-        }
-
-        public bool SupportsVolume {
-            get { return mSupportsVolume; }
-        }
-
-        public bool SupportsSeek {
-            get { return mSupportsSeek; }
         }
 
         public string to_string() {
@@ -231,18 +216,6 @@ namespace LibWebMusic {
                     mSupportsLike = keyFile.get_boolean(ident, "SupportsLike");
                 }
 
-                if(keyFile.has_key(ident, "SupportsPause")) {
-                    mSupportsPause = keyFile.get_boolean(ident, "SupportsPause");
-                }
-
-                if(keyFile.has_key(ident, "SupportsVolume")) {
-                    mSupportsVolume = keyFile.get_boolean(ident, "SupportsVolume");
-                }
-
-                if(keyFile.has_key(ident, "SupportsSeek")) {
-                    mSupportsSeek = keyFile.get_boolean(ident, "SupportsSeek");
-                }
-
             } catch(KeyFileError e) {
                 warning("Failed to look up optional key from ini file. " +
                         "Certain features may be disabled. (%s)", e.message);
@@ -260,9 +233,6 @@ namespace LibWebMusic {
             mSupportsShuffle        = false;
             mSupportsRepeat         = false;
             mSupportsLike           = false;
-            mSupportsPause          = false;
-            mSupportsVolume         = false;
-            mSupportsSeek           = false;
         }
     }
 
