@@ -162,7 +162,7 @@ namespace WebMusic.Browser
 
         }
 
-        private void OnMetadataChanged(string artist, string track, string album, string artUrl) {
+        private void OnMetadataChanged(string url, string artist, string track, string album, string artUrl) {
             this.SetTitle(artist, track, album);
         }
 
