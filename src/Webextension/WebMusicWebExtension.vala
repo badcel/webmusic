@@ -114,7 +114,7 @@ namespace WebMusic.Webextension {
             mPlugins[index].Enable = mSettings.get_boolean(key);
         }
 
-        private void OnMetadataChanged(string artist, string track, string album, string artUrl) {
+        private void OnMetadataChanged(string url, string artist, string track, string album, string artUrl) {
             string by = artist.length > 0? _("by %s").printf(artist) + " " : "";
             string from = album.length > 0? _("from %s").printf(album): "";
 
