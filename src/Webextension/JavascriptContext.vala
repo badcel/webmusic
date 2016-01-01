@@ -169,7 +169,7 @@ namespace WebMusic.Webextension {
             return ret.to_boolean(mContext);
         }
 
-        public bool get_property(string name, out JSCore.Value value) {
+        public new bool get_property(string name, out JSCore.Value value) {
             bool ret = false;
             value = new JSCore.Value.null(mContext);
             JSCore.Value? exception;
