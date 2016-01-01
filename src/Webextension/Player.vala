@@ -58,6 +58,8 @@ namespace WebMusic.Webextension {
         public abstract double Volume       { get; set; }
         public abstract int64  Position     { get; set; }
 
+        public abstract void Search(string term);
+
         public virtual void Next(){}
         public virtual void Previous(){}
         public virtual void Pause(){}

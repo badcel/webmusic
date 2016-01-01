@@ -119,5 +119,7 @@ namespace LibWebMusic {
         public abstract void Play()     throws IOError;
 
         public abstract void PlayPause() throws IOError;
+
+        public abstract void Search(string term) throws IOError;
     }
 }

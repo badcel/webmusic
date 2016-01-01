@@ -87,7 +87,10 @@ namespace WebMusic.Browser
         public void Load(string? service, string? searchTerm) {
 
             try {
+                bool changeService = false;
+
                 if(service != null && service != mService.Name) {
+                    changeService = true;
                     debug("Specified service: %s".printf(service));
                     this.mService.Load(service);
                 }
@@ -95,7 +98,7 @@ namespace WebMusic.Browser
                 string uri = mService.Url;
                 if(searchTerm != null) {
                     debug("Specified search term: %s".printf(searchTerm));
-                    if(!mService.HasSearchUrl) {
+                    if(!mService.HasSearchUrl && !mService.SupportsSearch) {
                         warning(_("The service %s does not support a search function.")
                                 .printf(mService.Name));
                     } else {
@@ -103,7 +106,18 @@ namespace WebMusic.Browser
                     }
                 }
 
-                mWebView.load_uri(uri);
+                if(mWebView.uri == null
+                    || changeService
+                    || searchTerm != null && !mService.SupportsSearch) {
+
+                    mWebView.load_uri(uri);
+                } else if(searchTerm != null) {
+                    try {
+                        mPlayer.Search(searchTerm);
+                    } catch(GLib.IOError e) {
+                        warning("Failed executing player action 'search'. (%s, %s)", e.message, searchTerm);
+                    }
+                }
 
                 if(!mService.IntegratesService) {
                     SetCover("");

@@ -446,6 +446,20 @@ namespace WebMusic.Webextension {
             }
         }
 
+        public override void Search(string term) {
+
+            if(mIntegrationReady) {
+                Idle.add(() => {
+                    Variant[] args = new Variant[2];
+                    args[0] = new Variant.string("search");
+                    args[1] = new Variant.string(term);
+                    mContext.CallFunction("ActivateAction", args);
+                    return false;
+                });
+            }
+
+        }
+
         private void InjectApi() {
             if(mService.ApiVersion != REQUIRED_API_VERSION) {
                 mIntegrationReady = false;
