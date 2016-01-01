@@ -31,6 +31,10 @@
         TOGGLE_LIKE    : "toggle-like"
     };
 
+    var BrowserAction = {
+        SEARCH    : "search"
+    };
+
     var PlaybackState = {
         STOP : 0,
         PLAY : 1,
@@ -127,6 +131,9 @@
             case PlayerAction.TRACK_POSITION:
                 let percent = (parameter / 1000000) / dzPlayer.getCurrentSong().DURATION;
                 dzPlayer.control.seek(percent);
+                break;
+            case BrowserAction.SEARCH:
+                www.navigate('/search/' + parameter);
                 break;
             default:
                 WebMusicApi.warning('Deezer - Unknown action: ' + action);
