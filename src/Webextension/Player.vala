@@ -22,7 +22,7 @@ namespace WebMusic.Webextension {
     public abstract class Player : GLib.Object {
 
         private uint mOwnerId;
-        private unowned DBusConnection mConnection;
+        private DBusConnection mConnection;
 
         public signal void Seeked(int64 position);
         public signal void PropertiesChanged(HashTable<string,Variant> dict);

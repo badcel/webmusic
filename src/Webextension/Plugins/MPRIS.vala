@@ -45,7 +45,7 @@ namespace WebMusic.Webextension.Plugins {
         private MprisRoot mRoot = null;
         private MprisPlayer mMprisPlayer = null;
 
-        private unowned DBusConnection mConnection;
+        private DBusConnection mConnection;
 
         public bool Enable {
             get { return mEnable; }
