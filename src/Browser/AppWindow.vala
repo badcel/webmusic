@@ -199,8 +199,6 @@ namespace WebMusic.Browser
                 mBtnPopover.sensitive = (event == WebKit.LoadEvent.FINISHED);
             });
             this.add(mBrowser);
-
-            this.activate_action("service", new Variant.string(mService.Ident));
         }
 
         private void EnableMiniMode(bool miniMode) {
