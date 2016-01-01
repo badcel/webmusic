@@ -119,6 +119,7 @@ namespace WebMusic.Webextension.Plugins {
         private void OnBusAcquired(DBusConnection connection, string name) {
             this.mConnection = connection;
             try {
+                debug("DBus: Bus %s acquired\n", name);
                 mRootId = connection.register_object("/org/mpris/MediaPlayer2", mRoot);
                 mPlayerId = connection.register_object("/org/mpris/MediaPlayer2", mMprisPlayer);
             }
