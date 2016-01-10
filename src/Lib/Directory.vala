@@ -34,6 +34,10 @@ namespace LibWebMusic {
             return Config.PKG_DATA_DIR + "/Services/";
         }
 
+        public static string GetPkgDataDir() {
+            return Config.PKG_DATA_DIR;
+        }
+
     }
 
 }

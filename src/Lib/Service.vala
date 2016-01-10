@@ -34,7 +34,7 @@ namespace LibWebMusic {
         private bool   mEnabled                = true;
         private string mSearchUrl              = "";
         private string mIntegrationFilePath    = "";
-        private string mSearchProviderFilePath = "";
+        private string mSearchProvider         = "";
         private bool   mSupportsShuffle        = false;
         private bool   mSupportsRepeat         = false;
         private bool   mSupportsLike           = false;
@@ -76,8 +76,8 @@ namespace LibWebMusic {
             get { return mIntegrationFilePath; }
         }
 
-        public string SearchProviderFilePath {
-            get { return mSearchProviderFilePath; }
+        public string SearchProvider {
+            get { return mSearchProvider; }
         }
 
         public bool HasSearchUrl {
@@ -89,7 +89,7 @@ namespace LibWebMusic {
         }
 
         public bool HasSearchProvider {
-            get { return mSearchProviderFilePath.length > 0; }
+            get { return mSearchProvider.length > 0; }
         }
 
         public bool SupportsShuffle {
@@ -202,7 +202,7 @@ namespace LibWebMusic {
                 }
 
                 if(keyFile.has_key(ident, "SearchProvider")) {
-                    mSearchProviderFilePath = path + keyFile.get_string(ident, "SearchProvider");
+                    mSearchProvider = keyFile.get_string(ident, "SearchProvider");
                 }
 
                 if(keyFile.has_key(ident, "Enabled")) {
@@ -238,7 +238,7 @@ namespace LibWebMusic {
             mEnabled                = true;
             mSearchUrl              = "";
             mIntegrationFilePath    = "";
-            mSearchProviderFilePath = "";
+            mSearchProvider         = "";
             mSupportsShuffle        = false;
             mSupportsRepeat         = false;
             mSupportsLike           = false;
