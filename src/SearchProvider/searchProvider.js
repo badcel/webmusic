@@ -15,7 +15,6 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-//imports.searchPath.unshift("/home/marcel/Programmieren/vala/WebMusicGit/src/bin/share/webmusic/");
 imports.searchPath.unshift(WebMusic.Directory.GetPkgDataDir());
 
 const Gio              = imports.gi.Gio;
