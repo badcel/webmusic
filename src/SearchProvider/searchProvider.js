@@ -15,19 +15,26 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-const Gio = imports.gi.Gio;
-const GLib = imports.gi.GLib;
-const Lang = imports.lang;
-const WebMusic = imports.gi.libwebmusic;
+//imports.searchPath.unshift("/home/marcel/Programmieren/vala/WebMusicGit/src/bin/share/webmusic/");
+imports.searchPath.unshift(WebMusic.Directory.GetPkgDataDir());
+
+const Gio              = imports.gi.Gio;
+const GLib             = imports.gi.GLib;
+const Lang             = imports.lang;
+const WebMusic         = imports.gi.libwebmusic;
+
+const StaticProviders  = imports.staticSearchProvider;
+const DynamicProviders = imports.Services;
 
 const SearchProviderInterface = Gio.resources_lookup_data('/org/gnome/shell/ShellSearchProvider2.xml', 0).toArray().toString();
 
 const SearchProvider = new Lang.Class({
-    Name: 'WebMusicSearchProvider',
+    Name: 'SearchProvider',
 
-    _currentId : 0,
-    _terms : [],
-    _enable : false,
+    _enable          : false,
+    _service         : null,
+    _provider        : null,
+    _cancellable     : null,
 
     _init: function(application) {
         this._app = application;
@@ -42,73 +49,104 @@ const SearchProvider = new Lang.Class({
         return this._impl.unexport_from_connection(connection);
     },
 
-    _checkService: function() {
-        let settings = new Gio.Settings({schema_id: "org.WebMusic.Browser"});
-        let lastService = settings.get_string("last-used-service");
+    _prepareProvider: function() {
+        this._enable = false;
+        let settings = new Gio.Settings({schema_id: 'org.WebMusic.Browser'});
+        let lastService = settings.get_string('last-used-service');
 
         if (lastService.length > 0) {
-            let service = new WebMusic.Service();
-            service.Load(lastService);
-            this._enable = service.get_HasSearchUrl();
-            if (this._enable) {
-                log("Search for webmusic service " + lastService + " enabled.");
+            this._service = new WebMusic.Service();
+            this._service.Load(lastService);
+
+            let name = this._service.get_Name();
+
+            if(this._service.get_HasSearchProvider()) {
+                this._enable = true;
+                let ident = this._service.get_Ident();
+                let file = this._service.get_SearchProvider().slice(0,-3);
+                this._provider = new DynamicProviders[ident][file][name + 'SearchProvider']();
+
+                //log('Using dynamic search provider for %s'.format(name));
+
+            } else if(this._service.get_HasSearchUrl()) {
+                this._enable = true;
+                this._provider = new StaticProviders.StaticSearchProvider();
+
+                //log('Using generic static search provider for %s'.format(name));
+
             }
+
+        } else {
+            log('Unknown last used service, can\'t prepare search provider.');
         }
+
+        return this._enable;
     },
 
-    _getTerm: function() {
-        let ret = '';
-        for (let i = 0; i < this._terms.length; i++) {
-            ret += this._terms[i] + ' ';
+    _createNewCancelObject: function() {
+        if(this._cancellable != null) {
+            this._cancellable.cancel();
         }
 
-        return ret;
+        this._cancellable = new Gio.Cancellable();
     },
 
     GetInitialResultSetAsync: function(terms, invocation) {
         this._app.hold();
-        this._currentId = 1;
-        this._terms = [];
 
-        let ret = '';
+        if(this._prepareProvider()) {
 
-        this._checkService();
+            this._createNewCancelObject();
 
-        if (this._enable) {
-            ret = (++this._currentId).toString();
-            this._terms = terms;
+            this._provider.GetInitialResultSetAsync(terms, Lang.bind(this,
+                function(ids) {
+                    this._app.release();
+                    this._active = false;
+                    invocation.return_value(new GLib.Variant('(as)', [ ids ]));
+            }), this._cancellable);
+        } else {
+            log('Error: No provider available');
+            this._app.release();
         }
-
-        this._app.release();
-        invocation.return_value(new GLib.Variant('(as)', [[ret]]));
     },
 
-    GetSubsearchResultSet: function(previous, terms) {
+    GetSubsearchResultSetAsync: function(params, invocation) {
+        let [previousResults, terms] = params;
         this._app.hold();
-        let ret = '';
 
-        if (this._enable) {
-            ret = (++this._currentId).toString();
-            this._terms = terms;
+        if(this._enable) {
+
+            this._createNewCancelObject();
+
+            this._provider.GetSubsearchResultSetAsync(terms, Lang.bind(this,
+                function(ids) {
+                    this._app.release();
+                    invocation.return_value(new GLib.Variant('(as)', [ ids ]));
+            }), this._cancellable);
+        } else {
+            log('Error: No provider available');
+            this._app.release();
         }
 
-        this._app.release();
-        return [ret];
     },
 
-    GetResultMetas: function(identifiers) {
+    GetResultMetasAsync: function(params, invocation) {
+        let ids = params[0];
         this._app.hold();
         let ret = [];
 
-        if(this._enable) {
-            ret.push({ name: new GLib.Variant('s', _("WebMusic")),
-                id: new GLib.Variant('s', this._currentId.toString()),
-                description: new GLib.Variant('s', _("Search for %s").format(this._getTerm())),
-                icon: (new Gio.ThemedIcon({ name: 'audio-x-generic' })).serialize()});
-        }
+        this._createNewCancelObject();
 
-        this._app.release();
-        return ret;
+        if(this._enable) {
+            this._provider.GetResultMetasAsync(ids, Lang.bind(this,
+                function(metas) {
+                    this._app.release();
+                    invocation.return_value(new GLib.Variant('(aa{sv})', [ metas ]));
+            }), this._cancellable);
+        } else {
+            log('Error: No provider available');
+            this._app.release();
+        }
     },
 
     ActivateResult: function(id, terms, timestamp) {
@@ -154,7 +192,7 @@ const SearchProvider = new Lang.Class({
                                   try {
                                       connection.call_finish(result);
                                   } catch(e) {
-                                      log('Failed to launch application: ' + e);
+                                      log('Failed to launch application: %s'.format(e));
                                   }
 
                                   this._app.release();
