@@ -154,7 +154,7 @@ const SearchProvider = new Lang.Class({
             { 'show-track' : new GLib.Variant('s', id.toString())}
         );
 
-        this._activateAction('show', dict, timestamp);
+        this._activateAction('load', dict, timestamp);
     },
 
     LaunchSearch: function(terms, timestamp) {

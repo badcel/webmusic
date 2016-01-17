@@ -29,8 +29,7 @@ namespace WebMusic.Browser {
             { "show-preferences", AppShowPreferences, null   , null},
             { "show-about"      , AppShowAbout      , null   , null},
             { "quit"            , AppQuit           , null   , null},
-            { "load"            , AppLoad           , "a{sv}", null},
-            { "show"            , AppShow           , "a{sv}", null}
+            { "load"            , AppLoad           , "a{sv}", null}
         };
 
         public const string HOMEPAGE = "http://webmusic.tiede.org";
@@ -172,19 +171,12 @@ namespace WebMusic.Browser {
             }
 
             try {
-
-                if(options.contains("show-track")) {
-                    this.register(null);
-                    this.activate_action("show", options.end());
-                    return 0;
-                }
-
-                if(options.contains("search")
-                    || options.contains("service")) {
+                 if(options.contains("search")
+                    || options.contains("service")
+                    || options.contains("show-track")
 
                     this.register(null);
                     this.activate_action("load", options.end());
-                    return 0;
                 }
             } catch(Error e) {
                 error("Could not register application. (%s)".printf(e.message));
@@ -243,32 +235,9 @@ namespace WebMusic.Browser {
             this.quit();
         }
 
-        private void AppShow(SimpleAction? action, Variant? parameter) {
-            if(parameter != null) {
-                string type = "";
-                string id = "";
-                string? service = null;
-
-                VariantDict dict = new VariantDict(parameter);
-
-                if(dict.contains("service")) {
-                    service = dict.lookup_value("service", VariantType.STRING).get_string();
-                }
-
-                if(dict.contains("show-track")) {
-                    type = "track";
-                    id = dict.lookup_value("show-track", VariantType.STRING).get_string();
-                }
-
-                this.mAppWindow = this.create_main_window(service);
-                this.mAppWindow.Show(service, type, id);
-            }
-        }
-
         private void AppLoad(SimpleAction? action, Variant? parameter) {
             if(parameter != null) {
                 string? service = null;
-                string? search  = null;
 
                 VariantDict dict = new VariantDict(parameter);
 
@@ -276,12 +245,16 @@ namespace WebMusic.Browser {
                     service = dict.lookup_value("service", VariantType.STRING).get_string();
                 }
 
-                if(dict.contains("search")) {
-                    search = dict.lookup_value("search", VariantType.STRING).get_string();
-                }
-
                 this.mAppWindow = this.create_main_window(service);
-                this.mAppWindow.Load(service, search);
+
+                if(dict.contains("search")) {
+                    string search = dict.lookup_value("search", VariantType.STRING).get_string();
+                    this.mAppWindow.Load(service, search);
+                } else if(dict.contains("show-track")) {
+                    string type = "track";
+                    string id = dict.lookup_value("show-track", VariantType.STRING).get_string();
+                    this.mAppWindow.Show(service, type, id);
+                }
             }
         }
 
