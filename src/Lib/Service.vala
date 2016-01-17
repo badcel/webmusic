@@ -34,6 +34,8 @@ namespace LibWebMusic {
         private bool   mEnabled                = true;
         private string mSearchUrl              = "";
         private string mTrackUrl               = "";
+        private string mAlbumUrl               = "";
+        private string mArtistUrl              = "";
         private string mIntegrationFilePath    = "";
         private string mSearchProvider         = "";
         private bool   mSupportsShuffle        = false;
@@ -77,6 +79,14 @@ namespace LibWebMusic {
             get { return mTrackUrl; }
         }
 
+        public string AlbumUrl {
+            get { return mAlbumUrl; }
+        }
+
+        public string ArtistUrl {
+            get { return mArtistUrl; }
+        }
+
         public string IntegrationFilePath {
             get { return mIntegrationFilePath; }
         }
@@ -91,6 +101,14 @@ namespace LibWebMusic {
 
         public bool HasTrackUrl {
             get { return mTrackUrl.length > 0; }
+        }
+
+        public bool HasAlbumUrl {
+            get { return mAlbumUrl.length > 0; }
+        }
+
+        public bool HasArtistUrl {
+            get { return mArtistUrl.length > 0; }
         }
 
         public bool IntegratesService {
@@ -210,6 +228,14 @@ namespace LibWebMusic {
                     mTrackUrl = keyFile.get_string(ident, "TrackUrl");
                 }
 
+                if(keyFile.has_key(ident, "AlbumUrl")) {
+                    mAlbumUrl = keyFile.get_string(ident, "AlbumUrl");
+                }
+
+                if(keyFile.has_key(ident, "ArtistUrl")) {
+                    mArtistUrl = keyFile.get_string(ident, "ArtistUrl");
+                }
+
                 if(keyFile.has_key(ident, "Integration")) {
                     mIntegrationFilePath = path + keyFile.get_string(ident, "Integration");
                 }
@@ -251,6 +277,8 @@ namespace LibWebMusic {
             mEnabled                = true;
             mSearchUrl              = "";
             mTrackUrl               = "";
+            mAlbumUrl               = "";
+            mArtistUrl              = "";
             mIntegrationFilePath    = "";
             mSearchProvider         = "";
             mSupportsShuffle        = false;

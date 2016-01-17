@@ -44,6 +44,10 @@ namespace WebMusic.Browser {
                 N_("Search service for SEARCH_TERM"), N_("SEARCH_TERM") },
             { "show-track", 't', 0, OptionArg.STRING, null,
                 N_("Show given track with id TRACK_ID"), N_("TRACK_ID") },
+            { "show-album", 'a', 0, OptionArg.STRING, null,
+                N_("Show given album with id ALBUM_ID"), N_("ALBUM_ID") },
+            { "show-artist", 'a', 0, OptionArg.STRING, null,
+                N_("Show given artist with id ARTIST_ID"), N_("ARTIST_ID") },
             { "list-services", 'l', 0, OptionArg.NONE, null,
                 N_("List all supported services"), null },
             { null }
@@ -174,6 +178,8 @@ namespace WebMusic.Browser {
                  if(options.contains("search")
                     || options.contains("service")
                     || options.contains("show-track")
+                    || options.contains("show-album")
+                    || options.contains("show-artist")) {
 
                     this.register(null);
                     this.activate_action("load", options.end());
@@ -253,6 +259,14 @@ namespace WebMusic.Browser {
                 } else if(dict.contains("show-track")) {
                     string type = "track";
                     string id = dict.lookup_value("show-track", VariantType.STRING).get_string();
+                    this.mAppWindow.Show(service, type, id);
+                } else if(dict.contains("show-album")) {
+                    string type = "album";
+                    string id = dict.lookup_value("show-album", VariantType.STRING).get_string();
+                    this.mAppWindow.Show(service, type, id);
+                } else if(dict.contains("show-artist")) {
+                    string type = "artist";
+                    string id = dict.lookup_value("show-artist", VariantType.STRING).get_string();
                     this.mAppWindow.Show(service, type, id);
                 }
             }

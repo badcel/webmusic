@@ -137,8 +137,14 @@ namespace WebMusic.Browser
                 } catch(GLib.IOError e) {
                     warning("Failed executing player action 'show'. (%s)", e.message);
                 }
-            } else if(mWebView.uri == null && mService.HasTrackUrl){
+            } else if(mWebView.uri == null && type == "track" && mService.HasTrackUrl){
                 string uri = mService.TrackUrl.printf(id);
+                mWebView.load_uri(uri);
+            } else if(mWebView.uri == null && type == "album" && mService.HasAlbumUrl){
+                string uri = mService.AlbumUrl.printf(id);
+                mWebView.load_uri(uri);
+            } else if(mWebView.uri == null && type == "artist" && mService.HasArtistUrl){
+                string uri = mService.ArtistUrl.printf(id);
                 mWebView.load_uri(uri);
             } else {
                 warning("The service %s does not provide a url to show data of type '%s'",
