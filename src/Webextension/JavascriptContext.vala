@@ -140,6 +140,10 @@ namespace WebMusic.Webextension {
                 }
 
                 ret = func.call_as_function(mContext, func, (JSCore.Value[]) params, out exception);
+
+                if(exception != null) {
+                    this.LogException(name, exception);
+                }
             }
 
             return ret;
@@ -181,6 +185,11 @@ namespace WebMusic.Webextension {
             } else {
                 ret = true;
                 value = mJsInterface.get_property(mContext, jsName, out exception);
+
+                if(exception != null) {
+                    this.LogException(name, exception);
+                }
+
             }
 
             return ret;
@@ -249,6 +258,21 @@ namespace WebMusic.Webextension {
 
         public bool GetBoolean(JSCore.Value val) {
             return val.to_boolean(mContext);
+        }
+
+        private void LogException(string name, JSCore.Value exception) {
+            JSCore.Value e = null;
+            JSCore.Object o = exception.to_object(mContext, e);
+
+            JSCore.String prop_name = new JSCore.String.with_utf8_c_string("line");
+            double line = o.get_property(mContext, prop_name, out e).to_number(mContext, e);
+
+            prop_name = new JSCore.String.with_utf8_c_string("sourceURL");
+            string file = this.GetUTF8String(o.get_property(mContext, prop_name, out e));
+
+            string message = this.GetUTF8String(exception);
+            warning("Error during call of function '%s'\n\t- Message: %s\n\t- Line: %s\n\t- File: %s",
+                    name, message, line.to_string(), file);
         }
 
         private static string GetUTF8StringFromValue(JSCore.Value val, JSCore.Context context){
