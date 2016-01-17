@@ -109,6 +109,10 @@ namespace WebMusic.Browser
             this.mBrowser.Load(service, searchTerm);
         }
 
+        public void Show(string? service, string type, string id) {
+            this.mBrowser.Show(service, type, id);
+        }
+
         private void WinMiniMode(SimpleAction action, Variant? parameter) {
             EnableMiniMode(!action.state.get_boolean());
             action.set_state(new Variant.boolean(mMiniMode));

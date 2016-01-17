@@ -151,23 +151,21 @@ const SearchProvider = new Lang.Class({
     ActivateResult: function(id, terms, timestamp) {
         this._app.hold();
 
-        let vd = this._getSearchVariantDict(terms);
-        this._activateAction('load', vd, timestamp);
+        let dict = new GLib.Variant('a{sv}',
+            { 'show-track' : new GLib.Variant('s', id.toString())}
+        );
+
+        this._activateAction('show', dict, timestamp);
     },
 
     LaunchSearch: function(terms, timestamp) {
         this._app.hold();
 
-        let vd = this._getSearchVariantDict(terms);
-        this._activateAction('load', vd, timestamp);
-    },
-
-    _getSearchVariantDict : function(terms) {
-        let dictionary = new GLib.Variant('a{sv}',
+        let dict = new GLib.Variant('a{sv}',
             { 'search': new GLib.Variant('s', terms.join(' '))}
         );
 
-        return dictionary;
+        this._activateAction('load', dict, timestamp);
     },
 
     _activateAction: function(action, parameter, timestamp) {
