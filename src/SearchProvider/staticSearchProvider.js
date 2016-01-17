@@ -24,10 +24,6 @@ const StaticSearchProvider = new Lang.Class({
     _currentId       : 0,
     _terms           : [],
 
-    _init: function() {
-
-    },
-
     GetInitialResultSetAsync: function(terms, callback) {
         this._currentId = 1;
         this._terms = [];
