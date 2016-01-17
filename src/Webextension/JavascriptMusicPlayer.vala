@@ -457,7 +457,19 @@ namespace WebMusic.Webextension {
                     return false;
                 });
             }
+        }
 
+        public override void Show(string type, string id) {
+            if(mIntegrationReady) {
+                Idle.add(() => {
+                    Variant[] args = new Variant[3];
+                    args[0] = new Variant.string("show");
+                    args[1] = new Variant.string(type);
+                    args[2] = new Variant.string(id);
+                    mContext.CallFunction("ActivateAction", args);
+                    return false;
+                });
+            }
         }
 
         private void InjectApi() {

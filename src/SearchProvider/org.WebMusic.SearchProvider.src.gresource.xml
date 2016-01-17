@@ -3,6 +3,7 @@
   <gresource prefix="/org/WebMusic/SearchProvider/js">
     <file>service.js</file>
     <file>searchProvider.js</file>
+    <file>staticSearchProvider.js</file>
     <file>config.js</file>
   </gresource>
 </gresources>

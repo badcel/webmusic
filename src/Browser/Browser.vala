@@ -127,7 +127,30 @@ namespace WebMusic.Browser
             } catch(ServiceError e) {
                 error("Could not load service. (%s)".printf(e.message));
             }
+        }
 
+         public void Show(string? service, string type, string id) {
+
+            if(mWebView.uri != null) {
+                try {
+                    mPlayer.Show(type, id);
+                } catch(GLib.IOError e) {
+                    warning("Failed executing player action 'show'. (%s)", e.message);
+                }
+            } else if(mWebView.uri == null && mService.HasTrackUrl){
+                string uri = mService.TrackUrl.printf(id);
+                mWebView.load_uri(uri);
+            } else {
+                warning("The service %s does not provide a url to show data of type '%s'",
+                    mService.Name, type);
+                mWebView.load_uri(mService.Url);
+            }
+
+            if(!mService.IntegratesService) {
+                SetCover("");
+                OnPlayercontrolChanged(false, false, false, false, false, false,
+                                        PlayStatus.STOP, RepeatStatus.NONE);
+            }
         }
 
         private void OnMetadataChanged(string url, string artist, string track, string album,

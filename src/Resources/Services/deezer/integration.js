@@ -32,7 +32,15 @@
     };
 
     var BrowserAction = {
-        SEARCH    : "search"
+        SEARCH    : "search",
+        SHOW      : "show"
+    };
+
+    var ActionShowType = {
+        TRACK    : "track",
+        ALBUM    : "album",
+        ARTIST   : "artist",
+        SHOW     : "show"
     };
 
     var PlaybackState = {
@@ -134,6 +142,28 @@
                 break;
             case BrowserAction.SEARCH:
                 www.navigate('/search/' + parameter);
+                break;
+            case BrowserAction.SHOW:
+                let type    = arguments[1];
+                let id      = arguments[2];
+
+                let url = '';
+
+                switch(type) {
+                    case ActionShowType.TRACK:
+                        url = '/track/' + id;
+                        break;
+                    case ActionShowType.ALBUM:
+                        url = '/album/' + id;
+                        break;
+                    case ActionShowType.ARTIST:
+                        url =  '/artist/' + id;
+                        break;
+                    default:
+                        url = '';
+                }
+
+                www.navigate(url);
                 break;
             default:
                 WebMusicApi.warning('Deezer - Unknown action: ' + action);

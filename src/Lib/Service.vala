@@ -33,8 +33,9 @@ namespace LibWebMusic {
 
         private bool   mEnabled                = true;
         private string mSearchUrl              = "";
+        private string mTrackUrl               = "";
         private string mIntegrationFilePath    = "";
-        private string mSearchProviderFilePath = "";
+        private string mSearchProvider         = "";
         private bool   mSupportsShuffle        = false;
         private bool   mSupportsRepeat         = false;
         private bool   mSupportsLike           = false;
@@ -72,16 +73,24 @@ namespace LibWebMusic {
             get { return mSearchUrl; }
         }
 
+        public string TrackUrl {
+            get { return mTrackUrl; }
+        }
+
         public string IntegrationFilePath {
             get { return mIntegrationFilePath; }
         }
 
-        public string SearchProviderFilePath {
-            get { return mSearchProviderFilePath; }
+        public string SearchProvider {
+            get { return mSearchProvider; }
         }
 
         public bool HasSearchUrl {
             get { return mSearchUrl.length > 0; }
+        }
+
+        public bool HasTrackUrl {
+            get { return mTrackUrl.length > 0; }
         }
 
         public bool IntegratesService {
@@ -89,7 +98,7 @@ namespace LibWebMusic {
         }
 
         public bool HasSearchProvider {
-            get { return mSearchProviderFilePath.length > 0; }
+            get { return mSearchProvider.length > 0; }
         }
 
         public bool SupportsShuffle {
@@ -197,12 +206,16 @@ namespace LibWebMusic {
                     mSearchUrl = keyFile.get_string(ident, "SearchUrl");
                 }
 
+                if(keyFile.has_key(ident, "TrackUrl")) {
+                    mTrackUrl = keyFile.get_string(ident, "TrackUrl");
+                }
+
                 if(keyFile.has_key(ident, "Integration")) {
                     mIntegrationFilePath = path + keyFile.get_string(ident, "Integration");
                 }
 
                 if(keyFile.has_key(ident, "SearchProvider")) {
-                    mSearchProviderFilePath = path + keyFile.get_string(ident, "SearchProvider");
+                    mSearchProvider = keyFile.get_string(ident, "SearchProvider");
                 }
 
                 if(keyFile.has_key(ident, "Enabled")) {
@@ -237,8 +250,9 @@ namespace LibWebMusic {
         private void Reset() {
             mEnabled                = true;
             mSearchUrl              = "";
+            mTrackUrl               = "";
             mIntegrationFilePath    = "";
-            mSearchProviderFilePath = "";
+            mSearchProvider         = "";
             mSupportsShuffle        = false;
             mSupportsRepeat         = false;
             mSupportsLike           = false;

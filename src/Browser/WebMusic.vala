@@ -29,7 +29,8 @@ namespace WebMusic.Browser {
             { "show-preferences", AppShowPreferences, null   , null},
             { "show-about"      , AppShowAbout      , null   , null},
             { "quit"            , AppQuit           , null   , null},
-            { "load"            , AppLoad           , "a{sv}", null}
+            { "load"            , AppLoad           , "a{sv}", null},
+            { "show"            , AppShow           , "a{sv}", null}
         };
 
         public const string HOMEPAGE = "http://webmusic.tiede.org";
@@ -42,6 +43,8 @@ namespace WebMusic.Browser {
                 N_("Define the service to use for application startup"), N_("SERVICE") },
             { "search", 's', 0, OptionArg.STRING, null,
                 N_("Search service for SEARCH_TERM"), N_("SEARCH_TERM") },
+            { "show-track", 't', 0, OptionArg.STRING, null,
+                N_("Show given track with id TRACK_ID"), N_("TRACK_ID") },
             { "list-services", 'l', 0, OptionArg.NONE, null,
                 N_("List all supported services"), null },
             { null }
@@ -169,7 +172,16 @@ namespace WebMusic.Browser {
             }
 
             try {
-                if(options.contains("search") || options.contains("service")) {
+
+                if(options.contains("show-track")) {
+                    this.register(null);
+                    this.activate_action("show", options.end());
+                    return 0;
+                }
+
+                if(options.contains("search")
+                    || options.contains("service")) {
+
                     this.register(null);
                     this.activate_action("load", options.end());
                     return 0;
@@ -229,6 +241,28 @@ namespace WebMusic.Browser {
 
         private void AppQuit(SimpleAction? action, Variant? parameter) {
             this.quit();
+        }
+
+        private void AppShow(SimpleAction? action, Variant? parameter) {
+            if(parameter != null) {
+                string type = "";
+                string id = "";
+                string? service = null;
+
+                VariantDict dict = new VariantDict(parameter);
+
+                if(dict.contains("service")) {
+                    service = dict.lookup_value("service", VariantType.STRING).get_string();
+                }
+
+                if(dict.contains("show-track")) {
+                    type = "track";
+                    id = dict.lookup_value("show-track", VariantType.STRING).get_string();
+                }
+
+                this.mAppWindow = this.create_main_window(service);
+                this.mAppWindow.Show(service, type, id);
+            }
         }
 
         private void AppLoad(SimpleAction? action, Variant? parameter) {
