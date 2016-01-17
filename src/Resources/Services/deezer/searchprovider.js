@@ -97,81 +97,6 @@ const DeezerSearchProvider = new Lang.Class({
         callback(metas);
     },
 
-    _loadIcon: function(callback, albumId, url, cancellable) {
-        let soupUri = new Soup.URI(url);
-        let message = new Soup.Message({method: "GET", uri: soupUri});
-        try {
-            this._session.send_async(message, cancellable, Lang.bind(this,
-                function(message, async_res) {
-                    try {
-                        let stream = message.send_finish(async_res);
-
-                        GdkPixbuf.Pixbuf.new_from_stream_async(stream, cancellable, Lang.bind(this,
-                            function(obj, async_res){
-                                let pixbuf = GdkPixbuf.Pixbuf.new_from_stream_finish(async_res);
-
-                                let iconData = [
-                                    pixbuf.get_width(),
-                                    pixbuf.get_height(),
-                                    pixbuf.get_rowstride(),
-                                    pixbuf.get_has_alpha(),
-                                    pixbuf.get_bits_per_sample(),
-                                    pixbuf.get_n_channels(),
-                                    pixbuf.read_pixel_bytes()];
-
-                                this._iconDataCache[albumId] = new GLib.Variant('(iiibiiay)', iconData);
-
-                                if(this._iconDataCacheReady) {
-                                    callback(this._ids);
-                                }
-                        }));
-                    } catch(e) {
-                        if (e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.CANCELLED)) {
-                           return;
-                        }
-
-                        throw e;
-                    }
-
-                }));
-        } catch(e) {
-            if (e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.CANCELLED)) {
-               return;
-            }
-
-            throw e;
-        }
-
-    },
-
-    _loadIcons: function(callback, cancellable) {
-        let soupUri, message;
-        let missingAlbums = false;
-
-        let albums = [];
-
-        for(let i = 0; i < this._dataCache.length; i++) {
-            let albumId  = this._dataCache[i].album.id;
-            let url = this._dataCache[i].album.cover_medium;
-
-            if(!this._iconDataCache[albumId] || this._iconDataCache[albumId] == null) {
-                missingAlbums = true;
-
-                if(albums.indexOf(albumId) == -1) {
-                    albums.push(albumId);
-                    this._loadIcon(callback, albumId, url, cancellable);
-                } else {
-                    //Album is already queued for loading, ignore
-                }
-
-            }
-        }
-
-        if(!missingAlbums) {
-            callback(this._ids);
-        }
-    },
-
     _handleSearch: function(terms, callback, cancellable) {
 
         let term = terms.join(' ');
@@ -218,5 +143,79 @@ const DeezerSearchProvider = new Lang.Class({
 
                 throw e;
             }
+    },
+
+    _loadIcons: function(callback, cancellable) {
+        let soupUri, message;
+        let missingAlbums = false;
+
+        let albums = [];
+
+        for(let i = 0; i < this._dataCache.length; i++) {
+            let albumId  = this._dataCache[i].album.id;
+            let url = this._dataCache[i].album.cover_medium;
+
+            if(!this._iconDataCache[albumId] || this._iconDataCache[albumId] == null) {
+                missingAlbums = true;
+
+                if(albums.indexOf(albumId) == -1) {
+                    albums.push(albumId);
+                    this._loadIcon(callback, albumId, url, cancellable);
+                } else {
+                    //Album is already queued for loading, ignore
+                }
+
+            }
+        }
+
+        if(!missingAlbums) {
+            callback(this._ids);
+        }
+    },
+
+    _loadIcon: function(callback, albumId, url, cancellable) {
+        let soupUri = new Soup.URI(url);
+        let message = new Soup.Message({method: "GET", uri: soupUri});
+        try {
+            this._session.send_async(message, cancellable, Lang.bind(this,
+                function(message, async_res) {
+                    try {
+                        let stream = message.send_finish(async_res);
+
+                        GdkPixbuf.Pixbuf.new_from_stream_async(stream, cancellable, Lang.bind(this,
+                            function(obj, async_res){
+                                let pixbuf = GdkPixbuf.Pixbuf.new_from_stream_finish(async_res);
+
+                                let iconData = [
+                                    pixbuf.get_width(),
+                                    pixbuf.get_height(),
+                                    pixbuf.get_rowstride(),
+                                    pixbuf.get_has_alpha(),
+                                    pixbuf.get_bits_per_sample(),
+                                    pixbuf.get_n_channels(),
+                                    pixbuf.read_pixel_bytes()];
+
+                                this._iconDataCache[albumId] = new GLib.Variant('(iiibiiay)', iconData);
+
+                                if(this._iconDataCacheReady) {
+                                    callback(this._ids);
+                                }
+                        }));
+                    } catch(e) {
+                        if (e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.CANCELLED)) {
+                           return;
+                        }
+
+                        throw e;
+                    }
+                }));
+        } catch(e) {
+            if (e.matches(Gio.IOErrorEnum, Gio.IOErrorEnum.CANCELLED)) {
+               return;
+            }
+
+            throw e;
+        }
+
     }
 });
