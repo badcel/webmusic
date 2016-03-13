@@ -10,5 +10,5 @@ DBusActivatable=true
 Exec=@WEBMUSIC_LOCAL_BINDIR@webmusic
 
 StartupNotify=true
-Categories=Network;GNOME;GTK;WebBrowser;
+Categories=GNOME;GTK;AudioVideo;Audio;Player;
 _Keywords=webmusic;music;
