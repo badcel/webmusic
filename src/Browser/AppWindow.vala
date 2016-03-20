@@ -48,9 +48,13 @@ namespace WebMusic.Browser
         }
     }
 
+    [GtkTemplate (ui = "/org/WebMusic/Browser/ui/application-window.ui")]
     private class AppWindow : Gtk.ApplicationWindow {
 
+        [GtkChild]
         private Gtk.HeaderBar    mHeader;
+
+        [GtkChild]
         private Gtk.MenuButton   mBtnPopover;
         private Browser          mBrowser;
         private IPlayer          mPlayer;
@@ -78,8 +82,6 @@ namespace WebMusic.Browser
                     RefreshDarkThemeMode();
                 }
             });
-
-            this.set_default_size(1200, 768);
 
             try {
                 mPlayer = Bus.get_proxy_sync(BusType.SESSION, "org.WebMusic.Webextension",
@@ -172,8 +174,6 @@ namespace WebMusic.Browser
 
         private void CreateWidgets(Service service) {
 
-            var imgMiniMode = new Gtk.Image.from_icon_name("open-menu-symbolic", Gtk.IconSize.MENU);
-
             var b = new Gtk.Builder();
             try {
                 b.add_from_resource("/org/WebMusic/Browser/ui/popover-menu.ui");
@@ -181,21 +181,7 @@ namespace WebMusic.Browser
                 error("The resource popover-menu.ui could not be loaded. (%s)", e.message);
             }
 
-            var model = b.get_object("popovermenu") as MenuModel;
-
-            mBtnPopover = new Gtk.MenuButton();
-            mBtnPopover.image             = imgMiniMode;
-            mBtnPopover.always_show_image = true;
-            mBtnPopover.sensitive         = false;
-            mBtnPopover.menu_model        = model;
-            mBtnPopover.use_popover       = true;
-
-            mHeader = new Gtk.HeaderBar();
-            mHeader.show_close_button = true;
-            mHeader.pack_end(mBtnPopover);
-            SetTitle("", "", "");
-
-            this.set_titlebar(mHeader);
+            mBtnPopover.menu_model = b.get_object("popovermenu") as MenuModel;
 
             mBrowser = new Browser(mPlayer, service);
             mBrowser.LoadChanged.connect((event) => {

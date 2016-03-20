@@ -2,6 +2,7 @@
 <gresources>
   <gresource prefix="/org/WebMusic/Browser">
     <file preprocess="xml-stripblanks">ui/application-menu.ui</file>
+    <file preprocess="xml-stripblanks">ui/application-window.ui</file>
     <file preprocess="xml-stripblanks">ui/clear-data-dialog.ui</file>
     <file preprocess="xml-stripblanks">ui/main.ui</file>
     <file preprocess="xml-stripblanks">ui/osd.ui</file>
