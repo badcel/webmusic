@@ -9,6 +9,7 @@ src/Webextension/WebMusicWebExtension.vala
 src/Webextension/Plugins/Notification.vala
 
 [type: gettext/glade]src/Resources/ui/application-menu.ui
+[type: gettext/glade]src/Resources/ui/application-window.ui
 [type: gettext/glade]src/Resources/ui/clear-data-dialog.ui
 [type: gettext/glade]src/Resources/ui/main.ui
 [type: gettext/glade]src/Resources/ui/popover-menu.ui
