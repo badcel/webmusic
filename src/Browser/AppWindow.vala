@@ -175,7 +175,6 @@ namespace WebMusic.Browser
             var imgMiniMode = new Gtk.Image.from_icon_name("open-menu-symbolic", Gtk.IconSize.MENU);
 
             var b = new Gtk.Builder();
-            b.set_translation_domain(Config.GETTEXT_PACKAGE);
             try {
                 b.add_from_resource("/org/WebMusic/Browser/ui/popover-menu.ui");
             } catch(Error e) {
