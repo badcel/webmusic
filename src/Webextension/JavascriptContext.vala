@@ -201,7 +201,9 @@ namespace WebMusic.Webextension {
                                        new JSCore.String.with_utf8_c_string(path), line,
                                        out exception);
 
-
+            if(exception != null) {
+                    this.LogException("EvaluateScript", exception);
+            }
         }
 
         public static JSCore.Value GetValueFromVariant(Variant? variant, JSCore.Context context) {
