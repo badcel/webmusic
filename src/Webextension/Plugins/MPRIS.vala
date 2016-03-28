@@ -396,5 +396,38 @@ namespace WebMusic.Webextension.Plugins {
         }
     }
 
+    [DBus(name = "org.mpris.MediaPlayer2.Playlists")]
+    private class MprisPlaylists : GLib.Object {
+
+        public signal void PlaylistChanged(Variant playlist);
+
+        private Player mPlayer;
+
+        public MprisPlaylists(Player player) {
+            mPlayer = player;
+        }
+
+        public uint32 PlaylistCount {
+            get { return 0; }
+        }
+
+        public Variant[] Orderings {
+            get { return null; }
+        }
+
+        public Variant ActivePlaylist {
+            get { return null; }
+        }
+
+        public void ActivatePlaylist(string playlist_id) {
+
+        }
+
+        public Variant[] GetPlaylists(uint32 index, uint32 max_count, string order, bool reverse_order) {
+            return null;
+        }
+
+    }
+
 }
 
