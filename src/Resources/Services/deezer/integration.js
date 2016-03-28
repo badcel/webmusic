@@ -18,37 +18,6 @@
 
 (function(WebMusicApi) {
 
-    var PlayerAction = {
-        STOP    : "stop",
-        PLAY    : "play",
-        PAUSE   : "pause",
-        NEXT    : "next",
-        PREVIOUS: "previous",
-        REPEAT  : "repeat",
-        VOLUME  : "volume",
-        TRACK_POSITION : "track-position",
-        TOGGLE_SHUFFLE : "toggle-shuffle",
-        TOGGLE_LIKE    : "toggle-like"
-    };
-
-    var BrowserAction = {
-        SEARCH    : "search",
-        SHOW      : "show"
-    };
-
-    var ActionShowType = {
-        TRACK    : "track",
-        ALBUM    : "album",
-        ARTIST   : "artist",
-        SHOW     : "show"
-    };
-
-    var PlaybackState = {
-        STOP : 0,
-        PLAY : 1,
-        PAUSE: 2,
-    };
-
     WebMusicApi.init = function() {
         WebMusicApi.ready      = false;
 
@@ -89,7 +58,7 @@
                 WebMusicApi.warning('Deezer - Unknown type: ' + currentSong.__TYPE__);
         }
 
-        WebMusicApi.playbackStatus = dzPlayer.isPlaying()? PlaybackState.PLAY : PlaybackState.STOP;
+        WebMusicApi.playbackStatus = dzPlayer.isPlaying()? WebMusicApi.PlaybackState.PLAY : WebMusicApi.PlaybackState.STOP;
 
         WebMusicApi.canGoNext     = WebMusicApi._isButtonEnabled('next');
         WebMusicApi.canGoPrevious = WebMusicApi._isButtonEnabled('prev');
@@ -111,52 +80,52 @@
     WebMusicApi.ActivateAction = function(action, parameter) {
 
         switch(action) {
-            case PlayerAction.PLAY:
+            case WebMusicApi.PlayerAction.PLAY:
                 dzPlayer.control.play();
                 break;
-            case PlayerAction.STOP:
-            case PlayerAction.PAUSE:
+            case WebMusicApi.PlayerAction.STOP:
+            case WebMusicApi.PlayerAction.PAUSE:
                 dzPlayer.control.pause();
                 break;
-            case PlayerAction.NEXT:
+            case WebMusicApi.PlayerAction.NEXT:
                 dzPlayer.control.nextSong();
                 break;
-            case PlayerAction.PREVIOUS:
+            case WebMusicApi.PlayerAction.PREVIOUS:
                 dzPlayer.control.prevSong();
                 break;
-            case PlayerAction.REPEAT:
+            case WebMusicApi.PlayerAction.REPEAT:
                 dzPlayer.control.setRepeat(parameter);
                 break;
-            case PlayerAction.VOLUME:
+            case WebMusicApi.PlayerAction.VOLUME:
                 dzPlayer.control.setVolume(parameter);
                 break;
-            case PlayerAction.TOGGLE_SHUFFLE:
+            case WebMusicApi.PlayerAction.TOGGLE_SHUFFLE:
                 dzPlayer.control.setShuffle(!dzPlayer.shuffle);
                 break;
-            case PlayerAction.TOGGLE_LIKE:
+            case WebMusicApi.PlayerAction.TOGGLE_LIKE:
                 document.querySelector('.player-actions .icon-love').parentNode.parentNode.click();
                 break;
-            case PlayerAction.TRACK_POSITION:
+            case WebMusicApi.PlayerAction.TRACK_POSITION:
                 let percent = (parameter / 1000000) / dzPlayer.getCurrentSong().DURATION;
                 dzPlayer.control.seek(percent);
                 break;
-            case BrowserAction.SEARCH:
+            case WebMusicApi.BrowserAction.SEARCH:
                 www.navigate('/search/' + parameter);
                 break;
-            case BrowserAction.SHOW:
+            case WebMusicApi.BrowserAction.SHOW:
                 let type    = arguments[1];
                 let id      = arguments[2];
 
                 let url = '';
 
                 switch(type) {
-                    case ActionShowType.TRACK:
+                    case WebMusicApi.ActionShowType.TRACK:
                         url = '/track/' + id;
                         break;
-                    case ActionShowType.ALBUM:
+                    case WebMusicApi.ActionShowType.ALBUM:
                         url = '/album/' + id;
                         break;
-                    case ActionShowType.ARTIST:
+                    case WebMusicApi.ActionShowType.ARTIST:
                         url =  '/artist/' + id;
                         break;
                     default:

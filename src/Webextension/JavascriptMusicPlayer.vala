@@ -479,13 +479,19 @@ namespace WebMusic.Webextension {
                     " Integration not loaded.", mService.Name, REQUIRED_API_VERSION);
             } else if(mService.IntegratesService) {
                 string serviceFile;
-                string path = mService.IntegrationFilePath;
+                string baseApi;
+                string path;
 
                 try {
+                    path = Directory.GetServiceDir() + "api.js";
+                    FileUtils.get_contents(path, out baseApi);
+
+                    path = mService.IntegrationFilePath;
                     FileUtils.get_contents(path, out serviceFile);
 
                     debug("Injecting %s: %s", mService.Ident, path);
 
+                    mContext.EvaluateScript(baseApi, path, 1);
                     mContext.EvaluateScript(serviceFile, path, 1);
                     mIntegrationReady = true;
 
