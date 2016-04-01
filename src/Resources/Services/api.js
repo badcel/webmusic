@@ -59,6 +59,42 @@
         WebMusicApi.ClearChanges();
     };
 
+    function Player() {}
+    Player.prototype = {
+
+        ready      : false,
+        canControl : false,
+        canPlay    : false,
+        canPause   : false,
+        canSeek    : false,
+
+        url    : '',
+        artist : '',
+        track  : '',
+        album  : '',
+        artUrl : '',
+
+        playbackStatus : 0,
+
+        canGoNext      : false,
+        canGoPrevious  : false,
+        canShuffle     : false,
+        canRepeat      : false,
+
+        like    : false,
+        shuffle : false,
+
+        repeat : 0,
+        volume : 50,
+
+        trackLength   : 0,
+        trackPosition : 0,
+
+        changes : []
+    };
+
+    WebMusicApi.Player = new Player();
+
     Object.defineProperty(WebMusicApi, 'ready', {
         set: function (value) {
             if(value != WebMusicApi.Player.ready) {
