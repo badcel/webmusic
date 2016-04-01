@@ -103,7 +103,7 @@
         set: function (value) {
             if(value != WebMusicApi.Player.canSeek) {
                 WebMusicApi.Player.changes.push({Property: 'canSeek', Value: value});
-                WebMusicApi.Player.ready = value;
+                WebMusicApi.Player.canSeek = value;
             }
         },
         get: function() { return WebMusicApi.Player.canSeek; }
