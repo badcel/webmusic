@@ -16,117 +16,63 @@
 
 namespace WebMusic.Webextension {
 
-    private class JavascriptContext : GLib.Object {
+    private class JsObject : GLib.Object {
 
         public signal void ContextChanged();
 
-        private unowned JSCore.GlobalContext mContext;
-        private unowned JSCore.Object mJsInterface;
-        private unowned JSCore.Object mGlobal;
+        private unowned JSCore.Object js_object;
+        private unowned JSCore.Context js_context;
 
-        private static const string API_NAME = "WebMusicApi";
-
-        public JavascriptContext(JSCore.GlobalContext context) {
-            this.SetContext(context);
+        public JsObject() {
         }
 
-
-        static const JSCore.StaticFunction[] js_funcs = {
-            { "debug", debugJs, JSCore.PropertyAttribute.ReadOnly },
-            { "warning", warningJs, JSCore.PropertyAttribute.ReadOnly },
-            { null, null, 0 }
-        };
-
-        public static JSCore.Value debugJs (JSCore.Context ctx,
-            JSCore.Object function,
-            JSCore.Object thisObject,
-            JSCore.Value[] arguments,
-            out JSCore.Value exception) {
-
-            exception = null;
-
-            debug("Log from JS: %s", GetUTF8StringFromValue(arguments[0], ctx));
-            return new JSCore.Value.boolean(ctx, true);
+        public JsObject.from_class(string name, JSCore.Class class, JSCore.Context context) {
+            this.create_from_class(name, class, context);
         }
 
-        public static JSCore.Value warningJs (JSCore.Context ctx,
-            JSCore.Object function,
-            JSCore.Object thisObject,
-            JSCore.Value[] arguments,
-            out JSCore.Value exception) {
+        public JsObject.from_object(JSCore.Object object, JSCore.Context context) {
+            object.protect(context);
 
-            exception = null;
-
-            warning("Warning from JS: %s", GetUTF8StringFromValue(arguments[0], ctx));
-            return new JSCore.Value.boolean(ctx, true);
+            js_object  = object;
+            js_context = context;
         }
 
-        public void SetContext(JSCore.GlobalContext context) {
+        public void create_from_class(string name, JSCore.Class class, JSCore.Context context){
+            var obj = new JSCore.Object(context, class, context);
+            obj.protect(context);
 
-            const JSCore.ClassDefinition definition = {
-                0,                          // version
-                JSCore.ClassAttribute.None, // attribute
-                API_NAME,                   // className
-                null,                       // parentClass
+            var global_obj = context.get_global_object();
+            global_obj.protect(context);
 
-                null,                       // static values
-                js_funcs,                   // static functions
+            var obj_name = new JSCore.String.with_utf8_c_string(name);
+            global_obj.set_property(context, obj_name, obj, JSCore.PropertyAttribute.None, null);
 
-                null,                       // initialize
-                null,                       // finalize
-
-                null,                       // hasProperty
-                null,                       // getProperty
-                null,                       // setProperty
-                null,                       // deleteProperty
-
-                null,                       // getPropertyNames
-                null,                       // callAsFunction
-                null,                       // callAsConstructor
-                null,                       // hasInstance
-                null                        // convertToType
-            };
-
-            var jsApiClass = new JSCore.Class(definition);
-            var jsInterface = new JSCore.Object(context, jsApiClass, mContext);
-            jsInterface.protect(context);
-
-            var global = context.get_global_object();
-            global.protect(context);
-
-            var id = new JSCore.String.with_utf8_c_string(API_NAME);
-            global.set_property(context, id, jsInterface, JSCore.PropertyAttribute.None, null);
-
-            if(mJsInterface != null) {
-                mJsInterface.unprotect(mContext);
+            if(js_object != null) {
+                js_object.unprotect(js_context);
             }
 
-            if(mGlobal != null) {
-                mGlobal.unprotect(mContext);
-            }
-
-            mGlobal = global;
-            mContext = context;
-            mJsInterface = jsInterface;
+            js_object  = obj;
+            js_context = context;
 
             this.ContextChanged();
         }
 
-        public unowned JSCore.Value CallFunction(string name, Variant[]? parameter) {
+        public Variant? call_function(string name, Variant[]? parameter) {
+            Variant? ret = null;
             JSCore.Value? exception;
-            unowned JSCore.Value ret = null;
+            unowned JSCore.Value retFunc = null;
 
-            JSCore.Value val = mJsInterface.get_property(mContext,
+            JSCore.Value val = js_object.get_property(js_context,
                                 new JSCore.String.with_utf8_c_string(name), out exception);
 
             //TODO Exception handling
 
-            JSCore.Object? func = val.to_object(mContext, exception);
+            JSCore.Object? func = val.to_object(js_context, exception);
 
             if(func == null) {
                 critical("Function %s is null.", name);
                 //TODO: Raise Exception
-            } else if(!func.is_function(mContext)) {
+            } else if(!func.is_function(js_context)) {
                 critical("Function %s is no function.", name);
                 //TODO: Raise Exception
             } else {
@@ -134,62 +80,67 @@ namespace WebMusic.Webextension {
                 if(parameter != null) {
                     params = new void*[parameter.length];
                     for(int i = 0; i < parameter.length; i++) {
-                        params[i] = GetValueFromVariant(parameter[i], mContext);
-
+                        params[i] = JsConverter.get_value(parameter[i], js_context);
                     }
                 }
 
-                ret = func.call_as_function(mContext, func, (JSCore.Value[]) params, out exception);
+                retFunc = func.call_as_function(js_context, func, (JSCore.Value[]) params, out exception);
 
                 if(exception != null) {
                     this.LogException(name, exception);
+                } else {
+                    ret = JsConverter.get_variant(retFunc, js_context);
                 }
             }
 
             return ret;
         }
 
-        public string CallFunctionAsString(string name, Variant[]? parameter) {
-            unowned JSCore.Value? ret = CallFunction(name, parameter);
-            return GetUTF8StringFromValue(ret, mContext);;
-        }
-
-        public int CallFunctionAsInteger(string name, Variant[]? parameter) {
-            JSCore.Value? exception = null;
-            unowned JSCore.Value? ret = CallFunction(name, parameter);
-
-            return (int)ret.to_number(mContext, exception);
-        }
-
-        public double CallFunctionAsDouble(string name, Variant[]? parameter) {
-            JSCore.Value? exception = null;
-            unowned JSCore.Value? ret = CallFunction(name, parameter);
-
-            return (double)ret.to_number(mContext, exception);
-        }
-
-        public bool CallFunctionAsBoolean(string name, Variant[]? parameter) {
-            unowned JSCore.Value? ret = CallFunction(name, parameter);
-            return ret.to_boolean(mContext);
-        }
-
-        public new bool get_property(string name, out JSCore.Value value) {
-            bool ret = false;
-            value = new JSCore.Value.null(mContext);
+        public Variant? get_property_value(string name) {
+            Variant? ret = null;
+            var value = new JSCore.Value.null(js_context);
             JSCore.Value? exception;
 
             JSCore.String jsName = new JSCore.String.with_utf8_c_string(name);
 
-            if(!mJsInterface.has_property(mContext, jsName)) {
-                ret = false;
+            if(!js_object.has_property(js_context, jsName)) {
+                ret = null;
             } else {
-                ret = true;
-                value = mJsInterface.get_property(mContext, jsName, out exception);
+                value = js_object.get_property(js_context, jsName, out exception);
 
                 if(exception != null) {
                     this.LogException(name, exception);
+                } else {
+                    ret = JsConverter.get_variant(value, js_context);
                 }
 
+            }
+
+            return ret;
+        }
+
+        public JsObject? get_property_object(string name) {
+            JsObject? ret = null;
+            JSCore.Value? exception;
+
+            JSCore.String jsName = new JSCore.String.with_utf8_c_string(name);
+
+            if(!js_object.has_property(js_context, jsName)) {
+                ret = null;
+            } else {
+                var value = js_object.get_property(js_context, jsName, out exception);
+
+                if(exception != null) {
+                    this.LogException(name, exception);
+                } else {
+                    var object = value.to_object(js_context, exception);
+
+                    if(exception != null) {
+                        this.LogException(name, exception);
+                    } else {
+                        return new JsObject.from_object(object, js_context);
+                    }
+                }
             }
 
             return ret;
@@ -197,7 +148,7 @@ namespace WebMusic.Webextension {
 
         public void EvaluateScript(string code, string path, int line) {
             JSCore.Value exception = null;
-            mContext.evaluate_script(new JSCore.String.with_utf8_c_string(code), mJsInterface,
+            js_context.evaluate_script(new JSCore.String.with_utf8_c_string(code), js_object,
                                        new JSCore.String.with_utf8_c_string(path), line,
                                        out exception);
 
@@ -206,85 +157,19 @@ namespace WebMusic.Webextension {
             }
         }
 
-        public static JSCore.Value GetValueFromVariant(Variant? variant, JSCore.Context context) {
-
-            if (variant == null) {
-		        return new JSCore.Value.null(context);
-            }
-
-            if (variant.is_of_type(VariantType.STRING)) {
-	            return new JSCore.Value.string(context, new JSCore.String.with_utf8_c_string(variant.get_string()));
-            }
-
-            if (variant.is_of_type(VariantType.BOOLEAN)) {
-	            return new JSCore.Value.boolean(context, variant.get_boolean());
-	        }
-
-            if (variant.is_of_type(VariantType.DOUBLE)) {
-	            return new JSCore.Value.number(context, variant.get_double());
-            }
-
-            if (variant.is_of_type(VariantType.INT32)) {
-	            return new JSCore.Value.number(context, (double) variant.get_int32());
-            }
-
-            if (variant.is_of_type(VariantType.UINT32)) {
-	            return new JSCore.Value.number(context, (double) variant.get_uint32());
-            }
-
-            if (variant.is_of_type(VariantType.INT64)) {
-	            return new JSCore.Value.number(context, (double) variant.get_int64());
-            }
-
-            if (variant.is_of_type(VariantType.UINT64)) {
-	            return new JSCore.Value.number(context, (double) variant.get_uint64());
-            }
-
-            warning("Given variant type could not be converted into a JSCore.Value");
-            return new JSCore.Value.null(context);
-        }
-
-        public string GetUTF8String(JSCore.Value val) {
-            return GetUTF8StringFromValue(val, mContext);
-        }
-
-        public double GetDouble(JSCore.Value val) {
-            JSCore.Value? exception = null;
-            return (double)val.to_number(mContext, exception);
-        }
-
-        public int GetInteger(JSCore.Value val) {
-            JSCore.Value? exception = null;
-            return (int)val.to_number(mContext, exception);
-        }
-
-        public bool GetBoolean(JSCore.Value val) {
-            return val.to_boolean(mContext);
-        }
-
-        private void LogException(string name, JSCore.Value exception) {
+        protected void LogException(string name, JSCore.Value exception) {
             JSCore.Value e = null;
-            JSCore.Object o = exception.to_object(mContext, e);
+            JSCore.Object o = exception.to_object(js_context, e);
 
             JSCore.String prop_name = new JSCore.String.with_utf8_c_string("line");
-            double line = o.get_property(mContext, prop_name, out e).to_number(mContext, e);
+            double line = o.get_property(js_context, prop_name, out e).to_number(js_context, e);
 
             prop_name = new JSCore.String.with_utf8_c_string("sourceURL");
-            string file = this.GetUTF8String(o.get_property(mContext, prop_name, out e));
+            string file = JsConverter.get_string(o.get_property(js_context, prop_name, out e), js_context);
 
-            string message = this.GetUTF8String(exception);
+            string message = JsConverter.get_string(exception, js_context);
             warning("Error during call of function '%s'\n\t- Message: %s\n\t- Line: %s\n\t- File: %s",
                     name, message, line.to_string(), file);
-        }
-
-        private static string GetUTF8StringFromValue(JSCore.Value val, JSCore.Context context){
-            JSCore.Value? exception = null;
-
-            JSCore.String str = val.to_string_copy(context, exception);
-            string ret = string.nfill(str.get_maximum_utf8_c_string_size(), ' ');
-            str.get_utf8_c_string(ret, ret.length);
-
-            return ret;
         }
     }
 }
