@@ -32,7 +32,6 @@ namespace WebMusic.Webextension {
 
         private HashTable<string, IPlugin> mPlugins;
         private BrowserDBus mBrowser;
-        private JavascriptContext mContext;
         private JavascriptMusicPlayer mPlayer;
         private Settings mSettings;
         private Service mService;
@@ -73,16 +72,16 @@ namespace WebMusic.Webextension {
                 if(mPlayer == null) {
                     //First run initialize
                     mService = new Service(name);
-                    mContext = new JavascriptContext(context);
 
-                    mPlayer = new JavascriptMusicPlayer(mService, mContext);
+                    mPlayer = new JavascriptMusicPlayer(mService);
+                    mPlayer.SetContext(context);
                     mPlayer.MetadataChanged.connect(this.OnMetadataChanged);
 
                     this.InitializePlugins();
                 } else {
                     //Refresh objects
                     mService.Load(name);
-                    mContext.SetContext(context);
+                    mPlayer.SetContext(context);
                 }
             } catch(ServiceError e) {
                 critical("Service file for %s could not be loaded. " +
@@ -123,7 +122,6 @@ namespace WebMusic.Webextension {
 
         private void Reset() {
             mService = null;
-            mContext = null;
             mPlayer  = null;
             mPlugins = null;
         }
