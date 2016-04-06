@@ -49,260 +49,285 @@
         PAUSE: 2,
     };
 
-    WebMusicApi.ClearChanges = function() {
-        WebMusicApi.Player.changes = [];
-    };
-
-    WebMusicApi.SendChanges = function() {
-        //Todo
-
-        WebMusicApi.ClearChanges();
+    WebMusicApi.PropertyChangeType = {
+        PLAYER   : 0,
+        PLAYLIST : 1,
+        TRACKLIST: 2,
     };
 
     function Player() {}
     Player.prototype = {
 
-        ready      : false,
-        canControl : false,
-        canPlay    : false,
-        canPause   : false,
-        canSeek    : false,
+        _ready      : false,
+        _canControl : false,
+        _canPlay    : false,
+        _canPause   : false,
+        _canSeek    : false,
 
-        url    : '',
-        artist : '',
-        track  : '',
-        album  : '',
-        artUrl : '',
+        _url    : '',
+        _artist : '',
+        _track  : '',
+        _album  : '',
+        _artUrl : '',
 
-        playbackStatus : 0,
+        _playbackStatus : 0,
 
-        canGoNext      : false,
-        canGoPrevious  : false,
-        canShuffle     : false,
-        canRepeat      : false,
+        _canGoNext      : false,
+        _canGoPrevious  : false,
+        _canShuffle     : false,
+        _canRepeat      : false,
 
-        like    : false,
-        shuffle : false,
+        _like    : false,
+        _shuffle : false,
 
-        repeat : 0,
-        volume : 50,
+        _repeat : 0,
+        _volume : 50,
 
-        trackLength   : 0,
-        trackPosition : 0,
+        _trackLength   : 0,
+        _trackPosition : 0,
 
-        changes : []
+        set ready(value) {
+            if(value != this._ready) {
+                this.changes.push(['ready', value]);
+                this._ready = value;
+            }
+        },
+
+        get ready() {
+            return this._ready;
+        },
+
+        set canControl(value) {
+            if(value != this._canControl) {
+                this.changes.push(['canControl', value]);
+                this._canControl = value;
+            }
+        },
+
+        get canControl() {
+            return this._canControl;
+        },
+
+        set canPlay(value) {
+            if(value != this._canPlay) {
+                this.changes.push(['canPlay', value]);
+                this._canPlay = value;
+            }
+        },
+
+        get canPlay() {
+            return this._canPlay;
+        },
+
+        set canPause(value) {
+            if(value != this._canPause) {
+                this.changes.push(['canPause', value]);
+                this._canPause = value;
+            }
+        },
+
+        get canPause() {
+            return this._canPause;
+        },
+
+        set canSeek(value) {
+            if(value != this._canSeek) {
+                this.changes.push(['canSeek', value]);
+                this._canSeek = value;
+            }
+        },
+
+        get canSeek() {
+            return this._canSeek;
+        },
+
+        set url(value) {
+            if(value != this._url) {
+                this.changes.push(['url', value]);
+                this._url = value;
+            }
+        },
+
+        get url() {
+            return this._url;
+        },
+
+        set artist(value) {
+            if(value != this._artist) {
+                this.changes.push(['artist', value]);
+                this._artist = value;
+            }
+        },
+
+        get artist() {
+            return this._artist;
+        },
+
+        set track(value) {
+            if(value != this._track) {
+                this.changes.push(['track', value]);
+                this._track = value;
+            }
+        },
+
+        get track() {
+            return this._track;
+        },
+
+        set album(value) {
+            if(value != this._album) {
+                this.changes.push(['album', value]);
+                this._album = value;
+            }
+        },
+
+        get album() {
+            return this._album;
+        },
+
+        set artUrl(value) {
+            if(value != this._artUrl) {
+                this.changes.push(['artUrl', value]);
+                this._artUrl = value;
+            }
+        },
+
+        get artUrl() {
+            return this._artUrl;
+        },
+
+        set playbackStatus(value) {
+            if(value != this._playbackStatus) {
+                this.changes.push(['playbackStatus', value]);
+                this._playbackStatus = value;
+            }
+        },
+
+        get playbackStatus() {
+            return this._playbackStatus;
+        },
+
+        set canGoNext(value) {
+            if(value != this._canGoNext) {
+                this.changes.push(['canGoNext', value]);
+                this._canGoNext = value;
+            }
+        },
+
+        get canGoNext() {
+            return this._canGoNext;
+        },
+
+        set canGoPrevious(value) {
+            if(value != this._canGoPrevious) {
+                this.changes.push(['canGoPrevious', value]);
+                this._canGoPrevious = value;
+            }
+        },
+
+        get canGoPrevious() {
+            return this._canGoPrevious;
+        },
+
+        set canShuffle(value) {
+            if(value != this._canShuffle) {
+                this.changes.push(['canShuffle', value]);
+                this._canShuffle = value;
+            }
+        },
+
+        get canShuffle() {
+            return this._canShuffle;
+        },
+
+        set canRepeat(value) {
+            if(value != this._canRepeat) {
+                this.changes.push(['canRepeat', value]);
+                this._canRepeat = value;
+            }
+        },
+
+        get canRepeat() {
+            return this._canRepeat;
+        },
+
+        set repeat(value) {
+            if(value != this._repeat) {
+                this.changes.push(['repeat', value]);
+                this._repeat = value;
+            }
+        },
+
+        get repeat() {
+            return this._repeat;
+        },
+
+        set volume(value) {
+            if(value != this._volume) {
+                this.changes.push(['volume', value]);
+                this._volume = value;
+            }
+        },
+
+        get volume() {
+            return this._volume;
+        },
+
+        set shuffle(value) {
+            if(value != this._shuffle) {
+                this.changes.push(['shuffle', value]);
+                this._shuffle = value;
+            }
+        },
+
+        get shuffle() {
+            return this._shuffle;
+        },
+
+        set like(value) {
+            if(value != this._like) {
+                this.changes.push(['like', value]);
+                this._like = value;
+            }
+        },
+
+        get like() {
+            return this._like;
+        },
+
+        set trackLength(value) {
+            if(value != this._trackLength) {
+                this.changes.push(['trackLength', value]);
+                this._trackLength = value;
+            }
+        },
+
+        get trackLength() {
+            return this._trackLength;
+        },
+
+        set trackPosition(value) {
+            if(value != this._trackPosition) {
+                //According to MPRIS2 spec property changes are not tracked
+                this._trackPosition = value;
+            }
+        },
+
+        get trackPosition() {
+            return this._trackPosition;
+        },
+
+
+        changes : [],
+
+        sendPropertyChange : function() {
+            if(this.changes.length > 0) {
+                WebMusicApi.sendPropertyChange(WebMusicApi.PropertyChangeType.PLAYER, this.changes);
+                this.changes = [];
+            }
+        }
     };
 
     WebMusicApi.Player = new Player();
-
-    Object.defineProperty(WebMusicApi, 'ready', {
-        set: function (value) {
-            if(value != WebMusicApi.Player.ready) {
-                WebMusicApi.Player.changes.push({Property: 'ready', Value: value});
-                WebMusicApi.Player.ready = value;
-            }
-        },
-        get: function() { return WebMusicApi.Player.ready; }
-    });
-
-    Object.defineProperty(WebMusicApi, 'canControl', {
-        set: function (value) {
-            if(value != WebMusicApi.Player.canControl) {
-                WebMusicApi.Player.changes.push({Property: 'canControl', Value: value});
-                WebMusicApi.Player.canControl = value;
-            }
-        },
-        get: function() { return WebMusicApi.Player.canControl; }
-    });
-
-    Object.defineProperty(WebMusicApi, 'canPlay', {
-        set: function (value) {
-            if(value != WebMusicApi.Player.canPlay) {
-                WebMusicApi.Player.changes.push({Property: 'canPlay', Value: value});
-                WebMusicApi.Player.canPlay = value;
-            }
-        },
-        get: function() { return WebMusicApi.Player.canPlay; }
-    });
-
-    Object.defineProperty(WebMusicApi, 'canPause', {
-        set: function (value) {
-            if(value != WebMusicApi.Player.canPause) {
-                WebMusicApi.Player.changes.push({Property: 'canPause', Value: value});
-                WebMusicApi.Player.canPause = value;
-            }
-        },
-        get: function() { return WebMusicApi.Player.canPause; }
-    });
-
-    Object.defineProperty(WebMusicApi, 'canSeek', {
-        set: function (value) {
-            if(value != WebMusicApi.Player.canSeek) {
-                WebMusicApi.Player.changes.push({Property: 'canSeek', Value: value});
-                WebMusicApi.Player.canSeek = value;
-            }
-        },
-        get: function() { return WebMusicApi.Player.canSeek; }
-    });
-
-    Object.defineProperty(WebMusicApi, 'url', {
-        set: function (value) {
-            if(value != WebMusicApi.Player.url) {
-                WebMusicApi.Player.changes.push({Property: 'url', Value: value});
-                WebMusicApi.Player.url = value;
-            }
-        },
-        get: function() { return WebMusicApi.Player.url; }
-    });
-
-    Object.defineProperty(WebMusicApi, 'artist', {
-        set: function (value) {
-            if(value != WebMusicApi.Player.artist) {
-                WebMusicApi.Player.changes.push({Property: 'artist', Value: value});
-                WebMusicApi.Player.artist = value;
-            }
-        },
-        get: function() { return WebMusicApi.Player.artist; }
-    });
-
-    Object.defineProperty(WebMusicApi, 'track', {
-        set: function (value) {
-            if(value != WebMusicApi.Player.track) {
-                WebMusicApi.Player.changes.push({Property: 'track', Value: value});
-                WebMusicApi.Player.track = value;
-            }
-        },
-        get: function() { return WebMusicApi.Player.track; }
-    });
-
-    Object.defineProperty(WebMusicApi, 'album', {
-        set: function (value) {
-            if(value != WebMusicApi.Player.album) {
-                WebMusicApi.Player.changes.push({Property: 'album', Value: value});
-                WebMusicApi.Player.album = value;
-            }
-        },
-        get: function() { return WebMusicApi.Player.album; }
-    });
-
-    Object.defineProperty(WebMusicApi, 'artUrl', {
-        set: function (value) {
-            if(value != WebMusicApi.Player.artUrl) {
-                WebMusicApi.Player.changes.push({Property: 'artUrl', Value: value});
-                WebMusicApi.Player.artUrl = value;
-            }
-        },
-        get: function() { return WebMusicApi.Player.artUrl; }
-    });
-
-    Object.defineProperty(WebMusicApi, 'playbackStatus', {
-        set: function (value) {
-            if(value != WebMusicApi.Player.playbackStatus) {
-                WebMusicApi.Player.changes.push({Property: 'playbackStatus', Value: value});
-                WebMusicApi.Player.playbackStatus = value;
-            }
-        },
-        get: function() { return WebMusicApi.Player.playbackStatus; }
-    });
-
-    Object.defineProperty(WebMusicApi, 'canGoNext', {
-        set: function (value) {
-            if(value != WebMusicApi.Player.canGoNext) {
-                WebMusicApi.Player.changes.push({Property: 'canGoNext', Value: value});
-                WebMusicApi.Player.canGoNext = value;
-            }
-        },
-        get: function() { return WebMusicApi.Player.canGoNext; }
-    });
-
-    Object.defineProperty(WebMusicApi, 'canGoPrevious', {
-        set: function (value) {
-            if(value != WebMusicApi.Player.canGoPrevious) {
-                WebMusicApi.Player.changes.push({Property: 'canGoPrevious', Value: value});
-                WebMusicApi.Player.canGoPrevious = value;
-            }
-        },
-        get: function() { return WebMusicApi.Player.canGoPrevious; }
-    });
-
-    Object.defineProperty(WebMusicApi, 'canShuffle', {
-        set: function (value) {
-            if(value != WebMusicApi.Player.canShuffle) {
-                WebMusicApi.Player.changes.push({Property: 'canShuffle', Value: value});
-                WebMusicApi.Player.canShuffle = value;
-            }
-        },
-        get: function() { return WebMusicApi.Player.canShuffle; }
-    });
-
-    Object.defineProperty(WebMusicApi, 'canRepeat', {
-        set: function (value) {
-            if(value != WebMusicApi.Player.canRepeat) {
-                WebMusicApi.Player.changes.push({Property: 'canRepeat', Value: value});
-                WebMusicApi.Player.canRepeat = value;
-            }
-        },
-        get: function() { return WebMusicApi.Player.canRepeat; }
-    });
-
-    Object.defineProperty(WebMusicApi, 'repeat', {
-        set: function (value) {
-            if(value != WebMusicApi.Player.repeat) {
-                WebMusicApi.Player.changes.push({Property: 'repeat', Value: value});
-                WebMusicApi.Player.repeat = value;
-            }
-        },
-        get: function() { return WebMusicApi.Player.repeat; }
-    });
-
-    Object.defineProperty(WebMusicApi, 'volume', {
-        set: function (value) {
-            if(value != WebMusicApi.Player.volume) {
-                WebMusicApi.Player.changes.push({Property: 'volume', Value: value});
-                WebMusicApi.Player.volume = value;
-            }
-        },
-        get: function() { return WebMusicApi.Player.volume; }
-    });
-
-    Object.defineProperty(WebMusicApi, 'shuffle', {
-        set: function (value) {
-            if(value != WebMusicApi.Player.shuffle) {
-                WebMusicApi.Player.changes.push({Property: 'shuffle', Value: value});
-                WebMusicApi.Player.shuffle = value;
-            }
-        },
-        get: function() { return WebMusicApi.Player.shuffle; }
-    });
-
-    Object.defineProperty(WebMusicApi, 'like', {
-        set: function (value) {
-            if(value != WebMusicApi.Player.like) {
-                WebMusicApi.Player.changes.push({Property: 'like', Value: value});
-                WebMusicApi.Player.like = value;
-            }
-        },
-        get: function() { return WebMusicApi.Player.like; }
-    });
-
-    Object.defineProperty(WebMusicApi, 'trackLength', {
-        set: function (value) {
-            if(value != WebMusicApi.Player.trackLength) {
-                WebMusicApi.Player.changes.push({Property: 'trackLength', Value: value});
-                WebMusicApi.Player.trackLength = value;
-            }
-        },
-        get: function() { return WebMusicApi.Player.trackLength; }
-    });
-
-    Object.defineProperty(WebMusicApi, 'trackPosition', {
-        set: function (value) {
-            if(value != WebMusicApi.Player.trackPosition) {
-                WebMusicApi.Player.changes.push({Property: 'trackPosition', Value: value});
-                WebMusicApi.Player.trackPosition = value;
-            }
-        },
-        get: function() { return WebMusicApi.Player.trackPosition; }
-    });
 
 })(this);
