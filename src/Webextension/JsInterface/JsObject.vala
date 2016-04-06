@@ -14,7 +14,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace WebMusic.Webextension {
+namespace WebMusic.Webextension.JsInterface {
 
     private class JsObject : GLib.Object {
 
