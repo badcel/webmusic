@@ -19,11 +19,87 @@ using WebMusic.Webextension.JsInterface;
 
 namespace WebMusic.Webextension {
 
+    public enum BrowserAction {
+        SEARCH, // INT = 0
+        SHOW;   // INT = 1
+
+        public string to_string() {
+
+            string ret = "";
+
+            switch(this) {
+                case BrowserAction.SEARCH:
+                    ret = "search";
+                    break;
+                case BrowserAction.SHOW:
+                    ret = "show";
+                    break;
+            }
+
+            return ret;
+        }
+    }
+
+    public enum PlayerAction {
+
+        STOP,           // INT = 0
+        PLAY,           // INT = 1
+        PAUSE,          // INT = 2
+        NEXT,           // INT = 3
+        PREVIOUS,       // INT = 4
+        REPEAT,         // INT = 5
+        VOLUME,         // INT = 6
+        TRACK_POSITION, // INT = 7
+        TOGGLE_SHUFFLE, // INT = 8
+        TOGGLE_LIKE;    // INT = 9
+
+        public string to_string() {
+
+            string ret = "";
+
+            switch(this) {
+                case PlayerAction.STOP:
+                    ret = "stop";
+                    break;
+                case PlayerAction.PLAY:
+                    ret = "play";
+                    break;
+                case PlayerAction.PAUSE:
+                    ret = "pause";
+                    break;
+                case PlayerAction.NEXT:
+                    ret = "next";
+                    break;
+                case PlayerAction.PREVIOUS:
+                    ret = "previous";
+                    break;
+                case PlayerAction.REPEAT:
+                    ret = "repeat";
+                    break;
+                case PlayerAction.VOLUME:
+                    ret = "volume";
+                    break;
+                case PlayerAction.TRACK_POSITION:
+                    ret = "track-position";
+                    break;
+                case PlayerAction.TOGGLE_SHUFFLE:
+                    ret = "toggle-shuffle";
+                    break;
+                case PlayerAction.TOGGLE_LIKE:
+                    ret = "toggle-like";
+                    break;
+            }
+
+            return ret;
+        }
+    }
+
     [DBus(name = "org.WebMusic.Webextension.Player")]
-    private class JavascriptMusicPlayer : WebMusicPlayer {
+    private class JavascriptMusicPlayer : Player {
 
         private const int REQUIRED_API_VERSION = 1;
         private static const string API_NAME = "WebMusicApi";
+        private static JavascriptMusicPlayer? mSelf = null;
 
         private JsObject mContext;
         private JsObject mJsPlayer;
@@ -38,17 +114,15 @@ namespace WebMusic.Webextension {
 
             mContext = new JsObject();
             mContext.ContextChanged.connect(OnContextChanged);
-        }
 
-        ~JavascriptMusicPlayer() {
-            StopCheckDom();
+            mSelf = this;
         }
-
 
         private static const JSCore.StaticFunction[] js_funcs = {
             { "debug", debugJs, JSCore.PropertyAttribute.ReadOnly },
             { "warning", warningJs, JSCore.PropertyAttribute.ReadOnly },
             { "sendPropertyChange", sendPropertyChange, JSCore.PropertyAttribute.ReadOnly },
+            { "seeked", onSeeked, JSCore.PropertyAttribute.ReadOnly },
             { null, null, 0 }
         };
 
@@ -100,19 +174,95 @@ namespace WebMusic.Webextension {
             return new JSCore.Value.boolean(ctx, true);
         }
 
+        private static JSCore.Value onSeeked (JSCore.Context ctx,
+            JSCore.Object function,
+            JSCore.Object thisObject,
+            JSCore.Value[] arguments,
+            out JSCore.Value exception) {
+
+            exception = null;
+
+            var v = JsConverter.get_variant(arguments[0], ctx);
+            mSelf.Seeked((int64)v.get_double());
+
+            return new JSCore.Value.boolean(ctx, true);
+        }
+
         private static JSCore.Value sendPropertyChange (JSCore.Context ctx,
             JSCore.Object function,
             JSCore.Object thisObject,
             JSCore.Value[] arguments,
             out JSCore.Value exception) {
 
-            GLib.Variant? val = null;
-            string? key = null;
+            exception = null;
+
             var v = JsConverter.get_variant(arguments[1], ctx);
+	        HashTable<string, Variant> ht = (HashTable<string, Variant>) v;
+
+            HashTable<PlayerProperties, Variant> changes = new HashTable<PlayerProperties, Variant>(direct_hash, direct_equal);
+            PlayerProperties? prop = null;
+
+            //Convert changes into enum types
+	        ht.foreach ((key, val) => {
+		        if(PlayerProperties.try_parse_name(key, out prop)) {
+		            changes.insert(prop, val);
+		        }
+	        });
+
+        	if(changes.contains(PlayerProperties.ART_URL)) {
+                cache_cover(changes);
+	        } else {
+                mSelf.PropertiesChanged(changes);
+	        }
 
             return new JSCore.Value.boolean(ctx, true);
         }
 
+        private static void cache_cover(HashTable<PlayerProperties, Variant> changes) {
+
+            string art_url = changes.get(PlayerProperties.ART_URL).get_string();
+
+            string artist = "";
+            if(changes.contains(PlayerProperties.ARTIST)) {
+                artist = changes.get(PlayerProperties.ARTIST).get_string();
+            }
+
+            string album = "";
+            if(changes.contains(PlayerProperties.ALBUM)) {
+                album = changes.get(PlayerProperties.ALBUM).get_string();
+            }
+
+            string track = "";
+            if(changes.contains(PlayerProperties.TRACK)) {
+                track = changes.get(PlayerProperties.TRACK).get_string();
+            }
+
+            string url_extension = art_url.substring(art_url.last_index_of_char('.'));
+            string file_artist   = artist.length > 0 ? artist + "_" : "";
+            string file_album    = album.length  > 0 ? album : track;
+
+            if(file_album.length == 0) {
+                //No track or album given. Generate id which is useable only one time
+                string date = new DateTime.now_utc().to_string();
+                file_album = GLib.Checksum.compute_for_string(ChecksumType.MD5, date, date.length);
+            }
+
+            string file_name = (file_artist + file_album + url_extension).replace(" ", "_").replace("/", "_");
+            file_name = Directory.GetAlbumArtDir() + file_name;
+
+            var file_cache = new FileCache();
+
+            file_cache.file_cached.connect((file_name, success) => {
+
+                if(success) {
+                    changes.insert(PlayerProperties.ART_FILE_LOCAL, new Variant.string("file://" + file_name));
+                }
+
+                mSelf.PropertiesChanged(changes);
+            });
+
+           file_cache.cache_async(art_url, file_name);
+        }
 
         [DBus (visible = false)]
         public void  SetContext(JSCore.GlobalContext context) {
@@ -120,97 +270,6 @@ namespace WebMusic.Webextension {
             this.mContext.create_from_class(API_NAME, apiClass, context);
 
             mJsPlayer = mContext.get_property_object("Player");
-        }
-
-        protected override string GetArtist() {
-            if(mIntegrationReady) {
-                Variant? prop = mJsPlayer.get_property_value("artist");
-                if(prop != null) {
-                    return prop.get_string(null);
-                } else {
-                    return "";
-                }
-            } else {
-                return "";
-            }
-        }
-
-        protected override string GetTrack()  {
-            if(mIntegrationReady) {
-                Variant? prop = mJsPlayer.get_property_value("track");
-                if(prop != null) {
-                    return prop.get_string(null);
-                } else {
-                    return "";
-                }
-            } else {
-                return "";
-            }
-        }
-
-        protected override string GetAlbum() {
-            if(mIntegrationReady) {
-                Variant? prop = mJsPlayer.get_property_value("album");
-                if(prop != null) {
-                    return prop.get_string(null);
-                } else {
-                    return "";
-                }
-            } else {
-                return "";
-            }
-        }
-
-        protected override int64 GetTrackLength() {
-            if(mIntegrationReady) {
-                Variant? prop = mJsPlayer.get_property_value("trackLength");
-                if(prop != null) {
-                    return (int64) prop.get_double();
-                } else {
-                    return 0;
-                }
-            } else {
-                return 0;
-            }
-        }
-
-        protected override string GetArtUrl() {
-            if(mIntegrationReady) {
-                Variant? prop = mJsPlayer.get_property_value("artUrl");
-                if(prop != null) {
-                    return prop.get_string(null);
-                } else {
-                    return "";
-                }
-            } else {
-                return "";
-            }
-        }
-
-        protected override string GetUrl() {
-            if(mIntegrationReady) {
-                Variant? prop = mJsPlayer.get_property_value("url");
-                if(prop != null) {
-                    return prop.get_string();
-                } else {
-                    return "";
-                }
-            } else {
-                return "";
-            }
-        }
-
-        protected override bool GetReady() {
-            if(mIntegrationReady) {
-                Variant? prop = mJsPlayer.get_property_value("ready");
-                if(prop != null) {
-                    return prop.get_boolean();
-                } else {
-                    return false;
-                }
-            } else {
-                return false;
-            }
         }
 
         public override PlayStatus PlaybackStatus {
@@ -335,9 +394,9 @@ namespace WebMusic.Webextension {
                 return ret;
             }
             set {
-                if(mIntegrationReady && mService.SupportsShuffle && mShuffle != value) {
+                if(mIntegrationReady && mService.SupportsShuffle && this.Shuffle != value) {
                     Variant[] args = new Variant[1];
-                    args[0] = new Variant.string("toggle-shuffle");
+                    args[0] = new Variant.string(PlayerAction.TOGGLE_SHUFFLE.to_string());
                     mContext.call_function("ActivateAction", args);
                 }
             }
@@ -359,10 +418,10 @@ namespace WebMusic.Webextension {
                 return ret;
             }
             set {
-                if(mIntegrationReady && mService.SupportsLike && mLike != value) {
+                if(mIntegrationReady && mService.SupportsLike && this.Like != value) {
                     Idle.add(() => {
                         Variant[] args = new Variant[1];
-                        args[0] = new Variant.string("toggle-like");
+                        args[0] = new Variant.string(PlayerAction.TOGGLE_LIKE.to_string());
                         mContext.call_function("ActivateAction", args);
                         return false;
                     });
@@ -386,7 +445,7 @@ namespace WebMusic.Webextension {
                 if(mIntegrationReady) {
                     Idle.add(() => {
                         Variant[] args = new Variant[2];
-                        args[0] = new Variant.string("volume");
+                        args[0] = new Variant.string(PlayerAction.VOLUME.to_string());
                         args[1] = new Variant.double(value);
                         mContext.call_function("ActivateAction", args);
                         return false;
@@ -410,7 +469,7 @@ namespace WebMusic.Webextension {
             set {
                 if(mIntegrationReady) {
                     Variant[] args = new Variant[2];
-                    args[0] = new Variant.string("track-position");
+                    args[0] = new Variant.string(PlayerAction.TRACK_POSITION.to_string());
                     args[1] = new Variant.int64(value);
                     mContext.call_function("ActivateAction", args);
                 }
@@ -462,7 +521,7 @@ namespace WebMusic.Webextension {
                 if(mIntegrationReady && mService.SupportsRepeat) {
                     Idle.add(() => {
                         Variant[] args = new Variant[2];
-                        args[0] = new Variant.string("repeat");
+                        args[0] = new Variant.string(PlayerAction.REPEAT.to_string());
                         args[1] = new Variant.int32((int32)value);
                         mContext.call_function("ActivateAction", args);
                         return false;
@@ -475,7 +534,7 @@ namespace WebMusic.Webextension {
             if(mIntegrationReady) {
                 Idle.add(() => {
                     Variant[] args = new Variant[1];
-                    args[0] = new Variant.string("next");
+                    args[0] = new Variant.string(PlayerAction.NEXT.to_string());
                     mContext.call_function("ActivateAction", args);
                     return false;
                 });
@@ -486,7 +545,7 @@ namespace WebMusic.Webextension {
             if(mIntegrationReady) {
                 Idle.add(() => {
                     Variant[] args = new Variant[1];
-                    args[0] = new Variant.string("previous");
+                    args[0] = new Variant.string(PlayerAction.PREVIOUS.to_string());
                     mContext.call_function("ActivateAction", args);
                     return false;
                 });
@@ -497,7 +556,7 @@ namespace WebMusic.Webextension {
             if(mIntegrationReady) {
                 Idle.add(() => {
                     Variant[] args = new Variant[1];
-                    args[0] = new Variant.string("pause");
+                    args[0] = new Variant.string(PlayerAction.PAUSE.to_string());
                     mContext.call_function("ActivateAction", args);
                     return false;
                 });
@@ -508,7 +567,7 @@ namespace WebMusic.Webextension {
             if(mIntegrationReady) {
                 Idle.add(() => {
                     Variant[] args = new Variant[1];
-                    args[0] = new Variant.string("stop");
+                    args[0] = new Variant.string(PlayerAction.STOP.to_string());
                     mContext.call_function("ActivateAction", args);
                     return false;
                 });
@@ -519,7 +578,7 @@ namespace WebMusic.Webextension {
             if(mIntegrationReady) {
                 Idle.add(() => {
                     Variant[] args = new Variant[1];
-                    args[0] = new Variant.string("play");
+                    args[0] = new Variant.string(PlayerAction.PLAY.to_string());
                     mContext.call_function("ActivateAction", args);
                     return false;
                 });
@@ -531,7 +590,7 @@ namespace WebMusic.Webextension {
             if(mIntegrationReady) {
                 Idle.add(() => {
                     Variant[] args = new Variant[2];
-                    args[0] = new Variant.string("search");
+                    args[0] = new Variant.string(BrowserAction.SEARCH.to_string());
                     args[1] = new Variant.string(term);
                     mContext.call_function("ActivateAction", args);
                     return false;
@@ -543,7 +602,7 @@ namespace WebMusic.Webextension {
             if(mIntegrationReady) {
                 Idle.add(() => {
                     Variant[] args = new Variant[3];
-                    args[0] = new Variant.string("show");
+                    args[0] = new Variant.string(BrowserAction.SHOW.to_string());
                     args[1] = new Variant.string(type);
                     args[2] = new Variant.string(id);
                     mContext.call_function("ActivateAction", args);
@@ -577,11 +636,9 @@ namespace WebMusic.Webextension {
 
                     mContext.call_function("init", null);
 
-                    StartCheckDom();
-
                 } catch(FileError e) {
                     mIntegrationReady = false;
-                    StopCheckDom();
+
                     critical("Could not load content of service file (%s). " +
                             "Integration disabled. (%s)", path, e.message);
                 }
@@ -589,11 +646,6 @@ namespace WebMusic.Webextension {
             } else {
                 mIntegrationReady = false;
                 debug("No integration supported for service %s.", mService.Name);
-                StopCheckDom();
-            }
-
-            if(!mIntegrationReady) {
-                Reset();
             }
         }
 
