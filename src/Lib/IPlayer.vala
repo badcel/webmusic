@@ -99,6 +99,111 @@ namespace LibWebMusic {
         }
     }
 
+    public enum PlayerProperties {
+        READY,           // INT =  0
+        CAN_CONTROL,     // INT =  1
+        CAN_PLAY,        // INT =  2
+        CAN_PAUSE,       // INT =  3
+        CAN_SEEK,        // INT =  4
+        CAN_GO_NEXT,     // INT =  5
+        CAN_GO_PREVIOUS, // INT =  6
+        CAN_SHUFFLE,     // INT =  7
+        CAN_REPEAT,      // INT =  8
+        URL,             // INT =  9
+        ARTIST,          // INT = 10
+        TRACK,           // INT = 11
+        ALBUM,           // INT = 12
+        ART_URL,         // INT = 13
+        ART_FILE_LOCAL,  // INT = 14
+        PLAYBACKSTATUS,  // INT = 15
+        LIKE,            // INT = 16
+        SHUFFLE,         // INT = 17
+        REPEAT,          // INT = 18
+        VOLUME,          // INT = 19
+        TRACK_LENGTH,    // INT = 20
+        TRACK_POSITION;  // INT = 21
+
+        public static bool try_parse_name(string name, out PlayerProperties? result) {
+
+            bool ret = true;
+            switch(name) {
+                case "ready":
+                    result = PlayerProperties.READY;
+                    break;
+                case "canControl":
+                    result = PlayerProperties.CAN_CONTROL;
+                    break;
+                case "canPlay":
+                    result = PlayerProperties.CAN_PLAY;
+                    break;
+                case "canPause":
+                    result = PlayerProperties.CAN_PAUSE;
+                    break;
+                case "canSeek":
+                    result = PlayerProperties.CAN_SEEK;
+                    break;
+                case "canGoNext":
+                    result = PlayerProperties.CAN_GO_NEXT;
+                    break;
+                case "canGoPrevious":
+                    result = PlayerProperties.CAN_GO_PREVIOUS;
+                    break;
+                case "canShuffle":
+                    result = PlayerProperties.CAN_SHUFFLE;
+                    break;
+                case "canRepeat":
+                    result = PlayerProperties.CAN_REPEAT;
+                    break;
+                case "url":
+                    result = PlayerProperties.URL;
+                    break;
+                case "artist":
+                    result = PlayerProperties.ARTIST;
+                    break;
+                case "track":
+                    result = PlayerProperties.TRACK;
+                    break;
+                case "album":
+                    result = PlayerProperties.ALBUM;
+                    break;
+                case "artUrl":
+                    result = PlayerProperties.ART_URL;
+                    break;
+                case "artFileLocal":
+                    result = PlayerProperties.ART_FILE_LOCAL;
+                    break;
+                case "playbackstatus":
+                    result = PlayerProperties.PLAYBACKSTATUS;
+                    break;
+                case "like":
+                    result = PlayerProperties.LIKE;
+                    break;
+                case "shuffle":
+                    result = PlayerProperties.SHUFFLE;
+                    break;
+                case "repeat":
+                    result = PlayerProperties.REPEAT;
+                    break;
+                case "volume":
+                    result = PlayerProperties.VOLUME;
+                    break;
+                case "trackLength":
+                    result = PlayerProperties.TRACK_LENGTH;
+                    break;
+                case "trackPosition":
+                    result = PlayerProperties.TRACK_POSITION;
+                    break;
+                default:
+                    result = null;
+                    ret = false;
+                    break;
+            }
+
+            return ret;
+        }
+
+    }
+
     [DBus(name = "org.WebMusic.Webextension.Player")]
     public interface IPlayer : GLib.Object {
 
