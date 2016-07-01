@@ -60,6 +60,7 @@ namespace WebMusic.Webextension.JsInterface {
             Variant variant = null;
 
             var type = value.get_type(js_context);
+
             switch(type) {
                 case JSCore.Type.Undefined:
                 case JSCore.Type.Null:
@@ -75,6 +76,8 @@ namespace WebMusic.Webextension.JsInterface {
                     variant = new Variant.string(get_string(value, js_context));
                     break;
                 case JSCore.Type.Object:
+                    //TODO: Currently only VariantDicts are supported
+
                     var dict = new VariantDict();
 
                     var js_dict = value.to_object(js_context, exception);
