@@ -86,7 +86,7 @@ namespace WebMusic.Browser
             try {
                 mPlayer = Bus.get_proxy_sync(BusType.SESSION, "org.WebMusic.Webextension",
                                         "/org/WebMusic/Webextension");
-                mPlayer.MetadataChanged.connect(OnMetadataChanged);
+                mPlayer.PropertiesChanged.connect(OnPropertiesChanged);
             } catch(IOError e) {
                 error("Could not connect to webextension via DBus. (%s)", e.message);
             }
@@ -168,8 +168,32 @@ namespace WebMusic.Browser
 
         }
 
-        private void OnMetadataChanged(string url, string artist, string track, string album, string artUrl) {
-            this.SetTitle(artist, track, album);
+        private void OnPropertiesChanged(HashTable<PlayerProperties, Variant> dict){
+
+            bool has_data = false;
+
+            string artist = "";
+            string track  = "";
+            string album  = "";
+
+            if(dict.contains(PlayerProperties.ARTIST)) {
+                artist = dict.get(PlayerProperties.ARTIST).get_string();
+                has_data = true;
+            }
+
+            if(dict.contains(PlayerProperties.TRACK)) {
+                track = dict.get(PlayerProperties.TRACK).get_string();
+                has_data = true;
+            }
+
+            if(dict.contains(PlayerProperties.ALBUM)) {
+                track = dict.get(PlayerProperties.ALBUM).get_string();
+                has_data = true;
+            }
+
+            if(has_data) {
+                this.SetTitle(artist, track, album);
+            }
         }
 
         private void CreateWidgets(Service service) {

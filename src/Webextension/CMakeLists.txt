@@ -15,11 +15,12 @@
  #
 
 vala_precompile(VALA_C
+    FileCache.vala
     Player.vala
-    WebMusicPlayer.vala
     WebMusicWebExtension.vala
-    JavascriptContext.vala
     JavascriptMusicPlayer.vala
+    JsInterface/JsConverter.vala
+    JsInterface/JsObject.vala
     Plugins/IPlugin.vala
     Plugins/MPRIS.vala
     Plugins/Notification.vala

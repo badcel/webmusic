@@ -33,32 +33,55 @@ namespace WebMusic.Webextension.Plugins {
 
         public bool RegisterPlayer(Player player) {
             mPlayer = player;
-            mPlayer.MetadataChanged.connect(OnMetadataChanged);
+            mPlayer.PropertiesChanged.connect(OnPropertiesChanged);
             return true;
         }
 
-        private void OnMetadataChanged(string url, string artist, string track, string album,
-                                        string fileName, int64 length){
+        private void OnPropertiesChanged(HashTable<PlayerProperties,Variant> dict) {
 
-            if(!this.Enable)
+            bool has_data = false;
+
+            string artist    = "";
+            string track     = "";
+            string album     = "";
+            string file_name = Config.PACKAGE; //desktop icon
+
+            if(dict.contains(PlayerProperties.TRACK)) {
+                track = dict.get(PlayerProperties.TRACK).get_string();
+                has_data = true;
+            }
+
+            if(dict.contains(PlayerProperties.ALBUM)) {
+                album = dict.get(PlayerProperties.ALBUM).get_string();
+                has_data = true;
+            }
+
+            if(dict.contains(PlayerProperties.ARTIST)) {
+                artist = dict.get(PlayerProperties.ARTIST).get_string();
+                has_data = true;
+            }
+
+            //if(dict.contains(PlayerProperties.ART_FILE_LOCAL)) {
+            //    file_name = dict.get(PlayerProperties.ART_FILE_LOCAL).get_string();
+            //}
+
+            if(!this.Enable || !has_data)
                 return;
 
             try {
-                string f = fileName.replace("file://", "");
-
                 string nowPlaying = _("Now playing %s").printf(track) + " ";
                 string by = artist.length > 0? _("by %s").printf(artist) + "\n": "";
                 string from = album.length > 0? _("from %s").printf(album): "";
                 string trackInfo = by + from;
 
                 if(mNotification == null) {
-                    mNotification = new Notify.Notification(nowPlaying, trackInfo, "webmusic");
+                    mNotification = new Notify.Notification(nowPlaying, trackInfo, file_name);
                 }
                 else
                 {
                     mNotification.clear_actions();
                     mNotification.clear_hints();
-                    mNotification.update(nowPlaying, trackInfo, "webmusic");
+                    mNotification.update(nowPlaying, trackInfo, file_name);
                 }
 
                 if(mPlayer.CanGoPrevious)
@@ -73,11 +96,6 @@ namespace WebMusic.Webextension.Plugins {
                 if(mPlayer.CanGoNext)
                 {
                     mNotification.add_action("media-skip-forward", _("Next"), CheckNotificationAction);
-                }
-
-                if(f.length > 0) {
-                    Gdk.Pixbuf pix = new Gdk.Pixbuf.from_file(f);
-                    mNotification.set_image_from_pixbuf(pix);
                 }
 
                 mNotification.set_urgency(Notify.Urgency.LOW);

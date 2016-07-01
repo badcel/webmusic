@@ -270,7 +270,7 @@ namespace JSCore {
 	}
 
 
-	[CCode (cprefix="kJSType")]
+	[CCode (cname="JSType", cprefix="kJSType")]
 	public enum Type {
 		Undefined, Null, Boolean, Number, String, Object
 	}

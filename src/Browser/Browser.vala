@@ -61,8 +61,7 @@ namespace WebMusic.Browser
 
             this.create_widgets();
 
-            mPlayer.MetadataChanged.connect(OnMetadataChanged);
-            mPlayer.PlayercontrolChanged.connect(OnPlayercontrolChanged);
+            mPlayer.PropertiesChanged.connect(OnPropertiesChanged);
         }
 
         public Service CurrentService {
@@ -121,8 +120,7 @@ namespace WebMusic.Browser
 
                 if(!mService.IntegratesService) {
                     SetCover("");
-                    OnPlayercontrolChanged(false, false, false, false, false, false,
-                                            PlayStatus.STOP, RepeatStatus.NONE);
+                    this.reset_playercontrols();
                 }
             } catch(ServiceError e) {
                 error("Could not load service. (%s)".printf(e.message));
@@ -154,27 +152,43 @@ namespace WebMusic.Browser
 
             if(!mService.IntegratesService) {
                 SetCover("");
-                OnPlayercontrolChanged(false, false, false, false, false, false,
-                                        PlayStatus.STOP, RepeatStatus.NONE);
+                this.reset_playercontrols();
             }
         }
 
-        private void OnMetadataChanged(string url, string artist, string track, string album,
-                                        string artUrl, int64 length) {
-            this.SetCover(artUrl);
+        private void reset_playercontrols() {
+            mBtnNext.sensitive = false;
+            mBtnPrev.sensitive = false;
+            mBtnPlayPause.sensitive = false;
+            mImgPlay.set_from_icon_name("media-playback-start", Gtk.IconSize.BUTTON);
         }
 
-        private void OnPlayercontrolChanged(bool canGoNext, bool canGoPrev, bool canShuffle,
-                            bool canRepeat, bool shuffle, bool like, PlayStatus playStatus, RepeatStatus repeat) {
+        private void OnPropertiesChanged(HashTable<PlayerProperties, Variant> dict){
 
-            mBtnNext.sensitive = mService.IntegratesService && canGoNext;
-            mBtnPrev.sensitive = mService.IntegratesService && canGoPrev;
+            if(dict.contains(PlayerProperties.ART_FILE_LOCAL)) {
+                this.SetCover(dict.get(PlayerProperties.ART_FILE_LOCAL).get_string());
+            }
+
+            if(dict.contains(PlayerProperties.CAN_GO_NEXT)) {
+                var can_go_next = dict.get(PlayerProperties.CAN_GO_NEXT).get_boolean();
+                mBtnNext.sensitive = mService.IntegratesService && can_go_next;
+            }
+
+            if(dict.contains(PlayerProperties.CAN_GO_PREVIOUS)) {
+                var can_go_previous = dict.get(PlayerProperties.CAN_GO_PREVIOUS).get_boolean();
+                mBtnPrev.sensitive = mService.IntegratesService && can_go_previous;
+            }
+
             mBtnPlayPause.sensitive = mService.IntegratesService;
 
-            if(playStatus == PlayStatus.PLAY) {
-                mImgPlay.set_from_icon_name("media-playback-pause", Gtk.IconSize.BUTTON);
-            } else {
-                mImgPlay.set_from_icon_name("media-playback-start", Gtk.IconSize.BUTTON);
+            if(dict.contains(PlayerProperties.PLAYBACKSTATUS)) {
+                PlayStatus play_status = (PlayStatus) dict.get(PlayerProperties.PLAYBACKSTATUS).get_double();
+
+                if(play_status == PlayStatus.PLAY) {
+                    mImgPlay.set_from_icon_name("media-playback-pause", Gtk.IconSize.BUTTON);
+                } else {
+                    mImgPlay.set_from_icon_name("media-playback-start", Gtk.IconSize.BUTTON);
+                }
             }
         }
 
@@ -203,11 +217,11 @@ namespace WebMusic.Browser
             SetCover(""); //Set default cover to initialize size of object
         }
 
-        private void SetCover(string fileName) {
-            string f = fileName.replace("file://", "");
+        private void SetCover(string file_name) {
+            string name = file_name.replace("file://", "");
 
-            if(f.length > 0) {
-                mCoverStage.LoadImage(f);
+            if(name.length > 0) {
+                mCoverStage.LoadImage(name);
             } else {
                 mCoverStage.LoadStockIcon("media-optical-cd-audio");
             }
