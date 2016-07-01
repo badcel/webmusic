@@ -18,43 +18,6 @@
 
 (function(WebMusicApi) {
 
-    WebMusicApi.PlayerAction = {
-        STOP    : 'stop',
-        PLAY    : 'play',
-        PAUSE   : 'pause',
-        NEXT    : 'next',
-        PREVIOUS: 'previous',
-        REPEAT  : 'repeat',
-        VOLUME  : 'volume',
-        TRACK_POSITION : 'track-position',
-        TOGGLE_SHUFFLE : 'toggle-shuffle',
-        TOGGLE_LIKE    : 'toggle-like'
-    };
-
-    WebMusicApi.BrowserAction = {
-        SEARCH    : 'search',
-        SHOW      : 'show'
-    };
-
-    WebMusicApi.ActionShowType = {
-        TRACK    : 'track',
-        ALBUM    : 'album',
-        ARTIST   : 'artist',
-        SHOW     : 'show'
-    };
-
-    WebMusicApi.PlaybackState = {
-        STOP : 0,
-        PLAY : 1,
-        PAUSE: 2,
-    };
-
-    WebMusicApi.PropertyChangeType = {
-        PLAYER   : 0,
-        PLAYLIST : 1,
-        TRACKLIST: 2,
-    };
-
     function Player() {}
     Player.prototype = {
 
@@ -88,7 +51,7 @@
 
         set ready(value) {
             if(value != this._ready) {
-                this.changes.push(['ready', value]);
+                this.changes.push([this.Properties.READY, value]);
                 this._ready = value;
             }
         },
@@ -99,7 +62,7 @@
 
         set canControl(value) {
             if(value != this._canControl) {
-                this.changes.push(['canControl', value]);
+                this.changes.push([this.Properties.CAN_CONTROL, value]);
                 this._canControl = value;
             }
         },
@@ -110,7 +73,7 @@
 
         set canPlay(value) {
             if(value != this._canPlay) {
-                this.changes.push(['canPlay', value]);
+                this.changes.push([this.Properties.CAN_PLAY, value]);
                 this._canPlay = value;
             }
         },
@@ -121,7 +84,7 @@
 
         set canPause(value) {
             if(value != this._canPause) {
-                this.changes.push(['canPause', value]);
+                this.changes.push([this.Properties.CAN_PAUSE, value]);
                 this._canPause = value;
             }
         },
@@ -132,7 +95,7 @@
 
         set canSeek(value) {
             if(value != this._canSeek) {
-                this.changes.push(['canSeek', value]);
+                this.changes.push([this.Properties.CAN_SEEK, value]);
                 this._canSeek = value;
             }
         },
@@ -143,7 +106,7 @@
 
         set url(value) {
             if(value != this._url) {
-                this.changes.push(['url', value]);
+                this.changes.push([this.Properties.URL, value]);
                 this._url = value;
             }
         },
@@ -154,7 +117,7 @@
 
         set artist(value) {
             if(value != this._artist) {
-                this.changes.push(['artist', value]);
+                this.changes.push([this.Properties.ARTIST, value]);
                 this._artist = value;
             }
         },
@@ -165,7 +128,7 @@
 
         set track(value) {
             if(value != this._track) {
-                this.changes.push(['track', value]);
+                this.changes.push([this.Properties.TRACK, value]);
                 this._track = value;
             }
         },
@@ -176,7 +139,7 @@
 
         set album(value) {
             if(value != this._album) {
-                this.changes.push(['album', value]);
+                this.changes.push([this.Properties.ALBUM, value]);
                 this._album = value;
             }
         },
@@ -187,7 +150,7 @@
 
         set artUrl(value) {
             if(value != this._artUrl) {
-                this.changes.push(['artUrl', value]);
+                this.changes.push([this.Properties.ART_URL, value]);
                 this._artUrl = value;
             }
         },
@@ -198,7 +161,7 @@
 
         set playbackStatus(value) {
             if(value != this._playbackStatus) {
-                this.changes.push(['playbackStatus', value]);
+                this.changes.push([this.Properties.PLAYBACKSTATUS, value]);
                 this._playbackStatus = value;
             }
         },
@@ -209,7 +172,7 @@
 
         set canGoNext(value) {
             if(value != this._canGoNext) {
-                this.changes.push(['canGoNext', value]);
+                this.changes.push([this.Properties.CAN_GO_NEXT, value]);
                 this._canGoNext = value;
             }
         },
@@ -220,7 +183,7 @@
 
         set canGoPrevious(value) {
             if(value != this._canGoPrevious) {
-                this.changes.push(['canGoPrevious', value]);
+                this.changes.push([this.Properties.CAN_GO_PREVIOUS, value]);
                 this._canGoPrevious = value;
             }
         },
@@ -231,7 +194,7 @@
 
         set canShuffle(value) {
             if(value != this._canShuffle) {
-                this.changes.push(['canShuffle', value]);
+                this.changes.push([this.Properties.CAN_SHUFFLE, value]);
                 this._canShuffle = value;
             }
         },
@@ -242,7 +205,7 @@
 
         set canRepeat(value) {
             if(value != this._canRepeat) {
-                this.changes.push(['canRepeat', value]);
+                this.changes.push([this.Properties.CAN_REPEAT, value]);
                 this._canRepeat = value;
             }
         },
@@ -253,7 +216,7 @@
 
         set repeat(value) {
             if(value != this._repeat) {
-                this.changes.push(['repeat', value]);
+                this.changes.push([this.Properties.REPEAT, value]);
                 this._repeat = value;
             }
         },
@@ -264,7 +227,7 @@
 
         set volume(value) {
             if(value != this._volume) {
-                this.changes.push(['volume', value]);
+                this.changes.push([this.Properties.VOLUME, value]);
                 this._volume = value;
             }
         },
@@ -275,7 +238,7 @@
 
         set shuffle(value) {
             if(value != this._shuffle) {
-                this.changes.push(['shuffle', value]);
+                this.changes.push([this.Properties.SHUFFLE, value]);
                 this._shuffle = value;
             }
         },
@@ -286,7 +249,7 @@
 
         set like(value) {
             if(value != this._like) {
-                this.changes.push(['like', value]);
+                this.changes.push([this.Properties.LIKE, value]);
                 this._like = value;
             }
         },
@@ -297,7 +260,7 @@
 
         set trackLength(value) {
             if(value != this._trackLength) {
-                this.changes.push(['trackLength', value]);
+                this.changes.push([this.Properties.TRACK_LENGTH, value]);
                 this._trackLength = value;
             }
         },
@@ -308,6 +271,13 @@
 
         set trackPosition(value) {
             if(value != this._trackPosition) {
+
+                if(this._trackPosition + 2000000 < value
+                    || this._trackPosition - 2000000 > value) {
+
+                    WebMusicApi.seeked(value);
+                }
+
                 //According to MPRIS2 spec property changes are not tracked
                 this._trackPosition = value;
             }
@@ -322,12 +292,83 @@
 
         sendPropertyChange : function() {
             if(this.changes.length > 0) {
+
+                let info = "";
+                for(let i = 0; i < this.changes.length; i++) {
+                    info += "<" + this.changes[i][0] + ":" + this.changes[i][1] + ">";
+                }
+                WebMusicApi.debug(info);
+
                 WebMusicApi.sendPropertyChange(WebMusicApi.PropertyChangeType.PLAYER, this.changes);
                 this.changes = [];
             }
         }
     };
 
+    Player.prototype.Action = {
+        STOP    : 'stop',
+        PLAY    : 'play',
+        PAUSE   : 'pause',
+        NEXT    : 'next',
+        PREVIOUS: 'previous',
+        REPEAT  : 'repeat',
+        VOLUME  : 'volume',
+        TRACK_POSITION : 'track-position',
+        TOGGLE_SHUFFLE : 'toggle-shuffle',
+        TOGGLE_LIKE    : 'toggle-like'
+    };
+
+    Player.prototype.PlaybackState = {
+        STOP : 0,
+        PLAY : 1,
+        PAUSE: 2
+    };
+
+    Player.prototype.Properties = {
+        READY           : 'ready',
+        CAN_CONTROL     : 'canControl',
+        CAN_PLAY        : 'canPlay',
+        CAN_PAUSE       : 'canPause',
+        CAN_SEEK        : 'canSeek',
+        CAN_GO_NEXT     : 'canGoNext',
+        CAN_GO_PREVIOUS : 'canGoPrevious',
+        CAN_SHUFFLE     : 'canShuffle',
+        CAN_REPEAT      : 'canRepeat',
+        URL             : 'url',
+        ARTIST          : 'artist',
+        TRACK           : 'track',
+        ALBUM           : 'album',
+        ART_URL         : 'artUrl',
+        PLAYBACKSTATUS  : 'playbackstatus',
+        LIKE            : 'like',
+        SHUFFLE         : 'shuffle',
+        REPEAT          : 'repeat',
+        VOLUME          : 'volume',
+        TRACK_LENGTH    : 'trackLength',
+        TRACK_POSITION  : 'trackPosition'
+    };
+
     WebMusicApi.Player = new Player();
+
+    function Browser() {}
+    Browser.prototype.Action = {
+        SEARCH    : 'search',
+        SHOW      : 'show'
+    };
+
+    Browser.prototype.ActionShowType = {
+        TRACK    : 'track',
+        ALBUM    : 'album',
+        ARTIST   : 'artist',
+        SHOW     : 'show'
+    };
+
+    WebMusicApi.Browser = new Browser();
+
+    WebMusicApi.PropertyChangeType = {
+        PLAYER   : 0,
+        PLAYLIST : 1,
+        TRACKLIST: 2,
+    };
 
 })(this);
