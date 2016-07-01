@@ -68,7 +68,7 @@ namespace WebMusic.Browser.Widgets.Osd {
 
                 this.InitButtons();
 
-                mPlayer.PlayercontrolChanged.connect(OnPlayercontrolChanged);
+                mPlayer.PropertiesChanged.connect(OnPropertiesChanged);
             }
 
             private void InitButtons() {
@@ -106,17 +106,27 @@ namespace WebMusic.Browser.Widgets.Osd {
                 mPlayer.Repeat = mBtnRepeat.RepeatState;
             }
 
-            private void OnPlayercontrolChanged(bool canGoNext, bool canGoPrev, bool canShuffle,
-                        bool canRepeat, bool shuffle, bool like, PlayStatus playStatus, RepeatStatus repeat) {
+            private void OnPropertiesChanged(HashTable<PlayerProperties, Variant> dict){
 
-                mBtnShuffle.sensitive = canShuffle;
-                mBtnShuffle.active = shuffle;
+                if(dict.contains(PlayerProperties.CAN_SHUFFLE)) {
+                    mBtnShuffle.sensitive = dict.get(PlayerProperties.CAN_SHUFFLE).get_boolean();
+                }
 
-                mBtnRepeat.sensitive = canRepeat;
-                mBtnRepeat.RepeatState = repeat;
+                if(dict.contains(PlayerProperties.SHUFFLE)) {
+                    mBtnShuffle.active = dict.get(PlayerProperties.SHUFFLE).get_boolean();
+                }
 
-                mBtnLike.active = like;
+                if(dict.contains(PlayerProperties.CAN_REPEAT)) {
+                    mBtnRepeat.sensitive = dict.get(PlayerProperties.CAN_REPEAT).get_boolean();
+                }
 
+                if(dict.contains(PlayerProperties.REPEAT)) {
+                    mBtnRepeat.RepeatState = (RepeatStatus)dict.get(PlayerProperties.REPEAT).get_double();
+                }
+
+                if(dict.contains(PlayerProperties.LIKE)) {
+                    mBtnLike.active = dict.get(PlayerProperties.LIKE).get_boolean();
+                }
             }
         }
 

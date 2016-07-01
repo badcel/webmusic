@@ -25,12 +25,7 @@ namespace WebMusic.Webextension {
         private DBusConnection mConnection;
 
         public signal void Seeked(int64 position);
-        public signal void PropertiesChanged(HashTable<string,Variant> dict);
-        public signal void MetadataChanged(string url, string artist, string track, string album,
-                                            string artUrl, int64 length);
-        public signal void PlayercontrolChanged(bool canGoNext, bool canGoPrev, bool canShuffle,
-                                                bool canRepeat, bool shuffle, bool like,
-                                                PlayStatus playStatus, RepeatStatus repeat);
+        public signal void PropertiesChanged(HashTable<PlayerProperties, Variant> dict);
 
         public Player() {
             OwnBus();

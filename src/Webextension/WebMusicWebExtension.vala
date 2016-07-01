@@ -75,7 +75,7 @@ namespace WebMusic.Webextension {
 
                     mPlayer = new JavascriptMusicPlayer(mService);
                     mPlayer.SetContext(context);
-                    mPlayer.MetadataChanged.connect(this.OnMetadataChanged);
+                    mPlayer.PropertiesChanged.connect(this.OnPropertiesChanged);
 
                     this.InitializePlugins();
                 } else {
@@ -113,11 +113,35 @@ namespace WebMusic.Webextension {
             mPlugins[index].Enable = mSettings.get_boolean(key);
         }
 
-        private void OnMetadataChanged(string url, string artist, string track, string album, string artUrl) {
-            string by = artist.length > 0? _("by %s").printf(artist) + " " : "";
-            string from = album.length > 0? _("from %s").printf(album): "";
+        private void OnPropertiesChanged(HashTable<PlayerProperties,Variant> dict) {
 
-            stdout.printf(_("Now playing %s") + " " + by + from +"\n", track, album, artist);
+            bool has_data = false;
+
+            string track    = "";
+            string album    = "";
+            string artist   = "";
+
+            if(dict.contains(PlayerProperties.TRACK)) {
+                track = dict.get(PlayerProperties.TRACK).get_string();
+                has_data = true;
+            }
+
+            if(dict.contains(PlayerProperties.ALBUM)) {
+                album = dict.get(PlayerProperties.ALBUM).get_string();
+                has_data = true;
+            }
+
+            if(dict.contains(PlayerProperties.ARTIST)) {
+                artist = dict.get(PlayerProperties.ARTIST).get_string();
+                has_data = true;
+            }
+
+            if(has_data) {
+                string by = artist.length > 0? _("by %s").printf(artist) + " " : "";
+                string from = album.length > 0? _("from %s").printf(album): "";
+
+                stdout.printf(_("Now playing %s") + " " + by + from +"\n", track, album, artist);
+            }
         }
 
         private void Reset() {

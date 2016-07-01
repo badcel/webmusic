@@ -76,8 +76,6 @@ namespace WebMusic.Webextension.Plugins {
             mPlayer = player;
 
             //TODO Connect if dbus name aquired and disconnect if dbus name lost
-            mPlayer.MetadataChanged.connect(OnMetadataChanged);
-            mPlayer.PlayercontrolChanged.connect(OnPlayercontrolChanged);
             mPlayer.PropertiesChanged.connect(OnPropertiesChanged);
 
             //TODO Check what to do if player gets inactive (signal if no integration available)
@@ -124,7 +122,7 @@ namespace WebMusic.Webextension.Plugins {
                 mPlayerId = connection.register_object("/org/mpris/MediaPlayer2", mMprisPlayer);
             }
             catch(IOError e) {
-                stdout.printf("%s\n", e.message);
+                warning("Could not register dbus object (%s).", e.message);
             }
         }
 
@@ -158,52 +156,104 @@ namespace WebMusic.Webextension.Plugins {
             catch(Error e) {
                 critical("Error emmitting PropertiesChanged DBus signal. (%s)", e.message);
             }
+
         }
 
         private void OnServiceChanged() {
             if(!mService.IntegratesService) {
-                OnMetadataChanged("", "", "", "", "", 0);
-                OnPlayercontrolChanged(false, false, false, false, false, false,
-                                        PlayStatus.STOP, RepeatStatus.NONE);
+               this.reset_data();
             }
         }
 
-        private void OnMetadataChanged(string url, string artist, string track, string album,
-                                        string artUrl, int64 length) {
+        private void OnPropertiesChanged(HashTable<PlayerProperties,Variant> dict) {
 
             if(!this.Enable || mConnection.closed)
                 return;
 
-            mMprisPlayer.SetMetadata(url, artist, track, album, artUrl, length);
-            Variant variant = mMprisPlayer.Metadata;
-            var builder = new VariantBuilder(VariantType.DICTIONARY);
-            builder.add("{sv}", "Metadata", variant);
+            HashTable<string, Variant> data = new HashTable<string, Variant>(str_hash, str_equal);
+            bool has_metadata = false;
 
-            this.SendPropertyChange(builder.end());
+            dict.foreach ((key, val) => {
+                switch(key) {
+                    case PlayerProperties.CAN_CONTROL:
+                        data.insert("CanControl", val);
+                        break;
+                    case PlayerProperties.CAN_PLAY:
+                        data.insert("CanPlay", val);
+                        break;
+                    case PlayerProperties.CAN_PAUSE:
+                        data.insert("CanPause", val);
+                        break;
+                    case PlayerProperties.CAN_SEEK:
+                        data.insert("CanSeek", val);
+                        break;
+                    case PlayerProperties.CAN_GO_NEXT:
+                        data.insert("CanGoNext", val);
+                        break;
+                    case PlayerProperties.CAN_GO_PREVIOUS:
+                        data.insert("CanGoPrevious", val);
+                        break;
+                    case PlayerProperties.CAN_SHUFFLE:
+                        data.insert("CanShuffle", val);
+                        break;
+                    case PlayerProperties.CAN_REPEAT:
+                        data.insert("CanRepeat", val);
+                        break;
+                    case PlayerProperties.PLAYBACKSTATUS:
+                        var playstatus = (PlayStatus) val.get_double();
+                        data.insert("PlaybackStatus", playstatus.to_string());
+                        break;
+                    case PlayerProperties.SHUFFLE:
+                        data.insert("Shuffle", val);
+                        break;
+                    case PlayerProperties.REPEAT:
+                        var repeat = (RepeatStatus) val.get_double();
+                        data.insert("LoopStatus", repeat.to_string());
+                        break;
+                    case PlayerProperties.VOLUME:
+                        data.insert("Volume", val);
+                        break;
+                    case PlayerProperties.URL:
+                    case PlayerProperties.ARTIST:
+                    case PlayerProperties.TRACK:
+                    case PlayerProperties.ALBUM:
+                    case PlayerProperties.ART_URL:
+                    case PlayerProperties.TRACK_LENGTH:
+                        has_metadata = true;
+                        break;
+                }
+	        });
+
+            if(has_metadata) {
+                mMprisPlayer.set_metadata(dict);
+                data.insert("Metadata", mMprisPlayer.Metadata);
+            }
+
+            this.SendPropertyChange(data);
         }
 
-        private void OnPlayercontrolChanged(bool canGoNext, bool canGoPrev, bool canShuffle,
-                        bool canRepeat, bool shuffle, bool like, PlayStatus playStatus, RepeatStatus repeat) {
+        private void reset_data() {
 
-            if(!this.Enable || mConnection.closed)
-                return;
+            HashTable<string, Variant> data = new HashTable<string, Variant>(str_hash, str_equal);
 
-            HashTable<string,Variant> dict = new HashTable<string,Variant>(str_hash, str_equal);
-            dict.insert("CanGoNext",      new Variant.boolean(canGoNext));
-            dict.insert("CanGoPrevious",  new Variant.boolean(canGoPrev));
-            dict.insert("Shuffle",        new Variant.boolean(shuffle));
-            dict.insert("PlaybackStatus", new Variant.string(playStatus.to_string()));
-            dict.insert("LoopStatus", new Variant.string(repeat.to_string()));
+            data.insert("CanControl", new Variant.boolean(false));
+            data.insert("CanPlay", new Variant.boolean(false));
+            data.insert("CanPause", new Variant.boolean(false));
+            data.insert("CanSeek", new Variant.boolean(false));
+            data.insert("CanGoNext", new Variant.boolean(false));
+            data.insert("CanGoPrevious", new Variant.boolean(false));
+            data.insert("CanShuffle", new Variant.boolean(false));
+            data.insert("CanRepeat", new Variant.boolean(false));
+            data.insert("PlaybackStatus", PlayStatus.STOP.to_string());
+            data.insert("Shuffle", new Variant.boolean(false));
+            data.insert("LoopStatus", RepeatStatus.NONE.to_string());
+            data.insert("Volume", new Variant.double(0.0));
 
-            this.SendPropertyChange(dict);
-        }
+            mMprisPlayer.reset_metadata();
+            data.insert("Metadata", mMprisPlayer.Metadata);
 
-        private void OnPropertiesChanged(HashTable<string,Variant> dict) {
+            this.SendPropertyChange(data);
 
-            if(!this.Enable || mConnection.closed)
-                return;
-
-            this.SendPropertyChange(dict);
         }
     }
 
@@ -313,8 +363,8 @@ namespace WebMusic.Webextension.Plugins {
             get { return mPlayer.Position; }
         }
 
-        public double MinimumRate   { get { return 1.0;   } }
-        public double MaximumRate   { get { return 1.0;   } }
+        public double MinimumRate   { get { return 1.0; } }
+        public double MaximumRate   { get { return 1.0; } }
 
         private HashTable<string,Variant> _metadata = new HashTable<string,Variant>(str_hash, str_equal);
         public HashTable<string,Variant> Metadata { //a{sv}
@@ -352,9 +402,11 @@ namespace WebMusic.Webextension.Plugins {
             mPlayer.Play();
         }
 
-        public void Seek(int64 offset){}
+        public void Seek(int64 offset) {
+            //TODO: Implement
+        }
 
-        public void SetPosition(ObjectPath TrackId, int64 Position){
+        public void SetPosition(ObjectPath TrackId, int64 Position) {
             mPlayer.Position = Position;
             this.Seeked(Position);
         }
@@ -367,28 +419,47 @@ namespace WebMusic.Webextension.Plugins {
             }
         }
 
-        public void SetMetadata(string url, string artist, string track, string album,
-                                string artUrl, int64 length) {
+        [DBus (visible = false)]
+        public void set_metadata(HashTable<PlayerProperties,Variant> dict) {
 
             _metadata = new HashTable<string,Variant>(str_hash, str_equal);
-            _metadata.insert("xesam:title",  new Variant.string(track));
-            _metadata.insert("mpris:artUrl", new Variant.string(artUrl));
 
-            if(length > 0){
-                _metadata.insert("mpris:length", new Variant.int64(length));
-            }
+            dict.foreach ((key, val) => {
+                switch(key) {
+                    case PlayerProperties.URL:
+                        _metadata.insert("xesam:url", val);
+                        break;
+                    case PlayerProperties.ARTIST:
+                        _metadata.insert("xesam:artist", val);
+                        break;
+                    case PlayerProperties.TRACK:
+                        _metadata.insert("xesam:title", val);
+                        break;
+                    case PlayerProperties.ALBUM:
+                        _metadata.insert("xesam:album", val);
+                        break;
+                    case PlayerProperties.ART_FILE_LOCAL:
+                        _metadata.insert("mpris:artUrl", val);
+                        break;
+                    case PlayerProperties.TRACK_LENGTH:
+                        int64 length = (int64)val.get_double();
+                        _metadata.insert("mpris:length", new Variant.int64(length));
+                        break;
+                }
+	        });
+        }
 
-            if(artist.length > 0) {
-                _metadata.insert("xesam:artist", new Variant.string(artist));
-            }
+        [DBus (visible = false)]
+        public void reset_metadata() {
 
-            if(album.length > 0) {
-                _metadata.insert("xesam:album", new Variant.string(album));
-            }
+            _metadata = new HashTable<string,Variant>(str_hash, str_equal);
 
-            if(url.length > 0) {
-                _metadata.insert("xesam:url", new Variant.string(url));
-            }
+            _metadata.insert("xesam:url", "");
+            _metadata.insert("xesam:artist", "");
+            _metadata.insert("xesam:title", "");
+            _metadata.insert("xesam:album", "");
+            _metadata.insert("mpris:artUrl", "");
+            _metadata.insert("mpris:length", new Variant.int64(0));
         }
 
         private void OnSeeked(int64 position) {
