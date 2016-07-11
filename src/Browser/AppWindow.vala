@@ -187,7 +187,7 @@ namespace WebMusic.Browser
             }
 
             if(dict.contains(PlayerProperties.ALBUM)) {
-                track = dict.get(PlayerProperties.ALBUM).get_string();
+                album = dict.get(PlayerProperties.ALBUM).get_string();
                 has_data = true;
             }
 
