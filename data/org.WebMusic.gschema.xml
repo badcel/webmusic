@@ -2,7 +2,7 @@
 <schemalist>
     <schema path="/org/WebMusic/" id="org.WebMusic" gettext-domain="">
         <child schema="org.WebMusic.Browser" name="browser"/>
-        <child schema="org.WebMusic.Browser.Plugins" name="webextension"/>
+        <child schema="org.WebMusic.Browser.Plugins" name="plugins"/>
     </schema>
     <schema path="/org/WebMusic/Browser/" id="org.WebMusic.Browser">   
         <key type="s" name="use-dark-theme">
