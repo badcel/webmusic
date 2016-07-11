@@ -21,15 +21,11 @@ vala_precompile(VALA_C
     JavascriptMusicPlayer.vala
     JsInterface/JsConverter.vala
     JsInterface/JsObject.vala
-    Plugins/IPlugin.vala
-    Plugins/MPRIS.vala
-    Plugins/Notification.vala
 OPTIONS
     ${VALAFLAGS}
 PACKAGES
     glib-2.0
     gtk+-3.0
-    libnotify
     WebKit2WebExtension-4.0
 CUSTOM_VAPIS
     ${CMAKE_BINARY_DIR}/src/Lib/libwebmusic.vapi
@@ -42,9 +38,9 @@ GENERATE_HEADER
 )
 
 add_library(webextension SHARED ${VALA_C})
-target_link_libraries(webextension webmusic ${GLIB_LDFLAGS} ${WEBEXTENSION_LDFLAGS} ${NOTIFY_LDFLAGS})
+target_link_libraries(webextension webmusic ${GLIB_LDFLAGS} ${WEBEXTENSION_LDFLAGS})
 set_target_properties(webextension PROPERTIES
-                      COMPILE_FLAGS "${GLIB_CFLAGS} ${GTK_CFLAGS} ${WEBEXTENSION_CFLAGS} ${NOTIFY_CFLAGS} ${COMMON_CFLAGS}"
+                      COMPILE_FLAGS "${GLIB_CFLAGS} ${GTK_CFLAGS} ${WEBEXTENSION_CFLAGS} ${COMMON_CFLAGS}"
                       INCLUDE_DIRECTORIES "${CMAKE_BINARY_DIR}/src/Lib")
 
 install(TARGETS webextension DESTINATION "${PKG_LIBDIR}")

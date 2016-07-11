@@ -16,6 +16,7 @@
 
 using LibWebMusic;
 using WebMusic.Browser.Dialogs;
+using WebMusic.Browser.Plugins;
 
 namespace WebMusic.Browser
 {
@@ -59,8 +60,10 @@ namespace WebMusic.Browser
         private Browser          mBrowser;
         private IPlayer          mPlayer;
         private Settings         mSettings;
+        private Settings         mSettingsPlugins;
         private DarkThemeMode    mDarkThemeMode;
         private Service          mService;
+        private HashTable<string, IPlugin> mPlugins;
 
         private bool             mMiniMode = false;
 
@@ -83,6 +86,8 @@ namespace WebMusic.Browser
                 }
             });
 
+            mSettingsPlugins = new Settings("org.WebMusic.Browser.Plugins");
+
             try {
                 mPlayer = Bus.get_proxy_sync(BusType.SESSION, "org.WebMusic.Webextension",
                                         "/org/WebMusic/Webextension");
@@ -101,6 +106,7 @@ namespace WebMusic.Browser
             this.CreateWidgets(service);
             ReadDarkThemeMode();
             RefreshDarkThemeMode();
+            this.initialize_plugins();
         }
 
         public Browser GetBrowser() {
@@ -132,6 +138,28 @@ namespace WebMusic.Browser
                 critical(err);
                 ErrorDialog.run(err);
             }
+        }
+
+        private void initialize_plugins() {
+
+            mPlugins = new HashTable<string, IPlugin>(str_hash, str_equal);
+            mPlugins.insert("mpris", new Mpris((WebMusic)this.application, mService));
+            mPlugins.insert("notifications", new Notificationn());
+
+            foreach(IPlugin plugin in mPlugins.get_values()) {
+                plugin.RegisterPlayer(mPlayer);
+            }
+
+            mSettingsPlugins.changed.connect(OnSettingsPluginsChanged);
+
+            mPlugins["mpris"].Enable = mSettingsPlugins.get_boolean("enable-mpris");
+            mPlugins["notifications"].Enable = mSettingsPlugins.get_boolean("enable-notifications");
+
+        }
+
+        private void OnSettingsPluginsChanged(string key) {
+            string index = key.replace("enable-", "");
+            mPlugins[index].Enable = mSettingsPlugins.get_boolean(key);
         }
 
         private void ReadDarkThemeMode() {

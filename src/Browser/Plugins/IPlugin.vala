@@ -14,11 +14,11 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-using WebMusic.Webextension;
+using LibWebMusic;
 
-namespace WebMusic.Webextension.Plugins {
+namespace WebMusic.Browser.Plugins {
     public interface IPlugin : GLib.Object {
         public abstract bool Enable { get; set; }
-        public abstract bool RegisterPlayer(Player player);
+        public abstract bool RegisterPlayer(IPlayer player);
     }
 }

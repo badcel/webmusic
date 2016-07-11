@@ -2,7 +2,7 @@
 <schemalist>
     <schema path="/org/WebMusic/" id="org.WebMusic" gettext-domain="">
         <child schema="org.WebMusic.Browser" name="browser"/>
-        <child schema="org.WebMusic.Webextension" name="webextension"/>
+        <child schema="org.WebMusic.Browser.Plugins" name="webextension"/>
     </schema>
     <schema path="/org/WebMusic/Browser/" id="org.WebMusic.Browser">   
         <key type="s" name="use-dark-theme">
@@ -22,7 +22,7 @@
             <description>This service is loaded at application startup</description>
         </key>
     </schema>
-    <schema path="/org/WebMusic/Webextension/" id="org.WebMusic.Webextension">   
+    <schema path="/org/WebMusic/Browser/Plugins/" id="org.WebMusic.Browser.Plugins">
         <key type="b" name="enable-notifications">
             <default>true</default>
             <summary>Enable notifications</summary>

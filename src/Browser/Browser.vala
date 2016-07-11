@@ -16,6 +16,7 @@
 
 using LibWebMusic;
 using WebMusic.Browser.Widgets.Osd;
+using WebMusic.Browser.Plugins;
 using WebKit;
 using GLib;
 

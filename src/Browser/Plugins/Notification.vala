@@ -15,23 +15,22 @@
  */
 
 using LibWebMusic;
-using WebMusic.Webextension;
 using Notify;
 
-namespace WebMusic.Webextension.Plugins {
+namespace WebMusic.Browser.Plugins {
 
-    private class Notification : GLib.Object, IPlugin {
+    private class Notificationn : GLib.Object, IPlugin {
 
         private Notify.Notification mNotification;
-        private Player mPlayer;
+        private IPlayer mPlayer;
 
         public bool Enable { get; set; }
 
-        public Notification() {
+        public Notificationn() {
             Notify.init("WebMusic");
         }
 
-        public bool RegisterPlayer(Player player) {
+        public bool RegisterPlayer(IPlayer player) {
             mPlayer = player;
             mPlayer.PropertiesChanged.connect(OnPropertiesChanged);
             return true;
@@ -112,13 +111,25 @@ namespace WebMusic.Webextension.Plugins {
         private void CheckNotificationAction(Notify.Notification notification, string action) {
             switch(action) {
                 case "media-skip-forward":
-                    mPlayer.Next();
+                    try {
+                        mPlayer.Next();
+                    } catch(GLib.IOError e) {
+                        warning("Could not execute 'next' command due to a dbus error. (%s)", e.message);
+                    }
                     break;
                 case "media-playback-pause":
-                    mPlayer.Pause();
+                    try {
+                        mPlayer.Pause();
+                    } catch(GLib.IOError e) {
+                        warning("Could not execute 'pause' command due to a dbus error. (%s)", e.message);
+                    }
                     break;
                 case "media-skip-backward":
-                    mPlayer.Previous();
+                    try {
+                        mPlayer.Previous();
+                    } catch(GLib.IOError e) {
+                        warning("Could not execute 'previous' command due to a dbus error. (%s)", e.message);
+                    }
                     break;
                 default:
                     warning("Unknown notification action: %s", action);

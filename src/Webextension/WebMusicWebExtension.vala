@@ -16,7 +16,6 @@
 
 using WebKit;
 using LibWebMusic;
-using WebMusic.Webextension.Plugins;
 
 namespace WebMusic.Webextension {
     private WebMusicControler Controler;
@@ -30,10 +29,8 @@ namespace WebMusic.Webextension {
 
     private class WebMusicControler {
 
-        private HashTable<string, IPlugin> mPlugins;
         private BrowserDBus mBrowser;
         private JavascriptMusicPlayer mPlayer;
-        private Settings mSettings;
         private Service mService;
 
         public WebMusicControler() {
@@ -42,7 +39,7 @@ namespace WebMusic.Webextension {
             } catch(IOError e) {
                 error("Could not connect to browser via DBus. (%s)", e.message);
             }
-            mSettings = new Settings("org.WebMusic.Webextension");
+
         }
 
         public void DocumentLoaded(WebPage page) {
@@ -76,8 +73,6 @@ namespace WebMusic.Webextension {
                     mPlayer = new JavascriptMusicPlayer(mService);
                     mPlayer.SetContext(context);
                     mPlayer.PropertiesChanged.connect(this.OnPropertiesChanged);
-
-                    this.InitializePlugins();
                 } else {
                     //Refresh objects
                     mService.Load(name);
@@ -89,28 +84,6 @@ namespace WebMusic.Webextension {
 
                 Reset();
             }
-        }
-
-        private void InitializePlugins() {
-
-            mPlugins = new HashTable<string, IPlugin>(str_hash, str_equal);
-            mPlugins.insert("mpris", new Mpris(mBrowser, mService));
-            mPlugins.insert("notifications", new WebMusic.Webextension.Plugins.Notification());
-
-            foreach(IPlugin plugin in mPlugins.get_values()) {
-                plugin.RegisterPlayer(mPlayer);
-            }
-
-            mSettings.changed.connect(OnSettingsChanged);
-
-            mPlugins["mpris"].Enable = mSettings.get_boolean("enable-mpris");
-            mPlugins["notifications"].Enable = mSettings.get_boolean("enable-notifications");
-
-        }
-
-        private void OnSettingsChanged(string key) {
-            string index = key.replace("enable-", "");
-            mPlugins[index].Enable = mSettings.get_boolean(key);
         }
 
         private void OnPropertiesChanged(HashTable<PlayerProperties,Variant> dict) {
@@ -147,7 +120,6 @@ namespace WebMusic.Webextension {
         private void Reset() {
             mService = null;
             mPlayer  = null;
-            mPlugins = null;
         }
     }
 }

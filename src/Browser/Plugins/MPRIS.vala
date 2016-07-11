@@ -23,9 +23,8 @@
  */
 
 using LibWebMusic;
-using WebMusic.Webextension;
 
-namespace WebMusic.Webextension.Plugins {
+namespace WebMusic.Browser.Plugins {
 
     private errordomain MprisError {
         COULD_NOT_ACQUIRE_BUS
@@ -40,7 +39,7 @@ namespace WebMusic.Webextension.Plugins {
         private uint mPlayerId;
         private bool mEnable;
 
-        private Player mPlayer = null;
+        private IPlayer mPlayer = null;
         private Service mService = null;
         private MprisRoot mRoot = null;
         private MprisPlayer mMprisPlayer = null;
@@ -60,18 +59,18 @@ namespace WebMusic.Webextension.Plugins {
             }
         }
 
-        public Mpris(BrowserDBus browser, Service service) {
+        public Mpris(WebMusic webmusic, Service service) {
             mService = service;
             mService.ServiceLoaded.connect(OnServiceChanged);
 
-            mRoot = new MprisRoot(browser, service);
+            mRoot = new MprisRoot(webmusic, service);
         }
 
         ~Mpris() {
             ReleaseBus();
         }
 
-        public bool RegisterPlayer(Player player){
+        public bool RegisterPlayer(IPlayer player){
 
             mPlayer = player;
 
@@ -258,18 +257,18 @@ namespace WebMusic.Webextension.Plugins {
     }
 
     [DBus(name = "org.mpris.MediaPlayer2")]
-    private class MprisRoot : GLib.Object {
+    public class MprisRoot : GLib.Object {
 
         public bool CanQuit          { get { return true;  } }
         public bool CanRaise         { get { return true;  } }
         public bool HasTrackList     { get { return false; } }
         public bool CanSetFullscreen { get { return true; } }
 
-        private BrowserDBus mBrowser;
+        private WebMusic mBrowser;
         private Service     mService;
 
-        public MprisRoot(BrowserDBus browser, Service service) {
-            mBrowser = browser;
+        public MprisRoot(WebMusic webmusic, Service service) {
+            mBrowser = webmusic;
             mService = service;
         }
 
@@ -298,30 +297,22 @@ namespace WebMusic.Webextension.Plugins {
         }
 
         public void Quit() {
-            try {
-                mBrowser.Quit();
-            } catch(GLib.IOError e) {
-                warning("Could not quit application due to a DBus error. (%s)", e.message);
-            }
+            mBrowser.Quit();
         }
 
         public void Raise() {
-            try {
-                mBrowser.Raise();
-            } catch(GLib.IOError e) {
-                warning("Could not raise application due to a DBus error. (%s)", e.message);
-            }
+            mBrowser.Raise();
         }
     }
 
     [DBus(name = "org.mpris.MediaPlayer2.Player")]
-    private class MprisPlayer : GLib.Object {
+    public class MprisPlayer : GLib.Object {
 
         public signal void Seeked(int64 position);
 
-        private Player mPlayer;
+        private IPlayer mPlayer;
 
-        public MprisPlayer(Player player) {
+        public MprisPlayer(IPlayer player) {
             mPlayer = player;
             mPlayer.Seeked.connect(OnSeeked);
         }
@@ -383,23 +374,43 @@ namespace WebMusic.Webextension.Plugins {
         public bool   CanControl    { get { return mPlayer.CanControl;    } }
 
         public void Next() {
-            mPlayer.Next();
+            try {
+                mPlayer.Next();
+            } catch(GLib.IOError e) {
+                warning("Could not execute 'next' command due to a dbus error. (%s)", e.message);
+            }
         }
 
         public void Previous() {
-            mPlayer.Previous();
+            try {
+                mPlayer.Previous();
+            } catch(GLib.IOError e) {
+                warning("Could not execute 'previous' command due to a dbus error. (%s)", e.message);
+            }
         }
 
         public void Pause() {
-            mPlayer.Pause();
+            try {
+                mPlayer.Pause();
+            } catch(GLib.IOError e) {
+                warning("Could not execute 'pause' command due to a dbus error. (%s)", e.message);
+            }
         }
 
         public void Stop() {
-            mPlayer.Stop();
+            try {
+                mPlayer.Stop();
+            } catch(GLib.IOError e) {
+                warning("Could not execute 'stop' command due to a dbus error. (%s)", e.message);
+            }
         }
 
         public void Play() {
-            mPlayer.Play();
+            try {
+                mPlayer.Play();
+            } catch(GLib.IOError e) {
+                warning("Could not execute 'play' command due to a dbus error. (%s)", e.message);
+            }
         }
 
         public void Seek(int64 offset) {

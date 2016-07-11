@@ -208,10 +208,12 @@ namespace LibWebMusic {
     public interface IPlayer : GLib.Object {
 
         public signal void PropertiesChanged(HashTable<PlayerProperties, Variant> dict);
+        public signal void Seeked(int64 position);
 
         public abstract bool   Shuffle        { get; set; }
         public abstract bool   Like           { get; set; }
         public abstract RepeatStatus Repeat   { get; set; }
+        public abstract PlayStatus   PlaybackStatus { get; }
 
         public abstract void Next()     throws IOError;
         public abstract void Previous() throws IOError;
@@ -220,6 +222,18 @@ namespace LibWebMusic {
         public abstract void Play()     throws IOError;
 
         public abstract void PlayPause() throws IOError;
+
+        public abstract bool CanGoNext      { get; }
+        public abstract bool CanGoPrevious  { get; }
+        public abstract bool CanPlay        { get; }
+        public abstract bool CanPause       { get; }
+        public abstract bool CanSeek        { get; }
+        public abstract bool CanControl     { get; }
+        public abstract bool CanShuffle     { get; }
+        public abstract bool CanRepeat      { get; }
+
+        public abstract double Volume       { get; set; }
+        public abstract int64  Position     { get; set; }
 
         public abstract void Search(string term) throws IOError;
         public abstract void Show(string type, string id) throws IOError;

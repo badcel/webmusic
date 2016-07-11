@@ -31,21 +31,21 @@ namespace WebMusic.Browser.Dialogs {
         private Gtk.ComboBox mCmbDarkTheme;
 
         private Settings mSettingsBrowser;
-        private Settings mSettingsWebextension;
+        private Settings mSettingsPlugins;
 
         public PreferencesDialog() {
 
             Object (use_header_bar: 1);
 
             mSettingsBrowser = new Settings("org.WebMusic.Browser");
-            mSettingsWebextension = new Settings("org.WebMusic.Webextension");
+            mSettingsPlugins = new Settings("org.WebMusic.Browser.Plugins");
 
-            if(mSettingsWebextension == null || mSettingsBrowser == null)
+            if(mSettingsPlugins == null || mSettingsBrowser == null)
                 return;
 
-            mSettingsWebextension.bind("enable-mpris", mChkMpris,
+            mSettingsPlugins.bind("enable-mpris", mChkMpris,
                                         "active", SettingsBindFlags.NO_SENSITIVITY);
-            mSettingsWebextension.bind("enable-notifications", mChkNotification,
+            mSettingsPlugins.bind("enable-notifications", mChkNotification,
                                         "active", SettingsBindFlags.NO_SENSITIVITY);
 
             mSettingsBrowser.bind_with_mapping("use-dark-theme", mCmbDarkTheme,

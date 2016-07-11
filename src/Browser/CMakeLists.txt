@@ -28,6 +28,9 @@ vala_precompile(VALA_C
     Widgets/Osd/CoverStage.vala
     Widgets/Osd/ControlsActor.vala
     Widgets/Ui/RepeatButton.vala
+    Plugins/IPlugin.vala
+    Plugins/MPRIS.vala
+    Plugins/Notification.vala
 OPTIONS
     ${VALAFLAGS}
 PACKAGES
@@ -35,6 +38,7 @@ PACKAGES
     gtk+-3.0
     WebKit2-4.0
     clutter-gtk-1.0
+    libnotify
 CUSTOM_VAPIS
     ${CMAKE_BINARY_DIR}/src/Lib/libwebmusic.vapi
     ${CMAKE_SOURCE_DIR}/vapi/config.vapi
@@ -42,9 +46,9 @@ CUSTOM_VAPIS
 )
 
 add_executable(webmusic-bin ${VALA_C} ${RESOURCE_FILE})
-target_link_libraries(webmusic-bin webmusic ${GLIB_LDFLAGS} ${WEBKIT_LDFLAGS} ${CLUTTERGTK_LDFLAGS})
+target_link_libraries(webmusic-bin webmusic ${GLIB_LDFLAGS} ${WEBKIT_LDFLAGS} ${CLUTTERGTK_LDFLAGS} ${NOTIFY_LDFLAGS})
 set_target_properties(webmusic-bin PROPERTIES
-                      COMPILE_FLAGS "${GLIB_CFLAGS} ${GTK_CFLAGS} ${WEBKIT_CFLAGS} ${CLUTTERGTK_CFLAGS} ${COMMON_CFLAGS}"
+                      COMPILE_FLAGS "${GLIB_CFLAGS} ${GTK_CFLAGS} ${WEBKIT_CFLAGS} ${CLUTTERGTK_CFLAGS} ${NOTIFY_CFLAGS} ${COMMON_CFLAGS}"
                       INCLUDE_DIRECTORIES "${CMAKE_BINARY_DIR}/src/Lib"
                       OUTPUT_NAME webmusic)
 
