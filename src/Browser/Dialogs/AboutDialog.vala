@@ -37,9 +37,9 @@ namespace WebMusic.Browser.Dialogs {
             string comments = _("A web based music player that "
                                 + "integrates your favourite music service into the desktop.") + "\n\n"
                                 + _("Powered by WebKit %d.%d.%d\n").printf(
-                                WebKit.Version.MAJOR,
-                                WebKit.Version.MINOR,
-                                WebKit.Version.MICRO);
+                                WebKit.Version.major,
+                                WebKit.Version.minor,
+                                WebKit.Version.micro);
 
             Gdk.Pixbuf logo = null;
             Gtk.IconTheme iconTheme = Gtk.IconTheme.get_default();

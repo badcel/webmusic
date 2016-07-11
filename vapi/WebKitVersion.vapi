@@ -25,5 +25,21 @@ namespace WebKit {
 	    public const int MINOR;
 	    [CCode (cname = "WEBKIT_MICRO_VERSION")]
 	    public const int MICRO;
+
+
+	    public static uint major {
+	        [CCode (cname = "webkit_get_major_version")]
+	        get;
+	    }
+
+	    public static uint minor {
+	        [CCode (cname = "webkit_get_minor_version")]
+	        get;
+	    }
+
+	    public static uint micro {
+	        [CCode (cname = "webkit_get_micro_version")]
+	        get;
+	    }
 	}
 }
