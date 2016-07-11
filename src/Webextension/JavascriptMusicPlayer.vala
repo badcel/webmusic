@@ -206,6 +206,8 @@ namespace WebMusic.Webextension {
 	        ht.foreach ((key, val) => {
 		        if(PlayerProperties.try_parse_name(key, out prop)) {
 		            changes.insert(prop, val);
+		        } else {
+		            warning("Failed to parse javascript player property: %s", key);
 		        }
 	        });
 
