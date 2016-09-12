@@ -361,7 +361,7 @@ namespace WebMusic.Browser.Plugins {
         public HashTable<string,Variant> Metadata { //a{sv}
             owned get {
                 Variant variant = "/";
-                _metadata.insert("mpris:trackid", variant); //dummy
+                _metadata.insert("mpris:trackid", variant); //TODO Provide valid trackid
                 return _metadata;
             }
         }
