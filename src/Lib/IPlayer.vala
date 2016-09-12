@@ -16,82 +16,26 @@
 
 namespace LibWebMusic {
 
+    [DBus (use_string_marshalling = true)]
     public enum PlayStatus {
+
+        [DBus (value = "Stopped")]
         STOP,   // INT = 0
+        [DBus (value = "Playing")]
         PLAY,   // INT = 1
+        [DBus (value = "Paused")]
         PAUSE;  // INT = 2
-
-        public string to_string() {
-
-            //Strings are compatible to the MPRIS dbus-specification.
-            //Do not change!
-
-            string ret = "";
-
-            switch(this) {
-                case PlayStatus.STOP:
-                    ret = "Stopped";
-                    break;
-                case PlayStatus.PLAY:
-                    ret = "Playing";
-                    break;
-                case PlayStatus.PAUSE:
-                    ret = "Paused";
-                    break;
-            }
-
-            return ret;
-        }
     }
 
+    [DBus (use_string_marshalling = true)]
     public enum RepeatStatus {
+
+        [DBus (value = "None")]
         NONE,     // INT = 0
+        [DBus (value = "Playlist")]
         PLAYLIST, // INT = 1
+        [DBus (value = "Track")]
         TRACK;    // INT = 2
-
-        public string to_string() {
-
-            //Strings are compatible to the MPRIS dbus-specification.
-            //Do not change!
-
-            string ret = "";
-
-            switch(this) {
-                case RepeatStatus.NONE:
-                    ret = "None";
-                    break;
-                case RepeatStatus.TRACK:
-                    ret = "Track";
-                    break;
-                case RepeatStatus.PLAYLIST:
-                    ret = "Playlist";
-                    break;
-            }
-
-            return ret;
-        }
-
-        public static bool try_parse_name(string name, out RepeatStatus result = null) {
-
-            bool ret = true;
-            switch(name) {
-                case "None":
-                    result = RepeatStatus.NONE;
-                    break;
-                case "Track":
-                    result = RepeatStatus.TRACK;
-                    break;
-                case "Playlist":
-                    result = RepeatStatus.PLAYLIST;
-                    break;
-                default:
-                    result = RepeatStatus.NONE;
-                    ret = false;
-                    break;
-            }
-
-            return ret;
-        }
 
         public static uint n_values() {
             EnumClass enumc = (EnumClass)typeof(RepeatStatus).class_ref();

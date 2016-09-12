@@ -317,22 +317,14 @@ namespace WebMusic.Browser.Plugins {
             mPlayer.Seeked.connect(OnSeeked);
         }
 
-        public string PlaybackStatus
+        public PlayStatus PlaybackStatus
         {
-            owned get { return mPlayer.PlaybackStatus.to_string(); }
+            get { return mPlayer.PlaybackStatus; }
         }
 
-        public string LoopStatus {
-            owned get { return mPlayer.Repeat.to_string(); }
-            set {
-                RepeatStatus status;
-
-                if(!RepeatStatus.try_parse_name(value, out status)) {
-                    warning("Unknown loopstatus string '%s'", value);
-                }
-                mPlayer.Repeat = status;
-
-            }
+        public RepeatStatus LoopStatus {
+            get { return mPlayer.Repeat; }
+            set { mPlayer.Repeat = value; }
         }
 
         public double Rate {
