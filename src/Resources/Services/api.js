@@ -49,6 +49,8 @@
         _trackLength   : 0,
         _trackPosition : 0,
 
+        _metadataChanged : false,
+
         set ready(value) {
             if(value != this._ready) {
                 this.changes.push([this.Properties.READY, value]);
@@ -106,7 +108,7 @@
 
         set url(value) {
             if(value != this._url) {
-                this.changes.push([this.Properties.URL, value]);
+                this._metadataChanged = true;
                 this._url = value;
             }
         },
@@ -117,7 +119,7 @@
 
         set artist(value) {
             if(value != this._artist) {
-                this.changes.push([this.Properties.ARTIST, value]);
+                this._metadataChanged = true;
                 this._artist = value;
             }
         },
@@ -128,7 +130,7 @@
 
         set track(value) {
             if(value != this._track) {
-                this.changes.push([this.Properties.TRACK, value]);
+                this._metadataChanged = true;
                 this._track = value;
             }
         },
@@ -139,7 +141,7 @@
 
         set album(value) {
             if(value != this._album) {
-                this.changes.push([this.Properties.ALBUM, value]);
+                this._metadataChanged = true;
                 this._album = value;
             }
         },
@@ -150,7 +152,7 @@
 
         set artUrl(value) {
             if(value != this._artUrl) {
-                this.changes.push([this.Properties.ART_URL, value]);
+                this._metadataChanged = true;
                 this._artUrl = value;
             }
         },
@@ -260,7 +262,7 @@
 
         set trackLength(value) {
             if(value != this._trackLength) {
-                this.changes.push([this.Properties.TRACK_LENGTH, value]);
+                this._metadataChanged = true;
                 this._trackLength = value;
             }
         },
@@ -291,6 +293,17 @@
         changes : [],
 
         sendPropertyChange : function() {
+
+            if(this._metadataChanged) {
+                //Always send complete metadata
+                this.changes.push([this.Properties.URL, this.url]);
+                this.changes.push([this.Properties.ARTIST, this.artist]);
+                this.changes.push([this.Properties.TRACK, this.track]);
+                this.changes.push([this.Properties.ALBUM, this.album]);
+                this.changes.push([this.Properties.ART_URL, this.artUrl]);
+                this.changes.push([this.Properties.TRACK_LENGTH, this.trackLength]);
+            }
+
             if(this.changes.length > 0) {
 
                 let info = "";
@@ -300,7 +313,9 @@
                 WebMusicApi.debug(info);
 
                 WebMusicApi.sendPropertyChange(WebMusicApi.PropertyChangeType.PLAYER, this.changes);
+
                 this.changes = [];
+                this._metadataChanged = false;
             }
         }
     };
