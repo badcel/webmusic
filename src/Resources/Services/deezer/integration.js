@@ -27,7 +27,11 @@
         player.canPause   = false;
         player.canSeek    = true;
 
-        WebMusicApi.update();
+        document.onreadystatechange = function () {
+            if (document.readyState === "complete") {
+                WebMusicApi.update();
+            }
+        }
     };
 
     WebMusicApi.update = function() {
