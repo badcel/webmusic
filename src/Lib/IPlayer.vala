@@ -148,7 +148,69 @@ namespace LibWebMusic {
 
     }
 
-    [DBus(name = "org.WebMusic.Webextension.Player")]
+    public interface IPlayerPropertiesChangedProvider : GLib.Object {
+
+        public HashTable<string, Variant> get_properties_changed_data(HashTable<PlayerProperties, Variant> dict, out bool has_metadata) {
+
+            HashTable<string, Variant> data = new HashTable<string, Variant>(str_hash, str_equal);
+            bool _has_metadata = false;
+
+            dict.foreach ((key, val) => {
+                switch(key) {
+                    case PlayerProperties.CAN_CONTROL:
+                        data.insert("CanControl", val);
+                        break;
+                    case PlayerProperties.CAN_PLAY:
+                        data.insert("CanPlay", val);
+                        break;
+                    case PlayerProperties.CAN_PAUSE:
+                        data.insert("CanPause", val);
+                        break;
+                    case PlayerProperties.CAN_SEEK:
+                        data.insert("CanSeek", val);
+                        break;
+                    case PlayerProperties.CAN_GO_NEXT:
+                        data.insert("CanGoNext", val);
+                        break;
+                    case PlayerProperties.CAN_GO_PREVIOUS:
+                        data.insert("CanGoPrevious", val);
+                        break;
+                    case PlayerProperties.CAN_SHUFFLE:
+                        data.insert("CanShuffle", val);
+                        break;
+                    case PlayerProperties.CAN_REPEAT:
+                        data.insert("CanRepeat", val);
+                        break;
+                    case PlayerProperties.PLAYBACKSTATUS:
+                        data.insert("PlaybackStatus", (PlayStatus) val.get_double());
+                        break;
+                    case PlayerProperties.SHUFFLE:
+                        data.insert("Shuffle", val);
+                        break;
+                    case PlayerProperties.REPEAT:
+                        data.insert("LoopStatus", (RepeatStatus) val.get_double());
+                        break;
+                    case PlayerProperties.VOLUME:
+                        data.insert("Volume", val);
+                        break;
+                    case PlayerProperties.URL:
+                    case PlayerProperties.ARTIST:
+                    case PlayerProperties.TRACK:
+                    case PlayerProperties.ALBUM:
+                    case PlayerProperties.ART_URL:
+                    case PlayerProperties.TRACK_LENGTH:
+                        _has_metadata = true;
+                        break;
+                }
+	        });
+
+            has_metadata = _has_metadata;
+            return data;
+        }
+
+    }
+
+    [DBus (name = "org.WebMusic.Webextension.Player")]
     public interface IPlayer : GLib.Object {
 
         public signal void PropertiesChanged(HashTable<PlayerProperties, Variant> dict);

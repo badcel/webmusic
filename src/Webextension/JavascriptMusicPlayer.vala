@@ -214,7 +214,7 @@ namespace WebMusic.Webextension {
         	if(changes.contains(PlayerProperties.ART_URL)) {
                 cache_cover(changes);
 	        } else {
-                mSelf.PropertiesChanged(changes);
+                mSelf.send_property_change(changes);
 	        }
 
             return new JSCore.Value.boolean(ctx, true);
@@ -260,7 +260,7 @@ namespace WebMusic.Webextension {
                     changes.insert(PlayerProperties.ART_FILE_LOCAL, new Variant.string("file://" + file_name));
                 }
 
-                mSelf.PropertiesChanged(changes);
+                mSelf.send_property_change(changes);
             });
 
            file_cache.cache_async(art_url, file_name);

@@ -19,7 +19,7 @@ using LibWebMusic;
 namespace WebMusic.Webextension {
 
     [DBus(name = "org.WebMusic.Webextension.Player")]
-    public abstract class Player : GLib.Object {
+    public abstract class Player : GLib.Object, IPlayerPropertiesChangedProvider {
 
         private uint mOwnerId;
         private DBusConnection mConnection;
@@ -109,6 +109,36 @@ namespace WebMusic.Webextension {
 
         private void OnNameLost(DBusConnection connection, string name) {
             debug("DBus: Name %s lost.", name);
+        }
+
+        protected void send_property_change(HashTable<PlayerProperties, Variant> dict) {
+
+            bool has_metadata;
+            var data = this.get_properties_changed_data(dict, out has_metadata);
+            var invalidated_builder = new VariantBuilder(new VariantType("as"));
+
+            Variant[] arg_tuple = {
+                new Variant("s", "org.WebMusic.Webextension.Player"),
+                data,
+                invalidated_builder.end()
+            };
+            Variant args = new Variant.tuple(arg_tuple);
+
+            try {
+                this.mConnection.emit_signal(null,
+                                 "/org/WebMusic/Webextension",
+                                 "org.freedesktop.DBus.Properties",
+                                 "PropertiesChanged",
+                                 args
+                );
+
+                //TODO Convenience function. Data got already send via emit_signal
+                this.PropertiesChanged(dict);
+            }
+            catch(Error e) {
+                critical("Error emmitting PropertiesChanged DBus signal. (%s)", e.message);
+            }
+
         }
     }
 }

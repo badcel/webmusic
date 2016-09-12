@@ -30,7 +30,7 @@ namespace WebMusic.Browser.Plugins {
         COULD_NOT_ACQUIRE_BUS
     }
 
-    private class Mpris : GLib.Object, IPlugin {
+    private class Mpris : GLib.Object, IPlugin, IPlayerPropertiesChangedProvider {
 
         private const string INTERFACE_NAME = "org.mpris.MediaPlayer2.Player";
 
@@ -169,59 +169,8 @@ namespace WebMusic.Browser.Plugins {
             if(!this.Enable || mConnection.closed)
                 return;
 
-            HashTable<string, Variant> data = new HashTable<string, Variant>(str_hash, str_equal);
-            bool has_metadata = false;
-
-            dict.foreach ((key, val) => {
-                switch(key) {
-                    case PlayerProperties.CAN_CONTROL:
-                        data.insert("CanControl", val);
-                        break;
-                    case PlayerProperties.CAN_PLAY:
-                        data.insert("CanPlay", val);
-                        break;
-                    case PlayerProperties.CAN_PAUSE:
-                        data.insert("CanPause", val);
-                        break;
-                    case PlayerProperties.CAN_SEEK:
-                        data.insert("CanSeek", val);
-                        break;
-                    case PlayerProperties.CAN_GO_NEXT:
-                        data.insert("CanGoNext", val);
-                        break;
-                    case PlayerProperties.CAN_GO_PREVIOUS:
-                        data.insert("CanGoPrevious", val);
-                        break;
-                    case PlayerProperties.CAN_SHUFFLE:
-                        data.insert("CanShuffle", val);
-                        break;
-                    case PlayerProperties.CAN_REPEAT:
-                        data.insert("CanRepeat", val);
-                        break;
-                    case PlayerProperties.PLAYBACKSTATUS:
-                        var playstatus = (PlayStatus) val.get_double();
-                        data.insert("PlaybackStatus", playstatus.to_string());
-                        break;
-                    case PlayerProperties.SHUFFLE:
-                        data.insert("Shuffle", val);
-                        break;
-                    case PlayerProperties.REPEAT:
-                        var repeat = (RepeatStatus) val.get_double();
-                        data.insert("LoopStatus", repeat.to_string());
-                        break;
-                    case PlayerProperties.VOLUME:
-                        data.insert("Volume", val);
-                        break;
-                    case PlayerProperties.URL:
-                    case PlayerProperties.ARTIST:
-                    case PlayerProperties.TRACK:
-                    case PlayerProperties.ALBUM:
-                    case PlayerProperties.ART_URL:
-                    case PlayerProperties.TRACK_LENGTH:
-                        has_metadata = true;
-                        break;
-                }
-	        });
+	        bool has_metadata;
+	        var data = this.get_properties_changed_data(dict, out has_metadata);
 
             if(has_metadata) {
                 mMprisPlayer.set_metadata(dict);
