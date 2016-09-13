@@ -84,7 +84,7 @@ namespace WebMusic.Webextension.JsInterface {
                     }
                 }
 
-                retFunc = func.call_as_function(js_context, func, (JSCore.Value[]) params, out exception);
+                retFunc = func.call_as_function(js_context, js_object, (JSCore.Value[]) params, out exception);
 
                 if(exception != null) {
                     this.LogException(name, exception);
