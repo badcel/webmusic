@@ -56,6 +56,10 @@
 
         changes : null,
 
+        /*
+         * Defines if the integration script is ready
+         * to deliver information (bool)
+         */
         set ready(value) {
             if(value != this._ready) {
                 this.changes.push([this.Properties.READY, value]);
@@ -66,6 +70,13 @@
         get ready() {
             return this._ready;
         },
+
+        /*
+         * Most of the following properties correspond to the
+         * MPRIS specification of the interface org.mpris.MediaPlayer2.Player.
+         *
+         * See: https://specifications.freedesktop.org/mpris-spec/latest/Player_Interface.html
+         */
 
         set canControl(value) {
             if(value != this._canControl) {
@@ -155,6 +166,10 @@
             return this._canRepeat;
         },
 
+        /*
+         * playbackStatus uses values of this.PlaybackState
+         * See definition vor values.
+         */
         set playbackStatus(value) {
             if(value != this._playbackStatus) {
                 this.changes.push([this.Properties.PLAYBACKSTATUS, value]);
@@ -166,6 +181,14 @@
             return this._playbackStatus;
         },
 
+        /*
+         * Corresponds to the LoopStatus property of the MPRIS specification
+         *
+         * Values:
+         *  0: No repeat
+         *  1: Repeat playlist
+         *  2: Repeat track
+         */
         set repeat(value) {
             if(value != this._repeat) {
                 this.changes.push([this.Properties.REPEAT, value]);
@@ -177,6 +200,9 @@
             return this._repeat;
         },
 
+        /*
+         * Volume is set in percent (0.0 - 1.0)
+         */
         set volume(value) {
             if(value != this._volume) {
                 this.changes.push([this.Properties.VOLUME, value]);
@@ -199,6 +225,11 @@
             return this._shuffle;
         },
 
+        /*
+         * Mark a song as favourite (bool)
+         *
+         * Not specified in MPRIS specification
+         */
         set like(value) {
             if(value != this._like) {
                 this.changes.push([this.Properties.LIKE, value]);
@@ -210,6 +241,11 @@
             return this._like;
         },
 
+        /*
+         * Corresponds to the Position property of the MPRIS specification
+         *
+         * trackPosition is defined in microseconds
+         */
         set trackPosition(value) {
             if(value != this._trackPosition) {
 
@@ -228,6 +264,14 @@
             return this._trackPosition;
         },
 
+        /*
+         * The following data belongs to the Metadata property
+         * of the MPRIS Specification
+         */
+
+        /*
+         * URL to identify track
+         */
         set url(value) {
             if(value != this._url) {
                 this._metadataChanged = true;
@@ -272,6 +316,9 @@
             return this._album;
         },
 
+        /*
+         * Url of album picture
+         */
         set artUrl(value) {
             if(value != this._artUrl) {
                 this._metadataChanged = true;
@@ -283,6 +330,9 @@
             return this._artUrl;
         },
 
+        /*
+         * trackLength is specified in microseconds
+         */
         set trackLength(value) {
             if(value != this._trackLength) {
                 this._metadataChanged = true;
@@ -418,4 +468,4 @@
         TRACKLIST: 2,
     };
 
-})(this);
+})(this); //WebMusicApi scope
