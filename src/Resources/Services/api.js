@@ -18,8 +18,11 @@
 
 (function(WebMusicApi) {
 
-    function Player() {}
-    Player.prototype = {
+    WebMusicApi.BasePlayer = function() {
+        this.changes = new Array();
+    };
+
+    WebMusicApi.BasePlayer.prototype = {
 
         _ready      : false,
         _canControl : false,
@@ -50,6 +53,8 @@
         _trackPosition : 0,
 
         _metadataChanged : false,
+
+        changes : null,
 
         set ready(value) {
             if(value != this._ready) {
@@ -104,6 +109,123 @@
 
         get canSeek() {
             return this._canSeek;
+        },
+
+        set canGoNext(value) {
+            if(value != this._canGoNext) {
+                this.changes.push([this.Properties.CAN_GO_NEXT, value]);
+                this._canGoNext = value;
+            }
+        },
+
+        get canGoNext() {
+            return this._canGoNext;
+        },
+
+        set canGoPrevious(value) {
+            if(value != this._canGoPrevious) {
+                this.changes.push([this.Properties.CAN_GO_PREVIOUS, value]);
+                this._canGoPrevious = value;
+            }
+        },
+
+        get canGoPrevious() {
+            return this._canGoPrevious;
+        },
+
+        set canShuffle(value) {
+            if(value != this._canShuffle) {
+                this.changes.push([this.Properties.CAN_SHUFFLE, value]);
+                this._canShuffle = value;
+            }
+        },
+
+        get canShuffle() {
+            return this._canShuffle;
+        },
+
+        set canRepeat(value) {
+            if(value != this._canRepeat) {
+                this.changes.push([this.Properties.CAN_REPEAT, value]);
+                this._canRepeat = value;
+            }
+        },
+
+        get canRepeat() {
+            return this._canRepeat;
+        },
+
+        set playbackStatus(value) {
+            if(value != this._playbackStatus) {
+                this.changes.push([this.Properties.PLAYBACKSTATUS, value]);
+                this._playbackStatus = value;
+            }
+        },
+
+        get playbackStatus() {
+            return this._playbackStatus;
+        },
+
+        set repeat(value) {
+            if(value != this._repeat) {
+                this.changes.push([this.Properties.REPEAT, value]);
+                this._repeat = value;
+            }
+        },
+
+        get repeat() {
+            return this._repeat;
+        },
+
+        set volume(value) {
+            if(value != this._volume) {
+                this.changes.push([this.Properties.VOLUME, value]);
+                this._volume = value;
+            }
+        },
+
+        get volume() {
+            return this._volume;
+        },
+
+        set shuffle(value) {
+            if(value != this._shuffle) {
+                this.changes.push([this.Properties.SHUFFLE, value]);
+                this._shuffle = value;
+            }
+        },
+
+        get shuffle() {
+            return this._shuffle;
+        },
+
+        set like(value) {
+            if(value != this._like) {
+                this.changes.push([this.Properties.LIKE, value]);
+                this._like = value;
+            }
+        },
+
+        get like() {
+            return this._like;
+        },
+
+        set trackPosition(value) {
+            if(value != this._trackPosition) {
+
+                if(this._trackPosition + 2000000 < value
+                    || this._trackPosition - 2000000 > value) {
+
+                    WebMusicApi.seeked(value);
+                }
+
+                //According to MPRIS2 spec property changes are not tracked
+                this._trackPosition = value;
+            }
+        },
+
+        get trackPosition() {
+            return this._trackPosition;
         },
 
         set url(value) {
@@ -161,105 +283,6 @@
             return this._artUrl;
         },
 
-        set playbackStatus(value) {
-            if(value != this._playbackStatus) {
-                this.changes.push([this.Properties.PLAYBACKSTATUS, value]);
-                this._playbackStatus = value;
-            }
-        },
-
-        get playbackStatus() {
-            return this._playbackStatus;
-        },
-
-        set canGoNext(value) {
-            if(value != this._canGoNext) {
-                this.changes.push([this.Properties.CAN_GO_NEXT, value]);
-                this._canGoNext = value;
-            }
-        },
-
-        get canGoNext() {
-            return this._canGoNext;
-        },
-
-        set canGoPrevious(value) {
-            if(value != this._canGoPrevious) {
-                this.changes.push([this.Properties.CAN_GO_PREVIOUS, value]);
-                this._canGoPrevious = value;
-            }
-        },
-
-        get canGoPrevious() {
-            return this._canGoPrevious;
-        },
-
-        set canShuffle(value) {
-            if(value != this._canShuffle) {
-                this.changes.push([this.Properties.CAN_SHUFFLE, value]);
-                this._canShuffle = value;
-            }
-        },
-
-        get canShuffle() {
-            return this._canShuffle;
-        },
-
-        set canRepeat(value) {
-            if(value != this._canRepeat) {
-                this.changes.push([this.Properties.CAN_REPEAT, value]);
-                this._canRepeat = value;
-            }
-        },
-
-        get canRepeat() {
-            return this._canRepeat;
-        },
-
-        set repeat(value) {
-            if(value != this._repeat) {
-                this.changes.push([this.Properties.REPEAT, value]);
-                this._repeat = value;
-            }
-        },
-
-        get repeat() {
-            return this._repeat;
-        },
-
-        set volume(value) {
-            if(value != this._volume) {
-                this.changes.push([this.Properties.VOLUME, value]);
-                this._volume = value;
-            }
-        },
-
-        get volume() {
-            return this._volume;
-        },
-
-        set shuffle(value) {
-            if(value != this._shuffle) {
-                this.changes.push([this.Properties.SHUFFLE, value]);
-                this._shuffle = value;
-            }
-        },
-
-        get shuffle() {
-            return this._shuffle;
-        },
-
-        set like(value) {
-            if(value != this._like) {
-                this.changes.push([this.Properties.LIKE, value]);
-                this._like = value;
-            }
-        },
-
-        get like() {
-            return this._like;
-        },
-
         set trackLength(value) {
             if(value != this._trackLength) {
                 this._metadataChanged = true;
@@ -271,26 +294,54 @@
             return this._trackLength;
         },
 
-        set trackPosition(value) {
-            if(value != this._trackPosition) {
-
-                if(this._trackPosition + 2000000 < value
-                    || this._trackPosition - 2000000 > value) {
-
-                    WebMusicApi.seeked(value);
-                }
-
-                //According to MPRIS2 spec property changes are not tracked
-                this._trackPosition = value;
-            }
+        actionPlay : function() {
+            WebMusicApi.warning("Function actionPlay is not available");
         },
 
-        get trackPosition() {
-            return this._trackPosition;
+        actionPause : function() {
+            WebMusicApi.warning("Function actionPause is not available");
         },
 
+        actionStop : function() {
+            WebMusicApi.warning("Function actionStop is not available");
+        },
 
-        changes : [],
+        actionNext : function() {
+            WebMusicApi.warning("Function actionNext is not available");
+        },
+
+        actionPrevious : function(){
+            WebMusicApi.warning("Function actionPrevious is not available");
+        },
+
+        actionRepeat : function(repeatstatus){
+            WebMusicApi.warning("Function actionRepeat is not available");
+        },
+
+        actionVolume : function(volume){
+            WebMusicApi.warning("Function actionVolume is not available");
+        },
+
+        actionToggleShuffle : function(){
+            WebMusicApi.warning("Function actionToggleShuffle is not available");
+        },
+
+        actionToggleLike : function() {
+            WebMusicApi.warning("Function actionToggleLike is not available");
+        },
+
+        actionTrackPosition : function(position) {
+            WebMusicApi.warning("Function actionTrackPosition is not available");
+        },
+
+        actionSearch : function(searchstring){
+            WebMusicApi.warning("Function actionSearch is not available");
+        },
+
+        actionShow : function(type, id){
+            WebMusicApi.warning("Function actionShow is not available");
+        },
+
 
         sendPropertyChange : function() {
 
@@ -318,28 +369,16 @@
                 this._metadataChanged = false;
             }
         }
+
     };
 
-    Player.prototype.Action = {
-        STOP    : 'stop',
-        PLAY    : 'play',
-        PAUSE   : 'pause',
-        NEXT    : 'next',
-        PREVIOUS: 'previous',
-        REPEAT  : 'repeat',
-        VOLUME  : 'volume',
-        TRACK_POSITION : 'track-position',
-        TOGGLE_SHUFFLE : 'toggle-shuffle',
-        TOGGLE_LIKE    : 'toggle-like'
-    };
-
-    Player.prototype.PlaybackState = {
+    WebMusicApi.BasePlayer.prototype.PlaybackState = {
         STOP : 0,
         PLAY : 1,
         PAUSE: 2
     };
 
-    Player.prototype.Properties = {
+    WebMusicApi.BasePlayer.prototype.Properties = {
         READY           : 'ready',
         CAN_CONTROL     : 'canControl',
         CAN_PLAY        : 'canPlay',
@@ -363,14 +402,7 @@
         TRACK_POSITION  : 'trackPosition'
     };
 
-    WebMusicApi.Player = new Player();
-
     function Browser() {}
-    Browser.prototype.Action = {
-        SEARCH    : 'search',
-        SHOW      : 'show'
-    };
-
     Browser.prototype.ActionShowType = {
         TRACK    : 'track',
         ALBUM    : 'album',

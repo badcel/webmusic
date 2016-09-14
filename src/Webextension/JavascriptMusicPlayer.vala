@@ -29,10 +29,10 @@ namespace WebMusic.Webextension {
 
             switch(this) {
                 case BrowserAction.SEARCH:
-                    ret = "search";
+                    ret = "actionSearch";
                     break;
                 case BrowserAction.SHOW:
-                    ret = "show";
+                    ret = "actionShow";
                     break;
             }
 
@@ -59,34 +59,34 @@ namespace WebMusic.Webextension {
 
             switch(this) {
                 case PlayerAction.STOP:
-                    ret = "stop";
+                    ret = "actionStop";
                     break;
                 case PlayerAction.PLAY:
-                    ret = "play";
+                    ret = "actionPlay";
                     break;
                 case PlayerAction.PAUSE:
-                    ret = "pause";
+                    ret = "actionPause";
                     break;
                 case PlayerAction.NEXT:
-                    ret = "next";
+                    ret = "actionNext";
                     break;
                 case PlayerAction.PREVIOUS:
-                    ret = "previous";
+                    ret = "actionPrevious";
                     break;
                 case PlayerAction.REPEAT:
-                    ret = "repeat";
+                    ret = "actionRepeat";
                     break;
                 case PlayerAction.VOLUME:
-                    ret = "volume";
+                    ret = "actionVolume";
                     break;
                 case PlayerAction.TRACK_POSITION:
-                    ret = "track-position";
+                    ret = "actionTrackPosition";
                     break;
                 case PlayerAction.TOGGLE_SHUFFLE:
-                    ret = "toggle-shuffle";
+                    ret = "actionToggleShuffle";
                     break;
                 case PlayerAction.TOGGLE_LIKE:
-                    ret = "toggle-like";
+                    ret = "actionToggleLike";
                     break;
             }
 
@@ -397,9 +397,7 @@ namespace WebMusic.Webextension {
             }
             set {
                 if(mIntegrationReady && mService.SupportsShuffle && this.Shuffle != value) {
-                    Variant[] args = new Variant[1];
-                    args[0] = new Variant.string(PlayerAction.TOGGLE_SHUFFLE.to_string());
-                    mContext.call_function("ActivateAction", args);
+                    mJsPlayer.call_function(PlayerAction.TOGGLE_SHUFFLE.to_string(), null);
                 }
             }
         }
@@ -422,9 +420,7 @@ namespace WebMusic.Webextension {
             set {
                 if(mIntegrationReady && mService.SupportsLike && this.Like != value) {
                     Idle.add(() => {
-                        Variant[] args = new Variant[1];
-                        args[0] = new Variant.string(PlayerAction.TOGGLE_LIKE.to_string());
-                        mContext.call_function("ActivateAction", args);
+                        mJsPlayer.call_function(PlayerAction.TOGGLE_LIKE.to_string(), null);
                         return false;
                     });
                 }
@@ -446,10 +442,9 @@ namespace WebMusic.Webextension {
             set {
                 if(mIntegrationReady) {
                     Idle.add(() => {
-                        Variant[] args = new Variant[2];
-                        args[0] = new Variant.string(PlayerAction.VOLUME.to_string());
-                        args[1] = new Variant.double(value);
-                        mContext.call_function("ActivateAction", args);
+                        Variant[] args = new Variant[1];
+                        args[0] = new Variant.double(value);
+                        mJsPlayer.call_function(PlayerAction.VOLUME.to_string(), args);
                         return false;
                     });
                 }
@@ -470,10 +465,9 @@ namespace WebMusic.Webextension {
             }
             set {
                 if(mIntegrationReady) {
-                    Variant[] args = new Variant[2];
-                    args[0] = new Variant.string(PlayerAction.TRACK_POSITION.to_string());
-                    args[1] = new Variant.int64(value);
-                    mContext.call_function("ActivateAction", args);
+                    Variant[] args = new Variant[1];
+                    args[0] = new Variant.int64(value);
+                    mJsPlayer.call_function(PlayerAction.TRACK_POSITION.to_string(), args);
                 }
             }
         }
@@ -522,10 +516,9 @@ namespace WebMusic.Webextension {
             set {
                 if(mIntegrationReady && mService.SupportsRepeat) {
                     Idle.add(() => {
-                        Variant[] args = new Variant[2];
-                        args[0] = new Variant.string(PlayerAction.REPEAT.to_string());
-                        args[1] = new Variant.int32((int32)value);
-                        mContext.call_function("ActivateAction", args);
+                        Variant[] args = new Variant[1];
+                        args[0] = new Variant.int32((int32)value);
+                        mJsPlayer.call_function(PlayerAction.REPEAT.to_string(), args);
                         return false;
                     });
                 }
@@ -535,9 +528,7 @@ namespace WebMusic.Webextension {
         public override void Next() {
             if(mIntegrationReady) {
                 Idle.add(() => {
-                    Variant[] args = new Variant[1];
-                    args[0] = new Variant.string(PlayerAction.NEXT.to_string());
-                    mContext.call_function("ActivateAction", args);
+                    mJsPlayer.call_function(PlayerAction.NEXT.to_string(), null);
                     return false;
                 });
             }
@@ -546,9 +537,7 @@ namespace WebMusic.Webextension {
         public override void Previous() {
             if(mIntegrationReady) {
                 Idle.add(() => {
-                    Variant[] args = new Variant[1];
-                    args[0] = new Variant.string(PlayerAction.PREVIOUS.to_string());
-                    mContext.call_function("ActivateAction", args);
+                    mJsPlayer.call_function(PlayerAction.PREVIOUS.to_string(), null);
                     return false;
                 });
             }
@@ -557,9 +546,7 @@ namespace WebMusic.Webextension {
         public override void Pause() {
             if(mIntegrationReady) {
                 Idle.add(() => {
-                    Variant[] args = new Variant[1];
-                    args[0] = new Variant.string(PlayerAction.PAUSE.to_string());
-                    mContext.call_function("ActivateAction", args);
+                    mJsPlayer.call_function(PlayerAction.PAUSE.to_string(), null);
                     return false;
                 });
             }
@@ -568,9 +555,7 @@ namespace WebMusic.Webextension {
         public override void Stop() {
             if(mIntegrationReady) {
                 Idle.add(() => {
-                    Variant[] args = new Variant[1];
-                    args[0] = new Variant.string(PlayerAction.STOP.to_string());
-                    mContext.call_function("ActivateAction", args);
+                    mJsPlayer.call_function(PlayerAction.STOP.to_string(), null);
                     return false;
                 });
             }
@@ -579,9 +564,7 @@ namespace WebMusic.Webextension {
         public override void Play() {
             if(mIntegrationReady) {
                 Idle.add(() => {
-                    Variant[] args = new Variant[1];
-                    args[0] = new Variant.string(PlayerAction.PLAY.to_string());
-                    mContext.call_function("ActivateAction", args);
+                    mJsPlayer.call_function(PlayerAction.PLAY.to_string(), null);
                     return false;
                 });
             }
@@ -591,10 +574,9 @@ namespace WebMusic.Webextension {
 
             if(mIntegrationReady) {
                 Idle.add(() => {
-                    Variant[] args = new Variant[2];
-                    args[0] = new Variant.string(BrowserAction.SEARCH.to_string());
-                    args[1] = new Variant.string(term);
-                    mContext.call_function("ActivateAction", args);
+                    Variant[] args = new Variant[1];
+                    args[0] = new Variant.string(term);
+                    mJsPlayer.call_function(BrowserAction.SEARCH.to_string(), args);
                     return false;
                 });
             }
@@ -603,11 +585,10 @@ namespace WebMusic.Webextension {
         public override void Show(string type, string id) {
             if(mIntegrationReady) {
                 Idle.add(() => {
-                    Variant[] args = new Variant[3];
-                    args[0] = new Variant.string(BrowserAction.SHOW.to_string());
-                    args[1] = new Variant.string(type);
-                    args[2] = new Variant.string(id);
-                    mContext.call_function("ActivateAction", args);
+                    Variant[] args = new Variant[2];
+                    args[0] = new Variant.string(type);
+                    args[1] = new Variant.string(id);
+                    mJsPlayer.call_function(BrowserAction.SHOW.to_string(), args);
                     return false;
                 });
             }
