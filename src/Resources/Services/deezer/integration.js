@@ -167,4 +167,4 @@
         return button == null? false : !button.disabled
     };
 
-})(this);
+})(this); //WebMusicApi scope
