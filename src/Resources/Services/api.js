@@ -427,19 +427,19 @@
             WebMusicApi.warning("Function actionNext is not available");
         }
 
-        actionPrevious(){
+        actionPrevious() {
             WebMusicApi.warning("Function actionPrevious is not available");
         }
 
-        actionRepeat(repeatstatus){
+        actionRepeat(repeatstatus) {
             WebMusicApi.warning("Function actionRepeat is not available");
         }
 
-        actionVolume(volume){
+        actionVolume(volume) {
             WebMusicApi.warning("Function actionVolume is not available");
         }
 
-        actionToggleShuffle(){
+        actionToggleShuffle() {
             WebMusicApi.warning("Function actionToggleShuffle is not available");
         }
 
@@ -451,11 +451,11 @@
             WebMusicApi.warning("Function actionTrackPosition is not available");
         }
 
-        actionSearch(searchstring){
+        actionSearch(searchstring) {
             WebMusicApi.warning("Function actionSearch is not available");
         }
 
-        actionShow(type, id){
+        actionShow(type, id) {
             WebMusicApi.warning("Function actionShow is not available");
         }
 
@@ -475,16 +475,9 @@
 
             super.sendPropertyChange(this.PropertyChangeType.PLAYER);
         }
-    };
-
-
-
-
-            }
-        }
+    }
 
     WebMusicApi.BasePlayer = BasePlayer;
-
 
     function Browser() {}
     Browser.prototype.ActionShowType = {
