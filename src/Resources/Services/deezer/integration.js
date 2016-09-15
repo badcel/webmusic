@@ -113,7 +113,7 @@
         }
 
         actionRepeat(repeatstatus){
-                dzPlayer.control.setRepeat(repeatstatus);
+            dzPlayer.control.setRepeat(repeatstatus);
         }
 
         actionVolume(volume){
