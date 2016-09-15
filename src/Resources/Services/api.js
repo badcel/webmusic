@@ -18,11 +18,50 @@
 
 (function(WebMusicApi) {
 
-
-
-
-    class BasePlayer {
+    class BaseApi {
         constructor() {
+            this.changes = new Array();
+        }
+
+        start() {
+            document.onreadystatechange = function () {
+                if (document.readyState === "complete") {
+                    this.update();
+                }
+            }.bind(this);
+        }
+
+        update() {
+            WebMusicApi.warning("Function update is not available");
+        }
+
+        get PropertyChangeType() {
+            return { PLAYER   : 0,
+                     PLAYLIST : 1,
+                     TRACKLIST: 2,
+            };
+        }
+
+        sendPropertyChange(type) {
+
+            if(this.changes.length > 0) {
+
+                let info = "";
+                for(let i = 0; i < this.changes.length; i++) {
+                    info += "<" + this.changes[i][0] + ":" + this.changes[i][1] + ">";
+                }
+                WebMusicApi.debug(info);
+
+                WebMusicApi.sendPropertyChange(type, this.changes);
+
+                this.changes = [];
+            }
+        }
+    }
+
+    class BasePlayer extends BaseApi {
+        constructor() {
+            super();
 
             this._ready = false;
 
@@ -50,8 +89,6 @@
             this._trackLength = 0;
 
             this._metadataChanged = false;
-
-            this.changes = new Array;
         }
 
         get PlaybackState() {
@@ -422,7 +459,6 @@
             WebMusicApi.warning("Function actionShow is not available");
         }
 
-
         sendPropertyChange() {
 
             if(this._metadataChanged) {
@@ -437,21 +473,15 @@
                 this._metadataChanged = false;
             }
 
-            if(this.changes.length > 0) {
+            super.sendPropertyChange(this.PropertyChangeType.PLAYER);
+        }
+    };
 
-                let info = "";
-                for(let i = 0; i < this.changes.length; i++) {
-                    info += "<" + this.changes[i][0] + ":" + this.changes[i][1] + ">";
-                }
-                WebMusicApi.debug(info);
 
-                WebMusicApi.sendPropertyChange(WebMusicApi.PropertyChangeType.PLAYER, this.changes);
 
-                this.changes = [];
 
             }
         }
-    };
 
     WebMusicApi.BasePlayer = BasePlayer;
 
@@ -465,11 +495,5 @@
     };
 
     WebMusicApi.Browser = new Browser();
-
-    WebMusicApi.PropertyChangeType = {
-        PLAYER   : 0,
-        PLAYLIST : 1,
-        TRACKLIST: 2,
-    };
 
 })(this); //WebMusicApi scope

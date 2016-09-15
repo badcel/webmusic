@@ -29,14 +29,6 @@
             this.canSeek    = true;
         }
 
-        start() {
-            document.onreadystatechange = function () {
-                if (document.readyState === "complete") {
-                    this.update();
-                }
-            }.bind(this);
-        }
-
         update() {
             try {
 
@@ -86,7 +78,7 @@
                 this.sendPropertyChange();
 
             } catch(e) {
-                WebMusicApi.warning("Deezer - Error:" + e.message);
+                WebMusicApi.warning("DeezerPlayer - Error:" + e.message);
             } finally {
                 setTimeout(this.update.bind(this), 500);
             }
