@@ -18,43 +18,73 @@
 
 (function(WebMusicApi) {
 
-    WebMusicApi.BasePlayer = function() {
-        this.changes = new Array();
-    };
 
-    WebMusicApi.BasePlayer.prototype = {
 
-        _ready      : false,
-        _canControl : false,
-        _canPlay    : false,
-        _canPause   : false,
-        _canSeek    : false,
 
-        _url    : '',
-        _artist : '',
-        _track  : '',
-        _album  : '',
-        _artUrl : '',
+    class BasePlayer {
+        constructor() {
 
-        _playbackStatus : 0,
+            this._ready = false;
 
-        _canGoNext      : false,
-        _canGoPrevious  : false,
-        _canShuffle     : false,
-        _canRepeat      : false,
+            this._canControl    = false;
+            this._canPlay       = false;
+            this._canPause      = false;
+            this._canSeek       = false;
+            this._canGoNext     = false;
+            this._canGoPrevious = false;
+            this._canShuffle    = false;
+            this._canRepeat     = false;
 
-        _like    : false,
-        _shuffle : false,
+            this._playbackStatus = 0;
+            this._repeat         = 0;
+            this._volume         = 50;
+            this._shuffle        = false;
+            this._like           = false;
+            this._trackPosition  = 0;
 
-        _repeat : 0,
-        _volume : 50,
+            this._url         = '';
+            this._artist      = '';
+            this._track       = '';
+            this._album       = '';
+            this._artUrl      = '';
+            this._trackLength = 0;
 
-        _trackLength   : 0,
-        _trackPosition : 0,
+            this._metadataChanged = false;
 
-        _metadataChanged : false,
+            this.changes = new Array;
+        }
 
-        changes : null,
+        get PlaybackState() {
+            return { STOP : 0,
+                     PLAY : 1,
+                     PAUSE: 2
+            };
+        }
+
+        get Properties() {
+            return { READY           : 'ready',
+                     CAN_CONTROL     : 'canControl',
+                     CAN_PLAY        : 'canPlay',
+                     CAN_PAUSE       : 'canPause',
+                     CAN_SEEK        : 'canSeek',
+                     CAN_GO_NEXT     : 'canGoNext',
+                     CAN_GO_PREVIOUS : 'canGoPrevious',
+                     CAN_SHUFFLE     : 'canShuffle',
+                     CAN_REPEAT      : 'canRepeat',
+                     URL             : 'url',
+                     ARTIST          : 'artist',
+                     TRACK           : 'track',
+                     ALBUM           : 'album',
+                     ART_URL         : 'artUrl',
+                     PLAYBACKSTATUS  : 'playbackstatus',
+                     LIKE            : 'like',
+                     SHUFFLE         : 'shuffle',
+                     REPEAT          : 'repeat',
+                     VOLUME          : 'volume',
+                     TRACK_LENGTH    : 'trackLength',
+                     TRACK_POSITION  : 'trackPosition'
+            };
+        }
 
         /*
          * Defines if the integration script is ready
@@ -65,11 +95,11 @@
                 this.changes.push([this.Properties.READY, value]);
                 this._ready = value;
             }
-        },
+        }
 
         get ready() {
             return this._ready;
-        },
+        }
 
         /*
          * Most of the following properties correspond to the
@@ -83,88 +113,88 @@
                 this.changes.push([this.Properties.CAN_CONTROL, value]);
                 this._canControl = value;
             }
-        },
+        }
 
         get canControl() {
             return this._canControl;
-        },
+        }
 
         set canPlay(value) {
             if(value != this._canPlay) {
                 this.changes.push([this.Properties.CAN_PLAY, value]);
                 this._canPlay = value;
             }
-        },
+        }
 
         get canPlay() {
             return this._canPlay;
-        },
+        }
 
         set canPause(value) {
             if(value != this._canPause) {
                 this.changes.push([this.Properties.CAN_PAUSE, value]);
                 this._canPause = value;
             }
-        },
+        }
 
         get canPause() {
             return this._canPause;
-        },
+        }
 
         set canSeek(value) {
             if(value != this._canSeek) {
                 this.changes.push([this.Properties.CAN_SEEK, value]);
                 this._canSeek = value;
             }
-        },
+        }
 
         get canSeek() {
             return this._canSeek;
-        },
+        }
 
         set canGoNext(value) {
             if(value != this._canGoNext) {
                 this.changes.push([this.Properties.CAN_GO_NEXT, value]);
                 this._canGoNext = value;
             }
-        },
+        }
 
         get canGoNext() {
             return this._canGoNext;
-        },
+        }
 
         set canGoPrevious(value) {
             if(value != this._canGoPrevious) {
                 this.changes.push([this.Properties.CAN_GO_PREVIOUS, value]);
                 this._canGoPrevious = value;
             }
-        },
+        }
 
         get canGoPrevious() {
             return this._canGoPrevious;
-        },
+        }
 
         set canShuffle(value) {
             if(value != this._canShuffle) {
                 this.changes.push([this.Properties.CAN_SHUFFLE, value]);
                 this._canShuffle = value;
             }
-        },
+        }
 
         get canShuffle() {
             return this._canShuffle;
-        },
+        }
 
         set canRepeat(value) {
             if(value != this._canRepeat) {
                 this.changes.push([this.Properties.CAN_REPEAT, value]);
                 this._canRepeat = value;
             }
-        },
+        }
 
         get canRepeat() {
             return this._canRepeat;
-        },
+        }
 
         /*
          * playbackStatus uses values of this.PlaybackState
@@ -175,11 +205,11 @@
                 this.changes.push([this.Properties.PLAYBACKSTATUS, value]);
                 this._playbackStatus = value;
             }
-        },
+        }
 
         get playbackStatus() {
             return this._playbackStatus;
-        },
+        }
 
         /*
          * Corresponds to the LoopStatus property of the MPRIS specification
@@ -194,11 +224,11 @@
                 this.changes.push([this.Properties.REPEAT, value]);
                 this._repeat = value;
             }
-        },
+        }
 
         get repeat() {
             return this._repeat;
-        },
+        }
 
         /*
          * Volume is set in percent (0.0 - 1.0)
@@ -208,22 +238,22 @@
                 this.changes.push([this.Properties.VOLUME, value]);
                 this._volume = value;
             }
-        },
+        }
 
         get volume() {
             return this._volume;
-        },
+        }
 
         set shuffle(value) {
             if(value != this._shuffle) {
                 this.changes.push([this.Properties.SHUFFLE, value]);
                 this._shuffle = value;
             }
-        },
+        }
 
         get shuffle() {
             return this._shuffle;
-        },
+        }
 
         /*
          * Mark a song as favourite (bool)
@@ -235,11 +265,11 @@
                 this.changes.push([this.Properties.LIKE, value]);
                 this._like = value;
             }
-        },
+        }
 
         get like() {
             return this._like;
-        },
+        }
 
         /*
          * Corresponds to the Position property of the MPRIS specification
@@ -258,11 +288,11 @@
                 //According to MPRIS2 spec property changes are not tracked
                 this._trackPosition = value;
             }
-        },
+        }
 
         get trackPosition() {
             return this._trackPosition;
-        },
+        }
 
         /*
          * The following data belongs to the Metadata property
@@ -277,44 +307,44 @@
                 this._metadataChanged = true;
                 this._url = value;
             }
-        },
+        }
 
         get url() {
             return this._url;
-        },
+        }
 
         set artist(value) {
             if(value != this._artist) {
                 this._metadataChanged = true;
                 this._artist = value;
             }
-        },
+        }
 
         get artist() {
             return this._artist;
-        },
+        }
 
         set track(value) {
             if(value != this._track) {
                 this._metadataChanged = true;
                 this._track = value;
             }
-        },
+        }
 
         get track() {
             return this._track;
-        },
+        }
 
         set album(value) {
             if(value != this._album) {
                 this._metadataChanged = true;
                 this._album = value;
             }
-        },
+        }
 
         get album() {
             return this._album;
-        },
+        }
 
         /*
          * Url of album picture
@@ -324,11 +354,11 @@
                 this._metadataChanged = true;
                 this._artUrl = value;
             }
-        },
+        }
 
         get artUrl() {
             return this._artUrl;
-        },
+        }
 
         /*
          * trackLength is specified in microseconds
@@ -338,62 +368,62 @@
                 this._metadataChanged = true;
                 this._trackLength = value;
             }
-        },
+        }
 
         get trackLength() {
             return this._trackLength;
-        },
+        }
 
-        actionPlay : function() {
+        actionPlay() {
             WebMusicApi.warning("Function actionPlay is not available");
-        },
+        }
 
-        actionPause : function() {
+        actionPause() {
             WebMusicApi.warning("Function actionPause is not available");
-        },
+        }
 
-        actionStop : function() {
+        actionStop() {
             WebMusicApi.warning("Function actionStop is not available");
-        },
+        }
 
-        actionNext : function() {
+        actionNext() {
             WebMusicApi.warning("Function actionNext is not available");
-        },
+        }
 
-        actionPrevious : function(){
+        actionPrevious(){
             WebMusicApi.warning("Function actionPrevious is not available");
-        },
+        }
 
-        actionRepeat : function(repeatstatus){
+        actionRepeat(repeatstatus){
             WebMusicApi.warning("Function actionRepeat is not available");
-        },
+        }
 
-        actionVolume : function(volume){
+        actionVolume(volume){
             WebMusicApi.warning("Function actionVolume is not available");
-        },
+        }
 
-        actionToggleShuffle : function(){
+        actionToggleShuffle(){
             WebMusicApi.warning("Function actionToggleShuffle is not available");
-        },
+        }
 
-        actionToggleLike : function() {
+        actionToggleLike() {
             WebMusicApi.warning("Function actionToggleLike is not available");
-        },
+        }
 
-        actionTrackPosition : function(position) {
+        actionTrackPosition(position) {
             WebMusicApi.warning("Function actionTrackPosition is not available");
-        },
+        }
 
-        actionSearch : function(searchstring){
+        actionSearch(searchstring){
             WebMusicApi.warning("Function actionSearch is not available");
-        },
+        }
 
-        actionShow : function(type, id){
+        actionShow(type, id){
             WebMusicApi.warning("Function actionShow is not available");
-        },
+        }
 
 
-        sendPropertyChange : function() {
+        sendPropertyChange() {
 
             if(this._metadataChanged) {
                 //Always send complete metadata
@@ -403,6 +433,8 @@
                 this.changes.push([this.Properties.ALBUM, this.album]);
                 this.changes.push([this.Properties.ART_URL, this.artUrl]);
                 this.changes.push([this.Properties.TRACK_LENGTH, this.trackLength]);
+
+                this._metadataChanged = false;
             }
 
             if(this.changes.length > 0) {
@@ -416,41 +448,13 @@
                 WebMusicApi.sendPropertyChange(WebMusicApi.PropertyChangeType.PLAYER, this.changes);
 
                 this.changes = [];
-                this._metadataChanged = false;
+
             }
         }
-
     };
 
-    WebMusicApi.BasePlayer.prototype.PlaybackState = {
-        STOP : 0,
-        PLAY : 1,
-        PAUSE: 2
-    };
+    WebMusicApi.BasePlayer = BasePlayer;
 
-    WebMusicApi.BasePlayer.prototype.Properties = {
-        READY           : 'ready',
-        CAN_CONTROL     : 'canControl',
-        CAN_PLAY        : 'canPlay',
-        CAN_PAUSE       : 'canPause',
-        CAN_SEEK        : 'canSeek',
-        CAN_GO_NEXT     : 'canGoNext',
-        CAN_GO_PREVIOUS : 'canGoPrevious',
-        CAN_SHUFFLE     : 'canShuffle',
-        CAN_REPEAT      : 'canRepeat',
-        URL             : 'url',
-        ARTIST          : 'artist',
-        TRACK           : 'track',
-        ALBUM           : 'album',
-        ART_URL         : 'artUrl',
-        PLAYBACKSTATUS  : 'playbackstatus',
-        LIKE            : 'like',
-        SHUFFLE         : 'shuffle',
-        REPEAT          : 'repeat',
-        VOLUME          : 'volume',
-        TRACK_LENGTH    : 'trackLength',
-        TRACK_POSITION  : 'trackPosition'
-    };
 
     function Browser() {}
     Browser.prototype.ActionShowType = {
