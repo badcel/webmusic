@@ -1,6 +1,7 @@
 /* javascriptcore.vapi
  *
  * Copyright (C) 2010 Sam Thursfield <ssssam@gmail.com>
+ * Copyright (C) 2016 Marcel Tiede
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -318,6 +319,12 @@ namespace JSCore {
 		[CCode (cname = "JSValueIsNull", instance_pos=1.1)]
 		public bool is_object_of_class (Context ctx, Value js_value, Class js_class);
 
+        [CCode (cname = "JSValueIsArray", instance_pos=1.1)]
+		public bool is_array (Context ctx);
+
+		[CCode (cname = "JSValueIsDate", instance_pos=1.1)]
+		public bool is_date (Context ctx);
+
 		[CCode (cname = "JSValueIsEqual", instance_pos=1.1)]
 		public bool is_equal (Context ctx, Value b, Value *exception);
 
@@ -327,6 +334,27 @@ namespace JSCore {
 		[CCode (cname = "JSValueIsInstanceOfConstructor", instance_pos=1.1)]
 		public bool is_instance_of_constructor (Context ctx, Value js_value, Object constructor,
 		                                        Value *exception);
+
+        [CCode (cname = "JSValueMakeUndefined")]
+		public static Value make_undefined (Context ctx);
+
+		[CCode (cname = "JSValueMakeNull")]
+		public static Value make_null (Context ctx);
+
+        [CCode (cname = "JSValueMakeBoolean")]
+		public static Value make_boolean (Context ctx, bool boolean);
+
+		[CCode (cname = "JSValueMakeNumber")]
+		public static Value make_number (Context ctx, double number);
+
+		[CCode (cname = "JSValueMakeString")]
+		public static Value make_string (Context ctx, String str);
+
+        [CCode (cname = "JSValueMakeFromJSONString")]
+		public static Value make_from_json_string (Context ctx, String str);
+
+        [CCode (cname = "JSValueCreateJSONString", instance_pos=1.1)]
+		public String create_json_string (Context ctx, uint indent, Value *exception);
 
 		[CCode (cname = "JSValueToBoolean", instance_pos=1.1)]
 		public bool to_boolean (Context ctx);
