@@ -319,7 +319,7 @@ namespace JSCore {
 		[CCode (cname = "JSValueIsNull", instance_pos=1.1)]
 		public bool is_object_of_class (Context ctx, Value js_value, Class js_class);
 
-        [CCode (cname = "JSValueIsArray", instance_pos=1.1)]
+		[CCode (cname = "JSValueIsArray", instance_pos=1.1)]
 		public bool is_array (Context ctx);
 
 		[CCode (cname = "JSValueIsDate", instance_pos=1.1)]
@@ -335,13 +335,13 @@ namespace JSCore {
 		public bool is_instance_of_constructor (Context ctx, Value js_value, Object constructor,
 		                                        Value *exception);
 
-        [CCode (cname = "JSValueMakeUndefined")]
+		[CCode (cname = "JSValueMakeUndefined")]
 		public static Value make_undefined (Context ctx);
 
 		[CCode (cname = "JSValueMakeNull")]
 		public static Value make_null (Context ctx);
 
-        [CCode (cname = "JSValueMakeBoolean")]
+		[CCode (cname = "JSValueMakeBoolean")]
 		public static Value make_boolean (Context ctx, bool boolean);
 
 		[CCode (cname = "JSValueMakeNumber")]
@@ -350,10 +350,10 @@ namespace JSCore {
 		[CCode (cname = "JSValueMakeString")]
 		public static Value make_string (Context ctx, String str);
 
-        [CCode (cname = "JSValueMakeFromJSONString")]
+		[CCode (cname = "JSValueMakeFromJSONString")]
 		public static Value make_from_json_string (Context ctx, String str);
 
-        [CCode (cname = "JSValueCreateJSONString", instance_pos=1.1)]
+		[CCode (cname = "JSValueCreateJSONString", instance_pos=1.1)]
 		public String create_json_string (Context ctx, uint indent, Value *exception);
 
 		[CCode (cname = "JSValueToBoolean", instance_pos=1.1)]
