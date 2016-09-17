@@ -103,10 +103,16 @@ namespace WebMusic.Webextension.JsInterface {
             return variant;
         }
 
+
         public static string get_string(JSCore.Value value, JSCore.Context js_context){
             JSCore.Value? exception = null;
 
             JSCore.String str = value.to_string_copy(js_context, exception);
+
+            return get_string_from_js_string(str, js_context);
+        }
+
+        private static string get_string_from_js_string(JSCore.String str, JSCore.Context js_context) {
             var ret = string.nfill(str.get_maximum_utf8_c_string_size(), ' ');
             str.get_utf8_c_string(ret, ret.length);
 
