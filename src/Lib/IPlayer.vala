@@ -116,7 +116,7 @@ namespace LibWebMusic {
                 case "artFileLocal":
                     result = PlayerProperties.ART_FILE_LOCAL;
                     break;
-                case "playbackstatus":
+                case "playbackStatus":
                     result = PlayerProperties.PLAYBACKSTATUS;
                     break;
                 case "like":

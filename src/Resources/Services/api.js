@@ -20,7 +20,7 @@
 
     class BaseApi {
         constructor() {
-            this.changes = new Array();
+            this.changes = {};
         }
 
         start() {
@@ -44,17 +44,11 @@
 
         sendPropertyChange(type) {
 
-            if(this.changes.length > 0) {
-
-                let info = "";
-                for(let i = 0; i < this.changes.length; i++) {
-                    info += "<" + this.changes[i][0] + ":" + this.changes[i][1] + ">";
-                }
-                WebMusicApi.debug(info);
+            if(Object.keys(this.changes).length > 0) {
+                WebMusicApi.debug(JSON.stringify(this.changes));
 
                 WebMusicApi.sendPropertyChange(type, this.changes);
-
-                this.changes = [];
+                this.changes = {};
             }
         }
     }
@@ -98,38 +92,13 @@
             };
         }
 
-        get Properties() {
-            return { READY           : 'ready',
-                     CAN_CONTROL     : 'canControl',
-                     CAN_PLAY        : 'canPlay',
-                     CAN_PAUSE       : 'canPause',
-                     CAN_SEEK        : 'canSeek',
-                     CAN_GO_NEXT     : 'canGoNext',
-                     CAN_GO_PREVIOUS : 'canGoPrevious',
-                     CAN_SHUFFLE     : 'canShuffle',
-                     CAN_REPEAT      : 'canRepeat',
-                     URL             : 'url',
-                     ARTIST          : 'artist',
-                     TRACK           : 'track',
-                     ALBUM           : 'album',
-                     ART_URL         : 'artUrl',
-                     PLAYBACKSTATUS  : 'playbackstatus',
-                     LIKE            : 'like',
-                     SHUFFLE         : 'shuffle',
-                     REPEAT          : 'repeat',
-                     VOLUME          : 'volume',
-                     TRACK_LENGTH    : 'trackLength',
-                     TRACK_POSITION  : 'trackPosition'
-            };
-        }
-
         /*
          * Defines if the integration script is ready
          * to deliver information (bool)
          */
         set ready(value) {
             if(value != this._ready) {
-                this.changes.push([this.Properties.READY, value]);
+                this.changes.ready = value;
                 this._ready = value;
             }
         }
@@ -147,7 +116,7 @@
 
         set canControl(value) {
             if(value != this._canControl) {
-                this.changes.push([this.Properties.CAN_CONTROL, value]);
+                this.changes.canControl = value;
                 this._canControl = value;
             }
         }
@@ -158,7 +127,7 @@
 
         set canPlay(value) {
             if(value != this._canPlay) {
-                this.changes.push([this.Properties.CAN_PLAY, value]);
+                this.changes.canPlay = value;
                 this._canPlay = value;
             }
         }
@@ -169,7 +138,7 @@
 
         set canPause(value) {
             if(value != this._canPause) {
-                this.changes.push([this.Properties.CAN_PAUSE, value]);
+                this.changes.canPause = value;
                 this._canPause = value;
             }
         }
@@ -180,7 +149,7 @@
 
         set canSeek(value) {
             if(value != this._canSeek) {
-                this.changes.push([this.Properties.CAN_SEEK, value]);
+                this.changes.canSeek = value;
                 this._canSeek = value;
             }
         }
@@ -191,7 +160,7 @@
 
         set canGoNext(value) {
             if(value != this._canGoNext) {
-                this.changes.push([this.Properties.CAN_GO_NEXT, value]);
+                this.changes.canGoNext = value;
                 this._canGoNext = value;
             }
         }
@@ -202,7 +171,7 @@
 
         set canGoPrevious(value) {
             if(value != this._canGoPrevious) {
-                this.changes.push([this.Properties.CAN_GO_PREVIOUS, value]);
+                this.changes.canGoPrevious = value;
                 this._canGoPrevious = value;
             }
         }
@@ -213,7 +182,7 @@
 
         set canShuffle(value) {
             if(value != this._canShuffle) {
-                this.changes.push([this.Properties.CAN_SHUFFLE, value]);
+                this.changes.canShuffle = value;
                 this._canShuffle = value;
             }
         }
@@ -224,7 +193,7 @@
 
         set canRepeat(value) {
             if(value != this._canRepeat) {
-                this.changes.push([this.Properties.CAN_REPEAT, value]);
+                this.changes.canRepeat = value;
                 this._canRepeat = value;
             }
         }
@@ -239,7 +208,7 @@
          */
         set playbackStatus(value) {
             if(value != this._playbackStatus) {
-                this.changes.push([this.Properties.PLAYBACKSTATUS, value]);
+                this.changes.playbackStatus = value;
                 this._playbackStatus = value;
             }
         }
@@ -258,7 +227,7 @@
          */
         set repeat(value) {
             if(value != this._repeat) {
-                this.changes.push([this.Properties.REPEAT, value]);
+                this.changes.repeat = value;
                 this._repeat = value;
             }
         }
@@ -272,7 +241,7 @@
          */
         set volume(value) {
             if(value != this._volume) {
-                this.changes.push([this.Properties.VOLUME, value]);
+                this.changes.volume = value;
                 this._volume = value;
             }
         }
@@ -283,7 +252,7 @@
 
         set shuffle(value) {
             if(value != this._shuffle) {
-                this.changes.push([this.Properties.SHUFFLE, value]);
+                this.changes.shuffle = value;
                 this._shuffle = value;
             }
         }
@@ -299,7 +268,7 @@
          */
         set like(value) {
             if(value != this._like) {
-                this.changes.push([this.Properties.LIKE, value]);
+                this.changes.like = value;
                 this._like = value;
             }
         }
@@ -463,12 +432,12 @@
 
             if(this._metadataChanged) {
                 //Always send complete metadata
-                this.changes.push([this.Properties.URL, this.url]);
-                this.changes.push([this.Properties.ARTIST, this.artist]);
-                this.changes.push([this.Properties.TRACK, this.track]);
-                this.changes.push([this.Properties.ALBUM, this.album]);
-                this.changes.push([this.Properties.ART_URL, this.artUrl]);
-                this.changes.push([this.Properties.TRACK_LENGTH, this.trackLength]);
+                this.changes.url         = this.url;
+                this.changes.artist      = this.artist;
+                this.changes.track       = this.track;
+                this.changes.album       = this.album;
+                this.changes.artUrl      = this.artUrl;
+                this.changes.trackLength = this.trackLength;
 
                 this._metadataChanged = false;
             }
