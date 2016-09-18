@@ -267,7 +267,7 @@ namespace WebMusic.Webextension {
         }
 
         [DBus (visible = false)]
-        public void  SetContext(JSCore.GlobalContext context) {
+        public void SetContext(JSCore.GlobalContext context) {
             var apiClass = new JSCore.Class(definition);
             this.mContext.create_from_class(API_NAME, apiClass, context);
 
