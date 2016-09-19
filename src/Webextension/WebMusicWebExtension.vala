@@ -30,7 +30,7 @@ namespace WebMusic.Webextension {
     private class WebMusicControler {
 
         private BrowserDBus mBrowser;
-        private JavascriptMusicPlayer mPlayer;
+        private JsApi js_api;
         private Service mService;
 
         public WebMusicControler() {
@@ -66,17 +66,18 @@ namespace WebMusic.Webextension {
             unowned JSCore.GlobalContext context = (JSCore.GlobalContext)f.get_javascript_global_context();
 
             try {
-                if(mPlayer == null) {
+                if(js_api == null) {
                     //First run initialize
                     mService = new Service(name);
 
-                    mPlayer = new JavascriptMusicPlayer(mService);
-                    mPlayer.SetContext(context);
-                    mPlayer.PropertiesChanged.connect(this.OnPropertiesChanged);
+                    js_api = new JsApi(mService);
+                    js_api.set_context(context);
+                    js_api.Player.PropertiesChanged.connect(this.OnPropertiesChanged);
+
                 } else {
                     //Refresh objects
                     mService.Load(name);
-                    mPlayer.SetContext(context);
+                    js_api.set_context(context);
                 }
             } catch(ServiceError e) {
                 critical("Service file for %s could not be loaded. " +
@@ -119,7 +120,7 @@ namespace WebMusic.Webextension {
 
         private void Reset() {
             mService = null;
-            mPlayer  = null;
+            js_api  = null;
         }
     }
 }

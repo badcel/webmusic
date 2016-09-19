@@ -97,113 +97,46 @@ namespace WebMusic.Webextension {
     [DBus(name = "org.WebMusic.Webextension.Player")]
     private class JavascriptMusicPlayer : Player {
 
-        private const int REQUIRED_API_VERSION = 1;
-        private static const string API_NAME = "WebMusicApi";
-        private static JavascriptMusicPlayer? mSelf = null;
+        private JsApi js_api;
+        private JsObject js_player;
 
-        private JsObject mContext;
-        private JsObject mJsPlayer;
-
-        private Service mService;
-        private bool mIntegrationReady = false;
         private bool mShuffle = false;
         private bool mLike = false;
 
-        public JavascriptMusicPlayer(Service service) {
-            mService = service;
+        public JavascriptMusicPlayer(JsApi api) {
 
-            mContext = new JsObject();
-            mContext.ContextChanged.connect(OnContextChanged);
+            js_api    = api;
+            js_player = api.get_js_property("Player");
 
-            mSelf = this;
+            js_api.PropertiesChanged.connect(on_properties_changed);
+            js_api.SignalSend.connect(on_signal_send);
         }
 
-        private static const JSCore.StaticFunction[] js_funcs = {
-            { "debug", debugJs, JSCore.PropertyAttribute.ReadOnly },
-            { "warning", warningJs, JSCore.PropertyAttribute.ReadOnly },
-            { "sendPropertyChange", sendPropertyChange, JSCore.PropertyAttribute.ReadOnly },
-            { "seeked", onSeeked, JSCore.PropertyAttribute.ReadOnly },
-            { null, null, 0 }
-        };
+        private void on_signal_send(JsApiType type, string name, Variant params) {
+            if(type != JsApiType.PLAYER) {
+                return;
+            }
 
-        private const JSCore.ClassDefinition definition = {
-            0,                          // version
-            JSCore.ClassAttribute.None, // attribute
-            API_NAME,                   // className
-            null,                       // parentClass
-
-            null,                       // static values
-            js_funcs,                   // static functions
-
-            null,                       // initialize
-            null,                       // finalize
-
-            null,                       // hasProperty
-            null,                       // getProperty
-            null,                       // setProperty
-            null,                       // deleteProperty
-
-            null,                       // getPropertyNames
-            null,                       // callAsFunction
-            null,                       // callAsConstructor
-            null,                       // hasInstance
-            null                        // convertToType
-        };
-
-        private static JSCore.Value debugJs (JSCore.Context ctx,
-            JSCore.Object function,
-            JSCore.Object thisObject,
-            JSCore.Value[] arguments,
-            out JSCore.Value exception) {
-
-            exception = null;
-
-            debug("Log from JS: %s", JsConverter.get_string(arguments[0], ctx));
-            return new JSCore.Value.boolean(ctx, true);
+            if(name == "seeked") {
+                if(params.is_of_type(VariantType.DOUBLE)) {
+                    this.Seeked((int64)params.get_double());
+                } else {
+                    warning("Can not send seeked signal. Parameter is not of type double.");
+                }
+            }
         }
 
-        private static JSCore.Value warningJs (JSCore.Context ctx,
-            JSCore.Object function,
-            JSCore.Object thisObject,
-            JSCore.Value[] arguments,
-            out JSCore.Value exception) {
+        private void on_properties_changed(JsApiType type, HashTable<string, Variant> dict) {
 
-            exception = null;
-
-            warning("Warning from JS: %s", JsConverter.get_string(arguments[0], ctx));
-            return new JSCore.Value.boolean(ctx, true);
-        }
-
-        private static JSCore.Value onSeeked (JSCore.Context ctx,
-            JSCore.Object function,
-            JSCore.Object thisObject,
-            JSCore.Value[] arguments,
-            out JSCore.Value exception) {
-
-            exception = null;
-
-            var v = JsConverter.get_variant(arguments[0], ctx);
-            mSelf.Seeked((int64)v.get_double());
-
-            return new JSCore.Value.boolean(ctx, true);
-        }
-
-        private static JSCore.Value sendPropertyChange (JSCore.Context ctx,
-            JSCore.Object function,
-            JSCore.Object thisObject,
-            JSCore.Value[] arguments,
-            out JSCore.Value exception) {
-
-            exception = null;
-
-            var v = JsConverter.get_variant(arguments[1], ctx);
-	        HashTable<string, Variant> ht = (HashTable<string, Variant>) v;
+            if(type != JsApiType.PLAYER) {
+                return;
+            }
 
             HashTable<PlayerProperties, Variant> changes = new HashTable<PlayerProperties, Variant>(direct_hash, direct_equal);
             PlayerProperties? prop = null;
 
             //Convert changes into enum types
-	        ht.foreach ((key, val) => {
+	        dict.foreach ((key, val) => {
 		        if(PlayerProperties.try_parse_name(key, out prop)) {
 		            changes.insert(prop, val);
 		        } else {
@@ -214,13 +147,12 @@ namespace WebMusic.Webextension {
         	if(changes.contains(PlayerProperties.ART_URL)) {
                 cache_cover(changes);
 	        } else {
-                mSelf.send_property_change(changes);
+                this.send_property_change(changes);
 	        }
 
-            return new JSCore.Value.boolean(ctx, true);
         }
 
-        private static void cache_cover(HashTable<PlayerProperties, Variant> changes) {
+        private void cache_cover(HashTable<PlayerProperties, Variant> changes) {
 
             string art_url = changes.get(PlayerProperties.ART_URL).get_string();
 
@@ -260,24 +192,16 @@ namespace WebMusic.Webextension {
                     changes.insert(PlayerProperties.ART_FILE_LOCAL, new Variant.string("file://" + file_name));
                 }
 
-                mSelf.send_property_change(changes);
+                this.send_property_change(changes);
             });
 
            file_cache.cache_async(art_url, file_name);
         }
 
-        [DBus (visible = false)]
-        public void SetContext(JSCore.GlobalContext context) {
-            var apiClass = new JSCore.Class(definition);
-            this.mContext.create_from_class(API_NAME, apiClass, context);
-
-            mJsPlayer = mContext.get_property_object("Player");
-        }
-
         public override PlayStatus PlaybackStatus {
             get {
-                if(mIntegrationReady) {
-                    Variant? prop = mJsPlayer.get_property_value("playbackStatus");
+                if(js_api.Ready) {
+                    Variant? prop = js_player.get_property_value("playbackStatus");
                     if(prop != null) {
                         return (PlayStatus) prop.get_double();
                     } else {
@@ -291,8 +215,8 @@ namespace WebMusic.Webextension {
 
         public override bool CanGoNext {
             get {
-                if(mIntegrationReady) {
-                    Variant? prop = mJsPlayer.get_property_value("canGoNext");
+                if(js_api.Ready) {
+                    Variant? prop = js_player.get_property_value("canGoNext");
                     if(prop != null) {
                         return prop.get_boolean();
                     } else {
@@ -306,8 +230,8 @@ namespace WebMusic.Webextension {
 
         public override bool CanGoPrevious {
             get {
-                if(mIntegrationReady) {
-                    Variant? prop = mJsPlayer.get_property_value("canGoPrevious");
+                if(js_api.Ready) {
+                    Variant? prop = js_player.get_property_value("canGoPrevious");
                     if(prop != null) {
                         return prop.get_boolean();
                     } else {
@@ -322,8 +246,8 @@ namespace WebMusic.Webextension {
 
         public override bool CanPlay {
             get {
-                if(mIntegrationReady) {
-                    Variant? prop = mJsPlayer.get_property_value("canPlay");
+                if(js_api.Ready) {
+                    Variant? prop = js_player.get_property_value("canPlay");
                     if(prop != null) {
                         return prop.get_boolean();
                     } else {
@@ -337,8 +261,8 @@ namespace WebMusic.Webextension {
 
         public override bool CanPause {
             get {
-                if(mIntegrationReady) {
-                    Variant? prop = mJsPlayer.get_property_value("canPause");
+                if(js_api.Ready) {
+                    Variant? prop = js_player.get_property_value("canPause");
                     if(prop != null) {
                         return prop.get_boolean();
                     } else {
@@ -352,8 +276,8 @@ namespace WebMusic.Webextension {
 
         public override bool CanSeek {
             get {
-                if(mIntegrationReady) {
-                    Variant? prop = mJsPlayer.get_property_value("canSeek");
+                if(js_api.Ready) {
+                    Variant? prop = js_player.get_property_value("canSeek");
                     if(prop != null) {
                         return prop.get_boolean();
                     } else {
@@ -367,8 +291,8 @@ namespace WebMusic.Webextension {
 
         public override bool CanControl {
             get {
-                if(mIntegrationReady) {
-                    Variant? prop = mJsPlayer.get_property_value("canControl");
+                if(js_api.Ready) {
+                    Variant? prop = js_player.get_property_value("canControl");
                     if(prop != null) {
                         return prop.get_boolean();
                     } else {
@@ -384,8 +308,8 @@ namespace WebMusic.Webextension {
             get {
                 bool ret = false;
 
-                if(mIntegrationReady && mService.SupportsShuffle) {
-                    Variant? prop = mJsPlayer.get_property_value("shuffle");
+                if(js_api.Ready && js_api.WebService.SupportsShuffle) {
+                    Variant? prop = js_player.get_property_value("shuffle");
                     if(prop != null) {
                         ret = prop.get_boolean();
                     } else {
@@ -396,8 +320,8 @@ namespace WebMusic.Webextension {
                 return ret;
             }
             set {
-                if(mIntegrationReady && mService.SupportsShuffle && this.Shuffle != value) {
-                    mJsPlayer.call_function(PlayerAction.TOGGLE_SHUFFLE.to_string(), null);
+                if(js_api.Ready && js_api.WebService.SupportsShuffle && this.Shuffle != value) {
+                    js_player.call_function(PlayerAction.TOGGLE_SHUFFLE.to_string(), null);
                 }
             }
         }
@@ -406,8 +330,8 @@ namespace WebMusic.Webextension {
             get {
                 bool ret = false;
 
-                if(mIntegrationReady && mService.SupportsLike) {
-                    Variant? prop = mJsPlayer.get_property_value("like");
+                if(js_api.Ready && js_api.WebService.SupportsLike) {
+                    Variant? prop = js_player.get_property_value("like");
                     if(prop != null) {
                         ret = prop.get_boolean();
                     } else {
@@ -418,9 +342,9 @@ namespace WebMusic.Webextension {
                 return ret;
             }
             set {
-                if(mIntegrationReady && mService.SupportsLike && this.Like != value) {
+                if(js_api.Ready && js_api.WebService.SupportsLike && this.Like != value) {
                     Idle.add(() => {
-                        mJsPlayer.call_function(PlayerAction.TOGGLE_LIKE.to_string(), null);
+                        js_player.call_function(PlayerAction.TOGGLE_LIKE.to_string(), null);
                         return false;
                     });
                 }
@@ -431,8 +355,8 @@ namespace WebMusic.Webextension {
             get {
                 double ret = 1;
 
-                if(mIntegrationReady) {
-                    Variant? prop = mJsPlayer.get_property_value("volume");
+                if(js_api.Ready) {
+                    Variant? prop = js_player.get_property_value("volume");
                     if(prop != null) {
                         ret = prop.get_double();
                     }
@@ -440,11 +364,11 @@ namespace WebMusic.Webextension {
                 return ret;
             }
             set {
-                if(mIntegrationReady) {
+                if(js_api.Ready) {
                     Idle.add(() => {
                         Variant[] args = new Variant[1];
                         args[0] = new Variant.double(value);
-                        mJsPlayer.call_function(PlayerAction.VOLUME.to_string(), args);
+                        js_player.call_function(PlayerAction.VOLUME.to_string(), args);
                         return false;
                     });
                 }
@@ -455,8 +379,8 @@ namespace WebMusic.Webextension {
             get {
                 int64 ret = 0;
 
-                if(mIntegrationReady) {
-                    Variant? prop = mJsPlayer.get_property_value("trackPosition");
+                if(js_api.Ready) {
+                    Variant? prop = js_player.get_property_value("trackPosition");
                     if(prop != null) {
                         ret = (int64) prop.get_double();
                     }
@@ -464,10 +388,10 @@ namespace WebMusic.Webextension {
                 return ret;
             }
             set {
-                if(mIntegrationReady) {
+                if(js_api.Ready) {
                     Variant[] args = new Variant[1];
                     args[0] = new Variant.int64(value);
-                    mJsPlayer.call_function(PlayerAction.TRACK_POSITION.to_string(), args);
+                    js_player.call_function(PlayerAction.TRACK_POSITION.to_string(), args);
                 }
             }
         }
@@ -476,8 +400,8 @@ namespace WebMusic.Webextension {
             get {
                 bool ret = false;
 
-                if(mIntegrationReady && mService.SupportsShuffle) {
-                    Variant? prop = mJsPlayer.get_property_value("canShuffle");
+                if(js_api.Ready && js_api.WebService.SupportsShuffle) {
+                    Variant? prop = js_player.get_property_value("canShuffle");
                     if(prop != null) {
                         ret = prop.get_boolean();
                     }
@@ -491,8 +415,8 @@ namespace WebMusic.Webextension {
             get {
                 bool ret = false;
 
-                if(mIntegrationReady && mService.SupportsRepeat) {
-                    Variant? prop = mJsPlayer.get_property_value("canRepeat");
+                if(js_api.Ready && js_api.WebService.SupportsRepeat) {
+                    Variant? prop = js_player.get_property_value("canRepeat");
                     if(prop != null) {
                         ret = prop.get_boolean();
                     }
@@ -505,8 +429,8 @@ namespace WebMusic.Webextension {
         public override RepeatStatus Repeat {
             get {
                 RepeatStatus repeat = RepeatStatus.NONE;
-                if(mIntegrationReady && mService.SupportsRepeat) {
-                    Variant? prop = mJsPlayer.get_property_value("repeat");
+                if(js_api.Ready && js_api.WebService.SupportsRepeat) {
+                    Variant? prop = js_player.get_property_value("repeat");
                     if(prop != null) {
                         repeat = (RepeatStatus) prop.get_double();
                     }
@@ -514,11 +438,11 @@ namespace WebMusic.Webextension {
                 return repeat;
             }
             set {
-                if(mIntegrationReady && mService.SupportsRepeat) {
+                if(js_api.Ready && js_api.WebService.SupportsRepeat) {
                     Idle.add(() => {
                         Variant[] args = new Variant[1];
                         args[0] = new Variant.int32((int32)value);
-                        mJsPlayer.call_function(PlayerAction.REPEAT.to_string(), args);
+                        js_player.call_function(PlayerAction.REPEAT.to_string(), args);
                         return false;
                     });
                 }
@@ -526,45 +450,45 @@ namespace WebMusic.Webextension {
         }
 
         public override void Next() {
-            if(mIntegrationReady) {
+            if(js_api.Ready) {
                 Idle.add(() => {
-                    mJsPlayer.call_function(PlayerAction.NEXT.to_string(), null);
+                    js_player.call_function(PlayerAction.NEXT.to_string(), null);
                     return false;
                 });
             }
         }
 
         public override void Previous() {
-            if(mIntegrationReady) {
+            if(js_api.Ready) {
                 Idle.add(() => {
-                    mJsPlayer.call_function(PlayerAction.PREVIOUS.to_string(), null);
+                    js_player.call_function(PlayerAction.PREVIOUS.to_string(), null);
                     return false;
                 });
             }
         }
 
         public override void Pause() {
-            if(mIntegrationReady) {
+            if(js_api.Ready) {
                 Idle.add(() => {
-                    mJsPlayer.call_function(PlayerAction.PAUSE.to_string(), null);
+                    js_player.call_function(PlayerAction.PAUSE.to_string(), null);
                     return false;
                 });
             }
         }
 
         public override void Stop() {
-            if(mIntegrationReady) {
+            if(js_api.Ready) {
                 Idle.add(() => {
-                    mJsPlayer.call_function(PlayerAction.STOP.to_string(), null);
+                    js_player.call_function(PlayerAction.STOP.to_string(), null);
                     return false;
                 });
             }
         }
 
         public override void Play() {
-            if(mIntegrationReady) {
+            if(js_api.Ready) {
                 Idle.add(() => {
-                    mJsPlayer.call_function(PlayerAction.PLAY.to_string(), null);
+                    js_player.call_function(PlayerAction.PLAY.to_string(), null);
                     return false;
                 });
             }
@@ -572,68 +496,28 @@ namespace WebMusic.Webextension {
 
         public override void Search(string term) {
 
-            if(mIntegrationReady) {
+            if(js_api.Ready) {
                 Idle.add(() => {
                     Variant[] args = new Variant[1];
                     args[0] = new Variant.string(term);
-                    mJsPlayer.call_function(BrowserAction.SEARCH.to_string(), args);
+                    js_player.call_function(BrowserAction.SEARCH.to_string(), args);
                     return false;
                 });
             }
         }
 
         public override void Show(string type, string id) {
-            if(mIntegrationReady) {
+            if(js_api.Ready) {
                 Idle.add(() => {
                     Variant[] args = new Variant[2];
                     args[0] = new Variant.string(type);
                     args[1] = new Variant.string(id);
-                    mJsPlayer.call_function(BrowserAction.SHOW.to_string(), args);
+                    js_player.call_function(BrowserAction.SHOW.to_string(), args);
                     return false;
                 });
             }
         }
 
-        private void InjectApi() {
-            if(mService.ApiVersion != REQUIRED_API_VERSION) {
-                mIntegrationReady = false;
-                warning("Service %s is not supporting required API Version %i." +
-                    " Integration not loaded.", mService.Name, REQUIRED_API_VERSION);
-            } else if(mService.IntegratesService) {
-                string serviceFile;
-                string baseApi;
-                string path;
 
-                try {
-                    path = Directory.GetServiceDir() + "api.js";
-                    FileUtils.get_contents(path, out baseApi);
-
-                    path = mService.IntegrationFilePath;
-                    FileUtils.get_contents(path, out serviceFile);
-
-                    debug("Injecting %s: %s", mService.Ident, path);
-
-                    mContext.EvaluateScript(baseApi, path, 1);
-                    mContext.EvaluateScript(serviceFile, path, 1);
-                    mIntegrationReady = true;
-
-                    mContext.call_function("init", null);
-
-                } catch(FileError e) {
-                    mIntegrationReady = false;
-
-                    critical("Could not load content of service file (%s). " +
-                            "Integration disabled. (%s)", path, e.message);
-                }
-
-            } else {
-                mIntegrationReady = false;
-                debug("No integration supported for service %s.", mService.Name);
-            }
-        }
-
-        private void OnContextChanged() {
-            this.InjectApi();
-        }
     }
 }

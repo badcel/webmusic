@@ -18,8 +18,15 @@
 
 (function(WebMusicApi) {
 
+    let ApiType = {
+        PLAYER   : 0,
+        PLAYLIST : 1,
+        TRACKLIST: 2
+    };
+
     class BaseApi {
-        constructor() {
+        constructor(type) {
+            this.type = type;
             this.changes = {};
         }
 
@@ -35,27 +42,32 @@
             WebMusicApi.warning("Function update is not available");
         }
 
-        get PropertyChangeType() {
-            return { PLAYER   : 0,
-                     PLAYLIST : 1,
-                     TRACKLIST: 2,
-            };
-        }
-
-        sendPropertyChange(type) {
+        sendPropertyChange() {
 
             if(Object.keys(this.changes).length > 0) {
-                WebMusicApi.debug(JSON.stringify(this.changes));
+                this.debug(JSON.stringify(this.changes));
 
-                WebMusicApi.sendPropertyChange(type, this.changes);
+                WebMusicApi.sendPropertyChange(this.type, this.changes);
                 this.changes = {};
             }
+        }
+
+        sendSignal(name, params) {
+            WebMusicApi.sendSignal(this.type, name, params);
+        }
+
+        debug(text) {
+            WebMusicApi.debug(this.type, text);
+        }
+
+        warning(text) {
+            WebMusicApi.warning(this.type, text);
         }
     }
 
     class BasePlayer extends BaseApi {
         constructor() {
-            super();
+            super(ApiType.PLAYER);
 
             this._ready = false;
 
@@ -288,7 +300,7 @@
                 if(this._trackPosition + 2000000 < value
                     || this._trackPosition - 2000000 > value) {
 
-                    WebMusicApi.seeked(value);
+                    this.sendSignal("seeked", value);
                 }
 
                 //According to MPRIS2 spec property changes are not tracked
@@ -381,51 +393,51 @@
         }
 
         actionPlay() {
-            WebMusicApi.warning("Function actionPlay is not available");
+            this.warning("Function actionPlay is not available");
         }
 
         actionPause() {
-            WebMusicApi.warning("Function actionPause is not available");
+            this.warning("Function actionPause is not available");
         }
 
         actionStop() {
-            WebMusicApi.warning("Function actionStop is not available");
+            this.warning("Function actionStop is not available");
         }
 
         actionNext() {
-            WebMusicApi.warning("Function actionNext is not available");
+            this.warning("Function actionNext is not available");
         }
 
         actionPrevious() {
-            WebMusicApi.warning("Function actionPrevious is not available");
+            this.warning("Function actionPrevious is not available");
         }
 
         actionRepeat(repeatstatus) {
-            WebMusicApi.warning("Function actionRepeat is not available");
+            this.warning("Function actionRepeat is not available");
         }
 
         actionVolume(volume) {
-            WebMusicApi.warning("Function actionVolume is not available");
+            this.warning("Function actionVolume is not available");
         }
 
         actionToggleShuffle() {
-            WebMusicApi.warning("Function actionToggleShuffle is not available");
+            this.warning("Function actionToggleShuffle is not available");
         }
 
         actionToggleLike() {
-            WebMusicApi.warning("Function actionToggleLike is not available");
+            this.warning("Function actionToggleLike is not available");
         }
 
         actionTrackPosition(position) {
-            WebMusicApi.warning("Function actionTrackPosition is not available");
+            this.warning("Function actionTrackPosition is not available");
         }
 
         actionSearch(searchstring) {
-            WebMusicApi.warning("Function actionSearch is not available");
+            this.warning("Function actionSearch is not available");
         }
 
         actionShow(type, id) {
-            WebMusicApi.warning("Function actionShow is not available");
+            this.warning("Function actionShow is not available");
         }
 
         sendPropertyChange() {
@@ -442,7 +454,7 @@
                 this._metadataChanged = false;
             }
 
-            super.sendPropertyChange(this.PropertyChangeType.PLAYER);
+            super.sendPropertyChange();
         }
     }
 
