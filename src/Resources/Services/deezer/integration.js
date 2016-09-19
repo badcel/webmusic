@@ -78,7 +78,7 @@
                 this.sendPropertyChange();
 
             } catch(e) {
-                WebMusicApi.warning("DeezerPlayer - Error:" + e.message);
+                this.warning("Error:" + e.message);
             } finally {
                 setTimeout(this.update.bind(this), 500);
             }
