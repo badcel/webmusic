@@ -56,7 +56,7 @@
                         this.artUrl = 'http://cdn-images.deezer.com/images/cover/' + currentSong.ALB_PICTURE + '/300x300-000000-80-0-0.jpg';
                         break;
                     default:
-                        WebMusicApi.warning('Deezer - Unknown type: ' + currentSong.__TYPE__);
+                        this.warning('Unknown type: ' + currentSong.__TYPE__);
                 }
 
                 this.playbackStatus = dzPlayer.isPlaying()? this.PlaybackState.PLAY : this.PlaybackState.STOP;
