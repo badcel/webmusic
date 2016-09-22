@@ -98,58 +98,99 @@ namespace WebMusic.Webextension {
     private class JavascriptMusicPlayer : Player {
 
         private JsApi js_api;
-        private JsObject js_player;
 
         private bool mShuffle = false;
         private bool mLike = false;
 
         public JavascriptMusicPlayer(JsApi api) {
 
-            js_api    = api;
-            js_player = api.get_js_property("Player");
-
-            js_api.PropertiesChanged.connect(on_properties_changed);
+            js_api = api;
             js_api.SignalSend.connect(on_signal_send);
         }
 
-        private void on_signal_send(JsApiType type, string name, Variant params) {
-            if(type != JsApiType.PLAYER) {
+        private Variant? activate_action(PlayerAction action, Variant[]? args) {
+
+            Variant? parameter = null;
+            if(args != null) {
+                if(args.length == 1) {
+                    parameter = args[0];
+                } else if(args.length > 1){
+                    parameter = new Variant.array(null, args);
+                }
+            }
+
+            var command = new JsCommand(JsObjectType.PLAYER, JsAction.CALL_FUNCTION,
+                            action.to_string(), parameter);
+            return js_api.send_command(command);
+        }
+
+        private Variant? activate_browser_action(BrowserAction action, Variant[]? args) {
+
+            //TODO Validate if "BrowserAction" belongs into a separate feature like player / playlist
+
+            Variant? parameter = null;
+            if(args != null) {
+                if(args.length == 1) {
+                    parameter = args[0];
+                } else if(args.length > 1){
+                    parameter = new Variant.array(null, args);
+                }
+            }
+
+            var command = new JsCommand(JsObjectType.PLAYER, JsAction.CALL_FUNCTION,
+                            action.to_string(), parameter);
+            return js_api.send_command(command);
+        }
+
+        private Variant? get_js_property(string name){
+            var command = new JsCommand(JsObjectType.PLAYER, JsAction.GET_PROPERTY, name, null);
+            return js_api.send_command(command);
+        }
+
+        private void on_signal_send(JsObjectType type, string name, Variant? params) {
+            if(type != JsObjectType.PLAYER) {
+                return;
+            }
+
+            if(params == null) {
+                warning("Missing parameters to send signal <%s>.", name);
                 return;
             }
 
             if(name == "seeked") {
-                if(params.is_of_type(VariantType.DOUBLE)) {
-                    this.Seeked((int64)params.get_double());
+
+                if(params.is_of_type(VariantType.INT64)) {
+                    this.Seeked(params.get_int64());
                 } else {
-                    warning("Can not send seeked signal. Parameter is not of type double.");
+                    warning("Can not send Seeked signal. Parameter is not of type int64, but <%s>.", params.get_type_string());
                 }
+
+            } else if(name == "propertiesChanged") {
+
+                if(!params.is_of_type(VariantType.DICTIONARY)) {
+                    warning("Can not send PropertiesChanged signal. Parameter is not of type dictionary.");
+                    return;
+                }
+
+                HashTable<PlayerProperties, Variant> changes = new HashTable<PlayerProperties, Variant>(direct_hash, direct_equal);
+                PlayerProperties? prop = null;
+
+                //Convert changes into enum types
+                HashTable<string, Variant> dict = (HashTable<string, Variant>) params;
+	            dict.foreach ((key, val) => {
+		            if(PlayerProperties.try_parse_name(key, out prop)) {
+		                changes.insert(prop, val);
+		            } else {
+		                warning("Failed to parse javascript player property: %s", key);
+		            }
+	            });
+
+            	if(changes.contains(PlayerProperties.ART_URL)) {
+                    cache_cover(changes);
+	            } else {
+                    this.send_property_change(changes);
+	            }
             }
-        }
-
-        private void on_properties_changed(JsApiType type, HashTable<string, Variant> dict) {
-
-            if(type != JsApiType.PLAYER) {
-                return;
-            }
-
-            HashTable<PlayerProperties, Variant> changes = new HashTable<PlayerProperties, Variant>(direct_hash, direct_equal);
-            PlayerProperties? prop = null;
-
-            //Convert changes into enum types
-	        dict.foreach ((key, val) => {
-		        if(PlayerProperties.try_parse_name(key, out prop)) {
-		            changes.insert(prop, val);
-		        } else {
-		            warning("Failed to parse javascript player property: %s", key);
-		        }
-	        });
-
-        	if(changes.contains(PlayerProperties.ART_URL)) {
-                cache_cover(changes);
-	        } else {
-                this.send_property_change(changes);
-	        }
-
         }
 
         private void cache_cover(HashTable<PlayerProperties, Variant> changes) {
@@ -201,9 +242,9 @@ namespace WebMusic.Webextension {
         public override PlayStatus PlaybackStatus {
             get {
                 if(js_api.Ready) {
-                    Variant? prop = js_player.get_property_value("playbackStatus");
-                    if(prop != null) {
-                        return (PlayStatus) prop.get_double();
+                    var prop = this.get_js_property("playbackStatus");
+                    if(prop != null && prop.is_of_type(VariantType.INT64)) {
+                        return (PlayStatus) prop.get_int64();
                     } else {
                         return PlayStatus.STOP;
                     }
@@ -215,92 +256,97 @@ namespace WebMusic.Webextension {
 
         public override bool CanGoNext {
             get {
+
+                bool ret = false;
+
                 if(js_api.Ready) {
-                    Variant? prop = js_player.get_property_value("canGoNext");
-                    if(prop != null) {
-                        return prop.get_boolean();
-                    } else {
-                        return false;
+                    var prop = this.get_js_property("canGoNext");
+                    if(prop != null && prop.is_of_type(VariantType.BOOLEAN)) {
+                        ret = prop.get_boolean();
                     }
-                } else {
-                    return false;
                 }
+
+                return ret;
             }
         }
 
         public override bool CanGoPrevious {
             get {
+
+                bool ret = false;
+
                 if(js_api.Ready) {
-                    Variant? prop = js_player.get_property_value("canGoPrevious");
-                    if(prop != null) {
-                        return prop.get_boolean();
-                    } else {
-                        return false;
+                    var prop = this.get_js_property("canGoPrevious");
+                    if(prop != null && prop.is_of_type(VariantType.BOOLEAN)) {
+                        ret = prop.get_boolean();
                     }
-                } else {
-                    return false;
                 }
+
+                return ret;
             }
         }
 
 
         public override bool CanPlay {
             get {
+
+                bool ret = false;
+
                 if(js_api.Ready) {
-                    Variant? prop = js_player.get_property_value("canPlay");
-                    if(prop != null) {
-                        return prop.get_boolean();
-                    } else {
-                        return false;
+                    var prop = this.get_js_property("canPlay");
+                    if(prop != null && prop.is_of_type(VariantType.BOOLEAN)) {
+                        ret = prop.get_boolean();
                     }
-                } else {
-                    return false;
                 }
+
+                return ret;
             }
         }
 
         public override bool CanPause {
             get {
+
+                bool ret = false;
+
                 if(js_api.Ready) {
-                    Variant? prop = js_player.get_property_value("canPause");
-                    if(prop != null) {
-                        return prop.get_boolean();
-                    } else {
-                        return false;
+                    var prop = this.get_js_property("canPause");
+                    if(prop != null && prop.is_of_type(VariantType.BOOLEAN)) {
+                        ret = prop.get_boolean();
                     }
-                } else {
-                    return false;
                 }
+
+                return ret;
             }
         }
 
         public override bool CanSeek {
             get {
+
+                bool ret = false;
+
                 if(js_api.Ready) {
-                    Variant? prop = js_player.get_property_value("canSeek");
-                    if(prop != null) {
-                        return prop.get_boolean();
-                    } else {
-                        return false;
+                    var prop = this.get_js_property("canSeek");
+                    if(prop != null && prop.is_of_type(VariantType.BOOLEAN)) {
+                        ret = prop.get_boolean();
                     }
-                } else {
-                    return false;
                 }
+
+                return ret;
             }
         }
 
         public override bool CanControl {
             get {
+
+                bool ret = false;
+
                 if(js_api.Ready) {
-                    Variant? prop = js_player.get_property_value("canControl");
-                    if(prop != null) {
-                        return prop.get_boolean();
-                    } else {
-                        return false;
+                    var prop = this.get_js_property("canControl");
+                    if(prop != null && prop.is_of_type(VariantType.BOOLEAN)) {
+                        ret = prop.get_boolean();
                     }
-                } else {
-                    return false;
                 }
+                return ret;
             }
         }
 
@@ -309,11 +355,9 @@ namespace WebMusic.Webextension {
                 bool ret = false;
 
                 if(js_api.Ready && js_api.WebService.SupportsShuffle) {
-                    Variant? prop = js_player.get_property_value("shuffle");
-                    if(prop != null) {
+                    var prop = this.get_js_property("shuffle");
+                    if(prop != null && prop.is_of_type(VariantType.BOOLEAN)) {
                         ret = prop.get_boolean();
-                    } else {
-                        ret = false;
                     }
                 }
                 mShuffle = ret;
@@ -321,7 +365,7 @@ namespace WebMusic.Webextension {
             }
             set {
                 if(js_api.Ready && js_api.WebService.SupportsShuffle && this.Shuffle != value) {
-                    js_player.call_function(PlayerAction.TOGGLE_SHUFFLE.to_string(), null);
+                    this.activate_action(PlayerAction.TOGGLE_SHUFFLE, null);
                 }
             }
         }
@@ -331,11 +375,9 @@ namespace WebMusic.Webextension {
                 bool ret = false;
 
                 if(js_api.Ready && js_api.WebService.SupportsLike) {
-                    Variant? prop = js_player.get_property_value("like");
-                    if(prop != null) {
+                    var prop = this.get_js_property("like");
+                    if(prop != null && prop.is_of_type(VariantType.BOOLEAN)) {
                         ret = prop.get_boolean();
-                    } else {
-                        ret = false;
                     }
                 }
                 mLike = ret;
@@ -344,7 +386,7 @@ namespace WebMusic.Webextension {
             set {
                 if(js_api.Ready && js_api.WebService.SupportsLike && this.Like != value) {
                     Idle.add(() => {
-                        js_player.call_function(PlayerAction.TOGGLE_LIKE.to_string(), null);
+                        this.activate_action(PlayerAction.TOGGLE_LIKE, null);
                         return false;
                     });
                 }
@@ -356,8 +398,8 @@ namespace WebMusic.Webextension {
                 double ret = 1;
 
                 if(js_api.Ready) {
-                    Variant? prop = js_player.get_property_value("volume");
-                    if(prop != null) {
+                    var prop = this.get_js_property("volume");
+                    if(prop != null && prop.is_of_type(VariantType.DOUBLE)) {
                         ret = prop.get_double();
                     }
                 }
@@ -368,7 +410,7 @@ namespace WebMusic.Webextension {
                     Idle.add(() => {
                         Variant[] args = new Variant[1];
                         args[0] = new Variant.double(value);
-                        js_player.call_function(PlayerAction.VOLUME.to_string(), args);
+                        this.activate_action(PlayerAction.VOLUME, args);
                         return false;
                     });
                 }
@@ -380,8 +422,8 @@ namespace WebMusic.Webextension {
                 int64 ret = 0;
 
                 if(js_api.Ready) {
-                    Variant? prop = js_player.get_property_value("trackPosition");
-                    if(prop != null) {
+                    var prop = this.get_js_property("trackPosition");
+                    if(prop != null && prop.is_of_type(VariantType.DOUBLE)) {
                         ret = (int64) prop.get_double();
                     }
                 }
@@ -391,7 +433,7 @@ namespace WebMusic.Webextension {
                 if(js_api.Ready) {
                     Variant[] args = new Variant[1];
                     args[0] = new Variant.int64(value);
-                    js_player.call_function(PlayerAction.TRACK_POSITION.to_string(), args);
+                    this.activate_action(PlayerAction.TRACK_POSITION, args);
                 }
             }
         }
@@ -401,8 +443,8 @@ namespace WebMusic.Webextension {
                 bool ret = false;
 
                 if(js_api.Ready && js_api.WebService.SupportsShuffle) {
-                    Variant? prop = js_player.get_property_value("canShuffle");
-                    if(prop != null) {
+                    var prop = this.get_js_property("canShuffle");
+                    if(prop != null && prop.is_of_type(VariantType.BOOLEAN)) {
                         ret = prop.get_boolean();
                     }
                 }
@@ -416,8 +458,8 @@ namespace WebMusic.Webextension {
                 bool ret = false;
 
                 if(js_api.Ready && js_api.WebService.SupportsRepeat) {
-                    Variant? prop = js_player.get_property_value("canRepeat");
-                    if(prop != null) {
+                    var prop = this.get_js_property("canRepeat");
+                    if(prop != null && prop.is_of_type(VariantType.BOOLEAN)) {
                         ret = prop.get_boolean();
                     }
                 }
@@ -430,8 +472,8 @@ namespace WebMusic.Webextension {
             get {
                 RepeatStatus repeat = RepeatStatus.NONE;
                 if(js_api.Ready && js_api.WebService.SupportsRepeat) {
-                    Variant? prop = js_player.get_property_value("repeat");
-                    if(prop != null) {
+                    var prop = this.get_js_property("repeat");
+                    if(prop != null && prop.is_of_type(VariantType.DOUBLE)) {
                         repeat = (RepeatStatus) prop.get_double();
                     }
                 }
@@ -441,8 +483,8 @@ namespace WebMusic.Webextension {
                 if(js_api.Ready && js_api.WebService.SupportsRepeat) {
                     Idle.add(() => {
                         Variant[] args = new Variant[1];
-                        args[0] = new Variant.int32((int32)value);
-                        js_player.call_function(PlayerAction.REPEAT.to_string(), args);
+                        args[0] = new Variant.int64((int64)value);
+                        this.activate_action(PlayerAction.REPEAT, args);
                         return false;
                     });
                 }
@@ -452,7 +494,7 @@ namespace WebMusic.Webextension {
         public override void Next() {
             if(js_api.Ready) {
                 Idle.add(() => {
-                    js_player.call_function(PlayerAction.NEXT.to_string(), null);
+                    this.activate_action(PlayerAction.NEXT, null);
                     return false;
                 });
             }
@@ -461,7 +503,7 @@ namespace WebMusic.Webextension {
         public override void Previous() {
             if(js_api.Ready) {
                 Idle.add(() => {
-                    js_player.call_function(PlayerAction.PREVIOUS.to_string(), null);
+                    this.activate_action(PlayerAction.PREVIOUS, null);
                     return false;
                 });
             }
@@ -470,7 +512,7 @@ namespace WebMusic.Webextension {
         public override void Pause() {
             if(js_api.Ready) {
                 Idle.add(() => {
-                    js_player.call_function(PlayerAction.PAUSE.to_string(), null);
+                    this.activate_action(PlayerAction.PAUSE, null);
                     return false;
                 });
             }
@@ -479,7 +521,7 @@ namespace WebMusic.Webextension {
         public override void Stop() {
             if(js_api.Ready) {
                 Idle.add(() => {
-                    js_player.call_function(PlayerAction.STOP.to_string(), null);
+                    this.activate_action(PlayerAction.STOP, null);
                     return false;
                 });
             }
@@ -488,7 +530,7 @@ namespace WebMusic.Webextension {
         public override void Play() {
             if(js_api.Ready) {
                 Idle.add(() => {
-                    js_player.call_function(PlayerAction.PLAY.to_string(), null);
+                    this.activate_action(PlayerAction.PLAY, null);
                     return false;
                 });
             }
@@ -500,7 +542,7 @@ namespace WebMusic.Webextension {
                 Idle.add(() => {
                     Variant[] args = new Variant[1];
                     args[0] = new Variant.string(term);
-                    js_player.call_function(BrowserAction.SEARCH.to_string(), args);
+                    this.activate_browser_action(BrowserAction.SEARCH, args);
                     return false;
                 });
             }
@@ -512,7 +554,7 @@ namespace WebMusic.Webextension {
                     Variant[] args = new Variant[2];
                     args[0] = new Variant.string(type);
                     args[1] = new Variant.string(id);
-                    js_player.call_function(BrowserAction.SHOW.to_string(), args);
+                    this.activate_browser_action(BrowserAction.SHOW, args);
                     return false;
                 });
             }

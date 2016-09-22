@@ -121,7 +121,7 @@ namespace WebMusic.Browser.Widgets.Osd {
                 }
 
                 if(dict.contains(PlayerProperties.REPEAT)) {
-                    mBtnRepeat.RepeatState = (RepeatStatus)dict.get(PlayerProperties.REPEAT).get_double();
+                    mBtnRepeat.RepeatState = (RepeatStatus)dict.get(PlayerProperties.REPEAT).get_int64();
                 }
 
                 if(dict.contains(PlayerProperties.LIKE)) {

@@ -394,8 +394,7 @@ namespace WebMusic.Browser.Plugins {
                         _metadata.insert("mpris:artUrl", val);
                         break;
                     case PlayerProperties.TRACK_LENGTH:
-                        int64 length = (int64)val.get_double();
-                        _metadata.insert("mpris:length", new Variant.int64(length));
+                        _metadata.insert("mpris:length", val);
                         break;
                 }
 	        });

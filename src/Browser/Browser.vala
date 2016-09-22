@@ -183,7 +183,7 @@ namespace WebMusic.Browser
             mBtnPlayPause.sensitive = mService.IntegratesService;
 
             if(dict.contains(PlayerProperties.PLAYBACKSTATUS)) {
-                PlayStatus play_status = (PlayStatus) dict.get(PlayerProperties.PLAYBACKSTATUS).get_double();
+                PlayStatus play_status = (PlayStatus) dict.get(PlayerProperties.PLAYBACKSTATUS).get_int64();
 
                 if(play_status == PlayStatus.PLAY) {
                     mImgPlay.set_from_icon_name("media-playback-pause", Gtk.IconSize.BUTTON);

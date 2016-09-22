@@ -37,6 +37,7 @@ webmusic_check_modules(GLIB         REQUIRED glib-2.0>=2.40)
 webmusic_check_modules(CLUTTERGTK   REQUIRED clutter-gtk-1.0>=1.5)
 webmusic_check_modules(INTROSPECTON REQUIRED gobject-introspection-1.0>=1.40)
 webmusic_check_modules(GJS          REQUIRED gjs-1.0>=1.43)
+webmusic_check_modules(JSONGLIB     REQUIRED json-glib-1.0>=1.2)
 
 webmusic_find_program(INTLTOOL_MERGE intltool-merge)
 webmusic_find_program(GLIB_COMPILE_RESOURCES glib-compile-resources)

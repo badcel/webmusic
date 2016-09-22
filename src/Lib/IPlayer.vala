@@ -182,13 +182,13 @@ namespace LibWebMusic {
                         data.insert("CanRepeat", val);
                         break;
                     case PlayerProperties.PLAYBACKSTATUS:
-                        data.insert("PlaybackStatus", (PlayStatus) val.get_double());
+                        data.insert("PlaybackStatus", (PlayStatus) val.get_int64());
                         break;
                     case PlayerProperties.SHUFFLE:
                         data.insert("Shuffle", val);
                         break;
                     case PlayerProperties.REPEAT:
-                        data.insert("LoopStatus", (RepeatStatus) val.get_double());
+                        data.insert("LoopStatus", (RepeatStatus) val.get_int64());
                         break;
                     case PlayerProperties.VOLUME:
                         data.insert("Volume", val);

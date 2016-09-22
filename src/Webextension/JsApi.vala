@@ -18,23 +18,27 @@ using WebMusic.Webextension.JsInterface;
 
 namespace WebMusic.Webextension {
 
-    public enum JsApiType {
-        PLAYER,    // INT = 0
-        PLAYLIST,  // INT = 1
-        TRACKLIST; // INT = 2
+    public enum JsObjectType {
+        API,       // INT = 0
+        PLAYER,    // INT = 1
+        PLAYLIST,  // INT = 2
+        TRACKLIST; // INT = 3
 
         public string to_string() {
 
             string ret = "";
 
             switch(this) {
-                case JsApiType.PLAYER:
+                case JsObjectType.API:
+                    ret = "API";
+                    break;
+                case JsObjectType.PLAYER:
                     ret = "Player";
                     break;
-                case JsApiType.PLAYLIST:
+                case JsObjectType.PLAYLIST:
                     ret = "Playlist";
                     break;
-                case JsApiType.TRACKLIST:
+                case JsObjectType.TRACKLIST:
                     ret = "Tracklist";
                     break;
             }
@@ -43,17 +47,219 @@ namespace WebMusic.Webextension {
         }
     }
 
+
+    public enum JsAction {
+        GET_PROPERTY,  // INT = 0
+        SET_PROPERTY,  // INT = 1
+        CALL_FUNCTION, // INT = 2
+        SEND_SIGNAL;   // INT = 3
+
+        public string to_string() {
+
+            string ret = "";
+
+            switch(this) {
+                case JsAction.GET_PROPERTY:
+                    ret = "get_property";
+                    break;
+                case JsAction.SET_PROPERTY:
+                    ret = "set_property";
+                    break;
+                case JsAction.CALL_FUNCTION:
+                    ret = "call_function";
+                    break;
+                case JsAction.SEND_SIGNAL:
+                    ret = "send_signal";
+                    break;
+            }
+
+            return ret;
+        }
+    }
+
+    private class JsCommand : GLib.Object, Json.Serializable {
+
+        public JsObjectType Type  { get; set; }
+        public JsAction Action    { get; set; }
+        public string Identifier  { get; set; }
+        public Variant? Parameter { get; set; }
+
+        public JsCommand(JsObjectType type, JsAction action,
+            string identifier, Variant? params) {
+
+            this.Type = type;
+            this.Action = action;
+            this.Identifier = identifier;
+            this.Parameter = params;
+        }
+
+        public string to_json() {
+            return Json.gobject_to_data(this, null);
+        }
+
+        public static JsCommand from_json(string json) throws GLib.Error {
+            return Json.gobject_from_data (typeof (JsCommand), json) as JsCommand;
+        }
+
+        public string to_string() {
+            StringBuilder builder = new StringBuilder ();
+		    builder.append_printf ("Type=<%d> ", this.Type);
+		    builder.append_printf ("Action=<%d> ", this.Action);
+		    builder.append_printf ("Identifier=<%s> ", this.Identifier);
+
+		    if(this.Parameter != null) {
+		        builder.append_printf ("Parameter=Variant Type <%s>", this.Parameter.get_type_string());
+		    }
+		    return (owned) builder.str;
+        }
+
+        public new bool deserialize_property (string property_name, out Value value, ParamSpec pspec, Json.Node property_node) {
+
+            value = Value(typeof (int));
+            bool ret = false;
+
+            switch(property_name) {
+                case "Type":
+                case "Action":
+                    value = Value(typeof (int));
+                    value.set_int((int)property_node.get_int());
+                    ret = true;
+                    break;
+                case "Identifier":
+                    value = Value(typeof (string));
+                    value.set_string(property_node.get_string());
+                    ret = true;
+                    break;
+                case "Parameter":
+                    value = Value(typeof (string));
+                    if(property_node.is_null()) {
+                        value.set_string("<null>");
+                    } else {
+                        value.set_string(property_node.get_string());
+                    }
+                    ret = true;
+                    break;
+                default:
+                    warning("Unknown property %s", property_name);
+                    ret = false;
+                    break;
+            }
+
+            return ret;
+        }
+
+        public new unowned ParamSpec find_property (string name) {
+            Type type = typeof (JsCommand);
+	        ObjectClass ocl = (ObjectClass) type.class_ref();
+	        return ocl.find_property(name);
+        }
+
+        public new Value get_property (ParamSpec pspec) {
+
+            Value value = Value(typeof (int));
+
+            switch(pspec.get_name()) {
+                case "Type":
+                    value = Value(typeof (int));
+                    value.set_int((int) this.Type);
+                    break;
+                case "Action":
+                    value = Value(typeof (int));
+                    value.set_int((int) this.Action);
+                    break;
+                case "Identifier":
+                    value = Value(typeof (string));
+                    value.set_string(this.Identifier);
+                    break;
+                case "Parameter":
+                    value = Value(typeof (string));
+                    if(this.Parameter == null) {
+                        value.set_string("<null>");
+                    } else {
+                        value.set_string(Json.gvariant_serialize_data(this.Parameter, null));
+                    }
+                    break;
+                default:
+                    warning("Unknown property %s", pspec.get_name());
+                    break;
+            }
+
+            return value;
+        }
+
+        public new Json.Node serialize_property (string property_name, Value value, ParamSpec pspec) {
+
+            Json.Node node = null;
+            switch(property_name) {
+                case "Type":
+                case "Action":
+                    node = new Json.Node(Json.NodeType.VALUE);
+                    node.set_int(value.get_int());
+                    break;
+                case "Identifier":
+                    node = new Json.Node(Json.NodeType.VALUE);
+                    node.set_string(value.get_string());
+                    break;
+                case "Parameter":
+                    var json = value.get_string();
+                    if(json == "<null>") {
+                        node = null; //Do not serialize property
+                    } else {
+                        node = new Json.Node(Json.NodeType.VALUE);
+                        node.set_string(json);
+                    }
+                    break;
+                default:
+                    warning("Unknown property %s", property_name);
+                    break;
+            }
+
+            return node;
+        }
+
+        public new void set_property (ParamSpec pspec, Value value) {
+
+            switch(pspec.get_name()) {
+                case "Type":
+                    this.Type = (JsObjectType) value.get_int();
+                    break;
+                case "Action":
+                    this.Action = (JsAction) value.get_int();
+                    break;
+                case "Identifier":
+                    this.Identifier = value.get_string();
+                    break;
+                case "Parameter":
+                    var json = value.get_string();
+                    if(json == "<null>") {
+                        this.Parameter = null;
+                    } else {
+                        try {
+                            this.Parameter = Json.gvariant_deserialize_data (json, -1, null);
+                        } catch(GLib.Error e) {
+                           warning("Could not deserialize property Parameter (%s).", e.message);
+                           this.Parameter = null;
+                        }
+                    }
+                    break;
+                default:
+                    warning("Unknown property %s", pspec.get_name());
+                    break;
+            }
+        }
+    }
+
     private class JsApi : GLib.Object{
 
         private const int REQUIRED_API_VERSION = 1;
-        private static const string API_NAME = "WebMusicApi";
+        private static const string API_NAME = "WebMusic";
         private static JsApi? mSelf = null;
 
-        public signal void PropertiesChanged(JsApiType type, HashTable<string, Variant> dict);
-        public signal void SignalSend(JsApiType type, string name, Variant params);
+        public signal void SignalSend(JsObjectType type, string name, Variant? params);
 
         private Service service;
         private JsObject js_api;
+        private JsObject js_global_object;
         private JavascriptMusicPlayer js_player;
 
         private bool api_ready = false;
@@ -62,8 +268,7 @@ namespace WebMusic.Webextension {
 
             service = s;
 
-            js_api = new JsObject();
-            js_api.ContextChanged.connect(OnContextChanged);
+            js_global_object = new JsObject();
 
             mSelf = this;
         }
@@ -82,20 +287,43 @@ namespace WebMusic.Webextension {
 
         public void set_context(JSCore.GlobalContext context) {
             var apiClass = new JSCore.Class(definition);
-            this.js_api.create_from_class(API_NAME, apiClass, context);
+            this.js_global_object.create_from_class(API_NAME, apiClass, context);
+            this.InjectApi();
+
+            js_api = js_global_object.get_property_object("Api");
+            js_player = new JavascriptMusicPlayer(this);
         }
 
-        public JsObject get_js_property(string object) {
-            return js_api.get_property_object(object);
+        public Variant? send_command(JsCommand command){
+
+            Variant? ret = null;
+            Variant[] args = new Variant[1];
+            args[0] = new Variant.string(command.to_json());
+
+            try {
+                var str = js_api.call_function_as_string("_handleJsonCommand", args);
+
+                if(str != null) {
+                    try {
+                        ret = Json.gvariant_deserialize_data(str, -1, null);
+                    } catch(GLib.Error e) {
+                        warning("Could not deserialize json data from command reply (%s).", e.message);
+                        ret = null;
+                    }
+                } else {
+                    ret = null;
+                }
+            } catch(JavascriptError e) {
+                warning("Could not call javascript function _handleJsonCommand (%s).", e.message);
+                ret = null;
+            }
+
+            return ret;
         }
 
 
         private static const JSCore.StaticFunction[] js_funcs = {
-            { "debug", debugJs, JSCore.PropertyAttribute.ReadOnly },
-            { "warning", warningJs, JSCore.PropertyAttribute.ReadOnly },
-            { "sendPropertyChange", sendPropertyChange, JSCore.PropertyAttribute.ReadOnly },
-            { "sendSignal", sendSignal, JSCore.PropertyAttribute.ReadOnly},
-            { "activateApiFeature", activateApiFeature, JSCore.PropertyAttribute.ReadOnly},
+            { "handleJsonCommand", handleJsonCommand, JSCore.PropertyAttribute.ReadOnly},
             { null, null, 0 }
         };
 
@@ -123,7 +351,7 @@ namespace WebMusic.Webextension {
             null                        // convertToType
         };
 
-        private static JSCore.Value debugJs (JSCore.Context ctx,
+        private static JSCore.Value handleJsonCommand(JSCore.Context ctx,
             JSCore.Object function,
             JSCore.Object thisObject,
             JSCore.Value[] arguments,
@@ -131,103 +359,55 @@ namespace WebMusic.Webextension {
 
             exception = null;
 
-            if(arguments.length == 2) {
-                var type = JsConverter.get_variant(arguments[0], ctx);
-                var type_string = ((JsApiType) type.get_double()).to_string();
-
-                var text = JsConverter.get_string(arguments[1], ctx);
-
-                debug("Log from JS (%s): %s", type_string, text);
-            } else {
-                warning("Can not log message from javascript. Wrong parameter count.");
-            }
-
-            return new JSCore.Value.boolean(ctx, true);
-        }
-
-        private static JSCore.Value warningJs (JSCore.Context ctx,
-            JSCore.Object function,
-            JSCore.Object thisObject,
-            JSCore.Value[] arguments,
-            out JSCore.Value exception) {
-
-            exception = null;
-
-            if(arguments.length == 2) {
-                var type = JsConverter.get_variant(arguments[0], ctx);
-                var type_string = ((JsApiType) type.get_double()).to_string();
-
-                var text = JsConverter.get_string(arguments[1], ctx);
-
-                warning("Warning from JS: (%s) %s", type_string, text);
-            } else {
-                warning("Can not log message from javascript. Wrong parameter count.");
-            }
-
-            return new JSCore.Value.boolean(ctx, true);
-        }
-
-        private static JSCore.Value sendPropertyChange (JSCore.Context ctx,
-            JSCore.Object function,
-            JSCore.Object thisObject,
-            JSCore.Value[] arguments,
-            out JSCore.Value exception) {
-
-            exception = null;
-
-            if(arguments.length == 2) {
-                var type = JsConverter.get_variant(arguments[0], ctx);
-	            HashTable<string, Variant> dict = (HashTable<string, Variant>) JsConverter.get_variant(arguments[1], ctx);
-
-                if(type != null) {
-                    var api_type = (JsApiType) type.get_double();
-                    mSelf.PropertiesChanged(api_type, dict);
-                } else {
-                    warning("Can not send property change. Unknown type.");
+            try {
+                if(!arguments[0].is_string(ctx)) {
+                    warning("Expecting string to handle command. Command ignored.");
+                    return new JSCore.Value.boolean(ctx, true);
                 }
-            } else {
-                warning("Can not send property change. Wrong parameter count.");
-            }
 
-            return new JSCore.Value.boolean(ctx, true);
-        }
+                string json = JsConverter.get_string(arguments[0], ctx);
+                var obj = JsCommand.from_json(json);
 
-        private static JSCore.Value sendSignal (JSCore.Context ctx,
-            JSCore.Object function,
-            JSCore.Object thisObject,
-            JSCore.Value[] arguments,
-            out JSCore.Value exception) {
+                if(obj.Action == JsAction.CALL_FUNCTION) {
 
-            exception = null;
+                    if(obj.Parameter == null) {
+                        warning("Missing parameter in command. Ignoring command.");
+                    } else {
+                        if(obj.Identifier == "warning"
+                            && obj.Parameter.is_of_type(VariantType.STRING)) {
 
-            if(arguments.length == 3) {
-                var type = JsConverter.get_variant(arguments[0], ctx);
+                            var type_text = obj.Type.to_string();
+                            var text = obj.Parameter.get_string();
 
-                if(type != null) {
-                    var api_type = (JsApiType) type.get_double();
-                    var name = JsConverter.get_string(arguments[1], ctx);
-                    var params = JsConverter.get_variant(arguments[2], ctx);
+                            warning("Warning from JS: (%s) %s", type_text, text);
 
-                    mSelf.SignalSend(api_type, name, params);
-                } else {
-                    warning("Can not send signal. Unknown type.");
+                        } else if(obj.Identifier == "debug"
+                            && obj.Parameter.is_of_type(VariantType.STRING)) {
+
+                            var type_text = obj.Type.to_string();
+                            var text = obj.Parameter.get_string();
+
+                            debug("Debug from JS: (%s) %s", type_text, text);
+
+                        } else if(obj.Identifier == "ping"
+                            && obj.Parameter.is_of_type(VariantType.STRING)) {
+
+                            var text = obj.Parameter.get_string() + " Ho!";
+                            var cmd = new JsCommand(obj.Type, JsAction.CALL_FUNCTION, "pong", text);
+                            var ret = mSelf.send_command(cmd);
+
+                            if(ret != null && ret.is_of_type(VariantType.STRING)) {
+                                debug("Got pong response: %s", ret.get_string());
+                            }
+                        }
+                    }
+
+                } else if(obj.Action == JsAction.SEND_SIGNAL) {
+                    mSelf.SignalSend(obj.Type, obj.Identifier, obj.Parameter);
                 }
-            } else {
-                warning("Can not send signal. Wrong parameter count.");
+            } catch(Error e) {
+                warning("Could not parse json data. Ignoring command (%s).", e.message);
             }
-
-            return new JSCore.Value.boolean(ctx, true);
-        }
-
-        private static JSCore.Value activateApiFeature (JSCore.Context ctx,
-            JSCore.Object function,
-            JSCore.Object thisObject,
-            JSCore.Value[] arguments,
-            out JSCore.Value exception) {
-
-            exception = null;
-
-            //TODO
 
             return new JSCore.Value.boolean(ctx, true);
         }
@@ -251,17 +431,19 @@ namespace WebMusic.Webextension {
 
                     debug("Injecting %s: %s", service.Ident, path);
 
-                    js_api.EvaluateScript(baseApi, path, 1);
-                    js_api.EvaluateScript(serviceFile, path, 1);
+                    js_global_object.EvaluateScript(baseApi, path, 1);
+                    js_global_object.EvaluateScript(serviceFile, path, 1);
                     api_ready = true;
 
-                    js_api.call_function("init", null);
+                    js_global_object.call_function("init", null);
 
                 } catch(FileError e) {
                     api_ready = false;
 
                     critical("Could not load content of service file (%s). " +
                             "Integration disabled. (%s)", path, e.message);
+                } catch(JavascriptError e) {
+                    warning(e.message);
                 }
 
             } else {
@@ -269,12 +451,6 @@ namespace WebMusic.Webextension {
                 debug("No integration supported for service %s.", service.Name);
             }
         }
-
-        private void OnContextChanged() {
-            this.InjectApi();
-            js_player = new JavascriptMusicPlayer(this);
-        }
-
     }
 
 }

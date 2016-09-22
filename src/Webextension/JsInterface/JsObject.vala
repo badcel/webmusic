@@ -16,6 +16,14 @@
 
 namespace WebMusic.Webextension.JsInterface {
 
+    errordomain JavascriptError {
+        EVALUATE,
+        GET_PROPERTY,
+        TO_OBJECT,
+        INVALID_OBJECT,
+        CALL_AS_FUNCTION
+    }
+
     private class JsObject : GLib.Object {
 
         public signal void ContextChanged();
@@ -57,7 +65,7 @@ namespace WebMusic.Webextension.JsInterface {
             this.ContextChanged();
         }
 
-        public Variant? call_function(string name, Variant[]? parameter) {
+        public Variant? call_function(string name, Variant[]? parameter) throws JavascriptError {
             Variant? ret = null;
             JSCore.Value? exception;
             unowned JSCore.Value retFunc = null;
@@ -65,16 +73,22 @@ namespace WebMusic.Webextension.JsInterface {
             JSCore.Value val = js_object.get_property(js_context,
                                 new JSCore.String.with_utf8_c_string(name), out exception);
 
-            //TODO Exception handling
+            if(exception != null) {
+                var text = this.get_exception_text("get_property", exception);
+                throw new JavascriptError.GET_PROPERTY(text);
+            }
 
             JSCore.Object? func = val.to_object(js_context, exception);
 
+            if(exception != null) {
+                var text = this.get_exception_text("to_object", exception);
+                throw new JavascriptError.TO_OBJECT(text);
+            }
+
             if(func == null) {
-                critical("Function %s is null.", name);
-                //TODO: Raise Exception
+                throw new JavascriptError.TO_OBJECT("Javascript function %s is null.".printf(name));
             } else if(!func.is_function(js_context)) {
-                critical("Function %s is no function.", name);
-                //TODO: Raise Exception
+                throw new JavascriptError.INVALID_OBJECT("Javascript function %s is no function.".printf(name));
             } else {
                 void*[] params = new void*[0];
                 if(parameter != null) {
@@ -87,9 +101,63 @@ namespace WebMusic.Webextension.JsInterface {
                 retFunc = func.call_as_function(js_context, js_object, (JSCore.Value[]) params, out exception);
 
                 if(exception != null) {
-                    this.LogException(name, exception);
+                    var text = this.get_exception_text("call_as_function_as_string", exception);
+                    throw new JavascriptError.CALL_AS_FUNCTION(text);
                 } else {
                     ret = JsConverter.get_variant(retFunc, js_context);
+                }
+            }
+
+            return ret;
+        }
+
+        //This function can be used to avoid the call of the possibly unsafe call to JsConverter
+        //for the return value of the called javascript function. If the returned value is no string
+        //null will be returned.
+        public string? call_function_as_string(string name, Variant[]? parameter) throws JavascriptError {
+            string? ret = null;
+            JSCore.Value exception = null;
+            unowned JSCore.Value retFunc = null;
+
+            JSCore.Value val = js_object.get_property(js_context,
+                                new JSCore.String.with_utf8_c_string(name), out exception);
+
+            if(exception != null) {
+                var text = this.get_exception_text("get_property", exception);
+                throw new JavascriptError.GET_PROPERTY(text);
+            }
+
+            JSCore.Object? func = val.to_object(js_context, exception);
+
+            if(exception != null) {
+                var text = this.get_exception_text("to_object", exception);
+                throw new JavascriptError.TO_OBJECT(text);
+            }
+
+            if(func == null) {
+                throw new JavascriptError.TO_OBJECT("Javascript function %s is null.".printf(name));
+            } else if(!func.is_function(js_context)) {
+                throw new JavascriptError.INVALID_OBJECT("Javascript function %s is no function.".printf(name));
+            } else {
+                void*[] params = new void*[0];
+                if(parameter != null) {
+                    params = new void*[parameter.length];
+                    for(int i = 0; i < parameter.length; i++) {
+                        params[i] = JsConverter.get_value(parameter[i], js_context);
+                    }
+                }
+
+                retFunc = func.call_as_function(js_context, js_object, (JSCore.Value[]) params, out exception);
+
+                if(exception != null) {
+                    var text = this.get_exception_text("call_as_function_as_string", exception);
+                    throw new JavascriptError.CALL_AS_FUNCTION(text);
+                } else {
+                    if(!retFunc.is_string(js_context)) {
+                        ret = null;
+                    } else {
+                        ret = JsConverter.get_string(retFunc, js_context);
+                    }
                 }
             }
 
@@ -146,18 +214,23 @@ namespace WebMusic.Webextension.JsInterface {
             return ret;
         }
 
-        public void EvaluateScript(string code, string path, int line) {
+        public void EvaluateScript(string code, string path, int line) throws JavascriptError {
             JSCore.Value exception = null;
             js_context.evaluate_script(new JSCore.String.with_utf8_c_string(code), js_object,
                                        new JSCore.String.with_utf8_c_string(path), line,
                                        out exception);
 
             if(exception != null) {
-                    this.LogException("EvaluateScript", exception);
+                var text = this.get_exception_text("evaluate_script", exception);
+                throw new JavascriptError.EVALUATE(text);
             }
         }
 
-        protected void LogException(string name, JSCore.Value exception) {
+        protected void LogException(string name, JSCore.Value exception){
+            warning(this.get_exception_text(name, exception));
+        }
+
+        protected string get_exception_text(string name, JSCore.Value exception) {
             JSCore.Value e = null;
             JSCore.Object o = exception.to_object(js_context, e);
 
@@ -168,7 +241,8 @@ namespace WebMusic.Webextension.JsInterface {
             string file = JsConverter.get_string(o.get_property(js_context, prop_name, out e), js_context);
 
             string message = JsConverter.get_string(exception, js_context);
-            warning("Error during call of function '%s'\n\t- Message: %s\n\t- Line: %s\n\t- File: %s",
+
+            return "JS error during call of function '%s'\n\t- Message: %s\n\t- Line: %s\n\t- File: %s".printf(
                     name, message, line.to_string(), file);
         }
     }

@@ -16,13 +16,125 @@
 
  "use strict";
 
-(function(WebMusicApi) {
+(function(WebMusic) {
 
-    let ApiType = {
-        PLAYER   : 0,
-        PLAYLIST : 1,
-        TRACKLIST: 2
-    };
+    class Api {
+        constructor() {
+            this._objects = {};
+        }
+
+        get Type() {
+            return {
+                API      : 0,
+                PLAYER   : 1,
+                PLAYLIST : 2,
+                TRACKLIST: 3
+            };
+        }
+
+        get Action() {
+            return {
+                GET_PROPERTY  : 0,
+                SET_PROPERTY  : 1,
+                CALL_FUNCTION : 2,
+                SEND_SIGNAL   : 3
+            }
+        }
+
+        register(object) {
+            if(object instanceof BaseApi) {
+                this._objects[object.type] = object;
+            } else {
+                this.warning(this.Type.API, "Could not register object (wrong type).");
+            }
+        }
+
+        warning(type, text) {
+            this._sendCommand(type, this.Action.CALL_FUNCTION, "warning", text);
+        }
+
+        debug(type, text) {
+            this._sendCommand(type, this.Action.CALL_FUNCTION, "debug", text);
+        }
+
+        sendSignal(type, name, params) {
+            this._sendCommand(type, this.Action.SEND_SIGNAL, name, params);
+        }
+
+        _sendCommand(type, action, ident, params) {
+
+            let cmd = { Type: type,
+                        Action: action,
+                        Identifier : ident
+            };
+
+            if(params != null) {
+                //Stringify again, for variant compability
+                cmd.Parameter = JSON.stringify(params);
+            }
+
+            WebMusic.handleJsonCommand(JSON.stringify(cmd));
+        }
+
+        _handleJsonCommand(json) {
+
+            let ret = false;
+            let command = JSON.parse(json);
+
+            if(command.Parameter != null) {
+                //Parse again, for variant compability
+                command.Parameter = JSON.parse(command.Parameter);
+            }
+
+            if(typeof command.Type === 'number') {
+                if(command.Type in this._objects) {
+                    ret = this._handle_command(this._objects[command.Type], command);
+                }
+            }
+
+            return JSON.stringify(ret); //Return in json format
+        }
+
+        _handle_command(object, command) {
+
+            let ret = false;
+
+            switch(command.Action) {
+                case this.Action.GET_PROPERTY:
+                    if(typeof command.Identifier === 'string') {
+                        ret = object[command.Identifier];
+                    }
+                    break;
+                case this.Action.SET_PROPERTY:
+                    if(typeof command.Identifier === 'string') {
+                        object[command.Identifier] = command.Parameter;
+                        ret = true;
+                    }
+                    break;
+                case this.Action.CALL_FUNCTION:
+
+                    if(typeof command.Identifier === 'string'
+                        && typeof object[command.Identifier] === 'function') {
+
+                        if(typeof command.Parameter === 'undefined'
+                            || command.Parameter == null) {
+                            ret = object[command.Identifier]();
+                        } else {
+                            if(Array.isArray(command.Parameter)) {
+                                ret = object[command.Identifier].apply(this, command.Parameter);
+                            } else {
+                                ret = object[command.Identifier](command.Parameter);
+                            }
+                        }
+                    }
+                    break;
+                default:
+                    this.warning(this.Type.API, "Can not handle unknown Action: " + command.Action);
+            }
+
+            return ret;
+        }
+    }
 
     class BaseApi {
         constructor(type) {
@@ -45,29 +157,38 @@
         sendPropertyChange() {
 
             if(Object.keys(this.changes).length > 0) {
-                this.debug(JSON.stringify(this.changes));
-
-                WebMusicApi.sendPropertyChange(this.type, this.changes);
+                this.sendSignal("propertiesChanged", this.changes);
                 this.changes = {};
             }
         }
 
         sendSignal(name, params) {
-            WebMusicApi.sendSignal(this.type, name, params);
+            this.debug("Send signal <" + name + ">");
+            WebMusic.Api.sendSignal(this.type, name, params);
         }
 
         debug(text) {
-            WebMusicApi.debug(this.type, text);
+            WebMusic.Api.debug(this.type, text);
         }
 
         warning(text) {
-            WebMusicApi.warning(this.type, text);
+            WebMusic.Api.warning(this.type, text);
+        }
+
+        ping() {
+            this.debug("Send ping: Hey!")
+            WebMusic.Api._sendCommand(this.type, WebMusic.Api.Action.CALL_FUNCTION, "ping", "Hey!");
+        }
+
+        pong(text) {
+            this.debug("Got pong: " + text);
+            return text + " Let's go!";
         }
     }
 
     class BasePlayer extends BaseApi {
         constructor() {
-            super(ApiType.PLAYER);
+            super(WebMusic.Api.Type.PLAYER);
 
             this._ready = false;
 
@@ -458,7 +579,6 @@
         }
     }
 
-    WebMusicApi.BasePlayer = BasePlayer;
 
     function Browser() {}
     Browser.prototype.ActionShowType = {
@@ -468,6 +588,8 @@
         SHOW     : 'show'
     };
 
-    WebMusicApi.Browser = new Browser();
+    WebMusic.Api = new Api();
+    WebMusic.Api.BasePlayer = BasePlayer;
+    WebMusic.Api.Browser = new Browser();
 
 })(this); //WebMusicApi scope

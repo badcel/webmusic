@@ -16,9 +16,9 @@
 
 "use strict";
 
-(function(WebMusicApi) {
+(function(WebMusic) {
 
-    class DeezerPlayer extends WebMusicApi.BasePlayer {
+    class DeezerPlayer extends WebMusic.Api.BasePlayer {
         constructor() {
             super();
 
@@ -132,23 +132,28 @@
         }
 
         actionShow(type, id){
+
             let url = '';
 
             switch(type) {
-                case WebMusicApi.Browser.ActionShowType.TRACK:
+                case WebMusic.Api.Browser.ActionShowType.TRACK:
                     url = '/track/' + id;
                     break;
-                case WebMusicApi.Browser.ActionShowType.ALBUM:
+                case WebMusic.Api.Browser.ActionShowType.ALBUM:
                     url = '/album/' + id;
                     break;
-                case WebMusicApi.Browser.ActionShowType.ARTIST:
+                case WebMusic.Api.Browser.ActionShowType.ARTIST:
                     url =  '/artist/' + id;
                     break;
                 default:
                     url = '';
             }
 
-            www.navigate(url);
+            if(url.length > 0) {
+                www.navigate(url);
+            } else {
+                this.warning("Can not show target. Type is unknown: " + type);
+            }
         }
 
         _isButtonPresent(name) {
@@ -162,9 +167,10 @@
         }
     }
 
-    WebMusicApi.init = function() {
-        WebMusicApi.Player = new DeezerPlayer();
-        WebMusicApi.Player.start();
+    WebMusic.init = function() {
+        let player = new DeezerPlayer();
+        WebMusic.Api.register(player);
+        player.start();
     };
 
 })(this); //WebMusicApi scope

@@ -27,6 +27,7 @@ OPTIONS
 PACKAGES
     glib-2.0
     gtk+-3.0
+    json-glib-1.0
     WebKit2WebExtension-4.0
 CUSTOM_VAPIS
     ${CMAKE_BINARY_DIR}/src/Lib/libwebmusic.vapi
@@ -39,9 +40,9 @@ GENERATE_HEADER
 )
 
 add_library(webextension SHARED ${VALA_C})
-target_link_libraries(webextension webmusic ${GLIB_LDFLAGS} ${WEBEXTENSION_LDFLAGS})
+target_link_libraries(webextension webmusic ${GLIB_LDFLAGS} ${JSONGLIB_LDFLAGS} ${WEBEXTENSION_LDFLAGS})
 set_target_properties(webextension PROPERTIES
-                      COMPILE_FLAGS "${GLIB_CFLAGS} ${GTK_CFLAGS} ${WEBEXTENSION_CFLAGS} ${COMMON_CFLAGS}"
+                      COMPILE_FLAGS "${GLIB_CFLAGS} ${GTK_CFLAGS} ${JSONGLIB_CFLAGS} ${WEBEXTENSION_CFLAGS} ${COMMON_CFLAGS}"
                       INCLUDE_DIRECTORIES "${CMAKE_BINARY_DIR}/src/Lib")
 
 install(TARGETS webextension DESTINATION "${PKG_LIBDIR}")
