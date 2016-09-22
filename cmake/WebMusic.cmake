@@ -25,14 +25,15 @@ macro(webmusic_check_modules)
   set(${ARGV0}_LDFLAGS "${WEBMUSIC_STRIPPED}")
 endmacro()
 
-function(webmusic_configure TYPE STYLE OUTPUT DESTINATION)
-    configure_file(${OUTPUT}.in ${OUTPUT}.vars @ONLY)
+function(webmusic_configure TYPE STYLE OUTPUT DESTINATION WORKING_DIRECTORY)
+    configure_file(${WORKING_DIRECTORY}/${OUTPUT}.in ${OUTPUT}.vars @ONLY)
     add_custom_target(${OUTPUT} ALL
                     ${INTLTOOL_MERGE}
                         --${STYLE}-style -u -q
                         ${CMAKE_SOURCE_DIR}/po
                         ${CMAKE_CURRENT_BINARY_DIR}/${OUTPUT}.vars
-                        ${CMAKE_CURRENT_BINARY_DIR}/${OUTPUT})
+                        ${CMAKE_CURRENT_BINARY_DIR}/${OUTPUT}
+                    WORKING_DIRECTORY ${WORKING_DIRECTORY})
   install(${TYPE} ${CMAKE_CURRENT_BINARY_DIR}/${OUTPUT} DESTINATION ${DESTINATION})
 endfunction()
 
