@@ -73,7 +73,9 @@
                 this.like          = document.querySelector('.player-actions .icon-love').classList.contains('active');
 
                 this.trackLength   = currentSong.DURATION * 1000000;
-                this.trackPosition = dzPlayer.position * 1000000;
+
+                //parseInt is a workaround because dzPlayer.position is not always an integer
+                this.trackPosition = parseInt(dzPlayer.position * 1000000);
 
                 this.sendPropertyChange();
 
