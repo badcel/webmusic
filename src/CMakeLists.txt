@@ -18,4 +18,8 @@ add_subdirectory(Lib)
 add_subdirectory(Browser)
 add_subdirectory(Webextension)
 add_subdirectory(SearchProvider)
-install(DIRECTORY Resources/Services DESTINATION "${PKG_DATADIR}")
+install(DIRECTORY Resources/Services 
+        DESTINATION "${PKG_DATADIR}"
+        PATTERN "*.in" EXCLUDE)
+
+webmusic_configure(FILES desktop example.ini ${PKG_DATADIR}/Services/example ./Resources/Services/example)
