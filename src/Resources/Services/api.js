@@ -39,7 +39,7 @@
         }
 
         update() {
-            WebMusicApi.warning("Function update is not available");
+            this.warning("Function update is not available");
         }
 
         sendPropertyChange() {
