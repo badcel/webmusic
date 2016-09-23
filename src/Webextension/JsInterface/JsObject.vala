@@ -101,7 +101,7 @@ namespace WebMusic.Webextension.JsInterface {
                 retFunc = func.call_as_function(js_context, js_object, (JSCore.Value[]) params, out exception);
 
                 if(exception != null) {
-                    var text = this.get_exception_text("call_as_function_as_string", exception);
+                    var text = this.get_exception_text("call_as_function", exception);
                     throw new JavascriptError.CALL_AS_FUNCTION(text);
                 } else {
                     ret = JsConverter.get_variant(retFunc, js_context);
@@ -150,7 +150,7 @@ namespace WebMusic.Webextension.JsInterface {
                 retFunc = func.call_as_function(js_context, js_object, (JSCore.Value[]) params, out exception);
 
                 if(exception != null) {
-                    var text = this.get_exception_text("call_as_function_as_string", exception);
+                    var text = this.get_exception_text("call_as_function", exception);
                     throw new JavascriptError.CALL_AS_FUNCTION(text);
                 } else {
                     if(!retFunc.is_string(js_context)) {
