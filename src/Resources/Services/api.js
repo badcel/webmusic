@@ -569,8 +569,11 @@
                 this.changes.artist      = this.artist;
                 this.changes.track       = this.track;
                 this.changes.album       = this.album;
-                this.changes.artUrl      = this.artUrl;
                 this.changes.trackLength = this.trackLength;
+
+                if(this.artUrl.length > 0) {
+                    this.changes.artUrl = this.artUrl;
+                }
 
                 this._metadataChanged = false;
             }
