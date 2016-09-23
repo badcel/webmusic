@@ -18,6 +18,7 @@ vala_precompile(VALA_C
     FileCache.vala
     Player.vala
     WebMusicWebExtension.vala
+    IJsAdapter.vala
     JsApi.vala
     JavascriptMusicPlayer.vala
     JsInterface/JsConverter.vala

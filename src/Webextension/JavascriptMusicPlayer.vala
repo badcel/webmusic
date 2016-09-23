@@ -95,15 +95,18 @@ namespace WebMusic.Webextension {
     }
 
     [DBus(name = "org.WebMusic.Webextension.Player")]
-    private class JavascriptMusicPlayer : Player {
+    private class JavascriptMusicPlayer : Player, IJsAdapter {
 
         private JsApi js_api;
 
         private bool mShuffle = false;
         private bool mLike = false;
 
-        public JavascriptMusicPlayer(JsApi api) {
+        public JavascriptMusicPlayer() {
+        }
 
+        [DBus (visible = false)]
+        public void insert_js_api(JsApi api) {
             js_api = api;
             js_api.SignalSend.connect(on_signal_send);
         }

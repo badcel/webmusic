@@ -260,25 +260,21 @@ namespace WebMusic.Webextension {
         private Service service;
         private JsObject js_api;
         private JsObject js_global_object;
-        private JavascriptMusicPlayer js_player;
+        private HashTable<JsObjectType, IJsAdapter> js_adapter;
 
         private bool api_ready = false;
 
         public JsApi(Service s){
 
             service = s;
+            mSelf = this;
 
             js_global_object = new JsObject();
-
-            mSelf = this;
+            js_adapter = new HashTable<JsObjectType, IJsAdapter>(direct_hash, direct_equal);
         }
 
         public bool Ready {
             get { return this.api_ready;}
-        }
-
-        public JavascriptMusicPlayer Player {
-            get { return this.js_player; }
         }
 
         public Service WebService {
@@ -291,7 +287,6 @@ namespace WebMusic.Webextension {
             this.InjectApi();
 
             js_api = js_global_object.get_property_object("Api");
-            js_player = new JavascriptMusicPlayer(this);
         }
 
         public Variant? send_command(JsCommand command){
@@ -371,7 +366,11 @@ namespace WebMusic.Webextension {
                 if(obj.Action == JsAction.CALL_FUNCTION) {
 
                     if(obj.Parameter == null) {
-                        warning("Missing parameter in command. Ignoring command.");
+                        if(obj.Identifier == "register") {
+                            mSelf.register_js_object(obj.Type);
+                        } else {
+                            warning("Missing parameter in command. Ignoring command.");
+                        }
                     } else {
                         if(obj.Identifier == "warning"
                             && obj.Parameter.is_of_type(VariantType.STRING)) {
@@ -410,6 +409,21 @@ namespace WebMusic.Webextension {
             }
 
             return new JSCore.Value.boolean(ctx, true);
+        }
+
+        private void register_js_object(JsObjectType type) {
+            switch(type) {
+                case JsObjectType.PLAYER:
+                    if(!this.js_adapter.contains(type)) {
+                        var player = new JavascriptMusicPlayer();
+                        player.insert_js_api(this);
+                        this.js_adapter.insert(type, player);
+                    }
+                    break;
+                default:
+                    warning("Can not register object. Unknown type %s.", type.to_string());
+                    break;
+            }
         }
 
         private void InjectApi() {
