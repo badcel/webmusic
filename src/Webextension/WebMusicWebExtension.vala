@@ -72,7 +72,6 @@ namespace WebMusic.Webextension {
 
                     js_api = new JsApi(mService);
                     js_api.set_context(context);
-                    js_api.Player.PropertiesChanged.connect(this.OnPropertiesChanged);
 
                 } else {
                     //Refresh objects
@@ -84,37 +83,6 @@ namespace WebMusic.Webextension {
                         "Reload page to try again. (%s)", name, e.message);
 
                 Reset();
-            }
-        }
-
-        private void OnPropertiesChanged(HashTable<PlayerProperties,Variant> dict) {
-
-            bool has_data = false;
-
-            string track    = "";
-            string album    = "";
-            string artist   = "";
-
-            if(dict.contains(PlayerProperties.TRACK)) {
-                track = dict.get(PlayerProperties.TRACK).get_string();
-                has_data = true;
-            }
-
-            if(dict.contains(PlayerProperties.ALBUM)) {
-                album = dict.get(PlayerProperties.ALBUM).get_string();
-                has_data = true;
-            }
-
-            if(dict.contains(PlayerProperties.ARTIST)) {
-                artist = dict.get(PlayerProperties.ARTIST).get_string();
-                has_data = true;
-            }
-
-            if(has_data) {
-                string by = artist.length > 0? _("by %s").printf(artist) + " " : "";
-                string from = album.length > 0? _("from %s").printf(album): "";
-
-                stdout.printf(_("Now playing %s") + " " + by + from +"\n", track, album, artist);
             }
         }
 
