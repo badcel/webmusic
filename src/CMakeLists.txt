@@ -22,4 +22,4 @@ install(DIRECTORY Resources/Services
         DESTINATION "${PKG_DATADIR}"
         PATTERN "*.in" EXCLUDE)
 
-webmusic_configure(FILES desktop example.ini ${PKG_DATADIR}/Services/example ./Resources/Services/example)
+webmusic_configure(FILES desktop example.ini ${PKG_DATADIR}/Services/example ${CMAKE_CURRENT_SOURCE_DIR}/Resources/Services/example)
