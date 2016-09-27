@@ -55,6 +55,13 @@
                         this.album  = currentSong.ALB_TITLE;
                         this.artUrl = 'http://cdn-images.deezer.com/images/cover/' + currentSong.ALB_PICTURE + '/300x300-000000-80-0-0.jpg';
                         break;
+                    case dzPlayer.MEDIA_TYPE_LIVE_STREAM:
+                        this.url    = currentSong.MD5_ORIGN;
+                        this.artist = '';
+                        this.track  = currentSong.SNG_TITLE;
+                        this.album  = '';
+                        this.artUrl = 'http://cdn-images.deezer.com/images/misc/' + currentSong.PICTURE_URL + '/300x300.jpg';
+                        break;
                     default:
                         this.warning('Unknown type: ' + dzPlayer.getMediaType());
                 }
