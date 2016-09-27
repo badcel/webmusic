@@ -70,9 +70,16 @@
                 this.repeat        = dzPlayer.getRepeat();
                 this.volume        = dzPlayer.volume;
                 this.shuffle       = dzPlayer.shuffle;
-                this.like          = document.querySelector('.player-actions .icon-love').classList.contains('active');
 
                 this.trackLength   = currentSong.DURATION * 1000000;
+                let like = document.querySelector('.player-actions .icon-love')
+                if(like != null ) {
+                    this.canLike = true;
+                    this.like = like.classList.contains('active');
+                } else {
+                    this.canLike = false;
+                    this.like = false;
+                }
 
                 //parseInt is a workaround because dzPlayer.position is not always an integer
                 this.trackPosition = parseInt(dzPlayer.position * 1000000);
