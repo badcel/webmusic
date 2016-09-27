@@ -471,6 +471,21 @@ namespace WebMusic.Webextension {
             }
         }
 
+        public override bool CanLike {
+            get {
+                bool ret = false;
+
+                if(js_api.Ready && js_api.WebService.SupportsLike) {
+                    var prop = this.get_js_property("canLike");
+                    if(prop != null && prop.is_of_type(VariantType.BOOLEAN)) {
+                        ret = prop.get_boolean();
+                    }
+                }
+
+                return ret;
+            }
+        }
+
         public override RepeatStatus Repeat {
             get {
                 RepeatStatus repeat = RepeatStatus.NONE;

@@ -124,6 +124,10 @@ namespace WebMusic.Browser.Widgets.Osd {
                     mBtnRepeat.RepeatState = (RepeatStatus)dict.get(PlayerProperties.REPEAT).get_int64();
                 }
 
+                if(dict.contains(PlayerProperties.CAN_LIKE)) {
+                    mBtnLike.sensitive = dict.get(PlayerProperties.CAN_LIKE).get_boolean();
+                }
+
                 if(dict.contains(PlayerProperties.LIKE)) {
                     mBtnLike.active = dict.get(PlayerProperties.LIKE).get_boolean();
                 }

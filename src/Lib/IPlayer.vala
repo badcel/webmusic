@@ -53,19 +53,20 @@ namespace LibWebMusic {
         CAN_GO_PREVIOUS, // INT =  6
         CAN_SHUFFLE,     // INT =  7
         CAN_REPEAT,      // INT =  8
-        URL,             // INT =  9
-        ARTIST,          // INT = 10
-        TRACK,           // INT = 11
-        ALBUM,           // INT = 12
-        ART_URL,         // INT = 13
-        ART_FILE_LOCAL,  // INT = 14
-        PLAYBACKSTATUS,  // INT = 15
-        LIKE,            // INT = 16
-        SHUFFLE,         // INT = 17
-        REPEAT,          // INT = 18
-        VOLUME,          // INT = 19
-        TRACK_LENGTH,    // INT = 20
-        TRACK_POSITION;  // INT = 21
+        CAN_LIKE  ,      // INT =  9
+        URL,             // INT = 10
+        ARTIST,          // INT = 11
+        TRACK,           // INT = 12
+        ALBUM,           // INT = 13
+        ART_URL,         // INT = 14
+        ART_FILE_LOCAL,  // INT = 15
+        PLAYBACKSTATUS,  // INT = 16
+        LIKE,            // INT = 17
+        SHUFFLE,         // INT = 18
+        REPEAT,          // INT = 19
+        VOLUME,          // INT = 20
+        TRACK_LENGTH,    // INT = 21
+        TRACK_POSITION;  // INT = 22
 
         public static bool try_parse_name(string name, out PlayerProperties? result) {
 
@@ -97,6 +98,9 @@ namespace LibWebMusic {
                     break;
                 case "canRepeat":
                     result = PlayerProperties.CAN_REPEAT;
+                    break;
+                case "canLike":
+                    result = PlayerProperties.CAN_LIKE;
                     break;
                 case "url":
                     result = PlayerProperties.URL;
@@ -181,6 +185,9 @@ namespace LibWebMusic {
                     case PlayerProperties.CAN_REPEAT:
                         data.insert("CanRepeat", val);
                         break;
+                    case PlayerProperties.CAN_LIKE:
+                        data.insert("CanLike", val);
+                        break;
                     case PlayerProperties.PLAYBACKSTATUS:
                         data.insert("PlaybackStatus", (PlayStatus) val.get_int64());
                         break;
@@ -237,6 +244,7 @@ namespace LibWebMusic {
         public abstract bool CanControl     { get; }
         public abstract bool CanShuffle     { get; }
         public abstract bool CanRepeat      { get; }
+        public abstract bool CanLike        { get; }
 
         public abstract double Volume       { get; set; }
         public abstract int64  Position     { get; set; }

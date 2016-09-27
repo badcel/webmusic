@@ -201,6 +201,7 @@
             this._canGoPrevious = false;
             this._canShuffle    = false;
             this._canRepeat     = false;
+            this._canLike       = false;
 
             this._playbackStatus = 0;
             this._repeat         = 0;
@@ -334,6 +335,17 @@
 
         get canRepeat() {
             return this._canRepeat;
+        }
+
+        set canLike(value) {
+            if(value != this._canLike) {
+                this.changes.canLike = value;
+                this._canLike = value;
+            }
+        }
+
+        get canLike() {
+            return this._canLike;
         }
 
         /*

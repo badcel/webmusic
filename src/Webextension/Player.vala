@@ -46,6 +46,7 @@ namespace WebMusic.Webextension {
         public abstract bool CanControl     { get; }
         public abstract bool CanShuffle     { get; }
         public abstract bool CanRepeat      { get; }
+        public abstract bool CanLike        { get; }
 
         public abstract bool Shuffle        { get; set; }
         public abstract bool Like           { get; set; }
