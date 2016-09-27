@@ -101,10 +101,7 @@ namespace WebMusic.Browser.Plugins {
                 }
 
                 mini_window.set_label(track, by + seperator + from);
-
-                if(file.length > 0) {
-                    mini_window.set_album_art(file.replace("file://", ""));
-                }
+                mini_window.set_album_art(file.replace("file://", ""));
 
                 mini_window.resize(1,1);
             }
@@ -128,10 +125,14 @@ namespace WebMusic.Browser.Plugins {
 
             public void set_album_art(string art_file) {
                 try {
-                    Gdk.Pixbuf pix = new Gdk.Pixbuf.from_file_at_size(art_file, 48, 48);
-                    this.album_art.set_from_pixbuf(pix);
+                    if(art_file.length == 0) {
+                        this.album_art.set_from_icon_name("media-optical-cd-audio", Gtk.IconSize.DIALOG);
+                    } else {
+                        Gdk.Pixbuf pix = new Gdk.Pixbuf.from_file_at_size(art_file, 48, 48);
+                        this.album_art.set_from_pixbuf(pix);
+                    }
                 } catch(Error e) {
-                    this.album_art.set_from_icon_name(Config.PACKAGE, Gtk.IconSize.DIALOG);
+                    this.album_art.set_from_icon_name("media-optical-cd-audio", Gtk.IconSize.DIALOG);
                     warning("Could not set image from pixbuf: %s (%s)", e.message, art_file);
                 }
             }
