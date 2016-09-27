@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-07-07 09:54+0200\n"
+"POT-Creation-Date: 2016-09-27 22:18+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,37 +17,84 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../data/webmusic.desktop.in.h:1 ../src/Browser/AppWindow.vala:215
+#: ../data/org.WebMusic.desktop.in.h:1 ../src/Browser/AppWindow.vala:269
 #: ../src/Browser/Dialogs/AboutDialog.vala:56
+#: ../src/Resources/ui/application-window.ui.h:1
+#: ../src/Resources/ui/mini-window.ui.h:1
 msgid "WebMusic"
 msgstr "WebMusic"
 
-#: ../data/webmusic.desktop.in.h:2 ../src/Browser/WebMusic.vala:199
-#: ../src/Browser/AppWindow.vala:221
+#: ../data/org.WebMusic.desktop.in.h:2 ../src/Browser/AppWindow.vala:275
+#: ../src/Resources/ui/application-window.ui.h:2
+#: ../src/Resources/ui/mini-window.ui.h:2
 msgid "Listen to your music"
 msgstr "Höre deine Musik"
 
-#: ../data/webmusic.desktop.in.h:3
+#: ../data/org.WebMusic.desktop.in.h:3
 msgid "webmusic;music;"
 msgstr "webmusic;music;musik;"
 
-#: ../src/Browser/WebMusic.vala:44
+#: ../src/Browser/AppWindow.vala:271
+#: ../src/Browser/Plugins/Notification.vala:72
+#, c-format
+msgid "by %s"
+msgstr "von %s"
+
+#: ../src/Browser/AppWindow.vala:272
+#: ../src/Browser/Plugins/Notification.vala:73
+#, c-format
+msgid "from %s"
+msgstr "aus %s"
+
+#: ../src/Browser/WebMusic.vala:40
 msgid "Show version number"
 msgstr "Versionsnummer anzeigen"
 
-#: ../src/Browser/WebMusic.vala:46
+#: ../src/Browser/WebMusic.vala:42
 msgid "Define the service to use for application startup"
 msgstr "Definiert den beim Anwendungsstart zu verwendenden Service"
 
-#: ../src/Browser/WebMusic.vala:46
+#: ../src/Browser/WebMusic.vala:42
 msgid "SERVICE"
 msgstr "SERVICE"
 
+#: ../src/Browser/WebMusic.vala:44
+msgid "Search service for SEARCH_TERM"
+msgstr "Durchsuche Dienst nach SUCHBEGRIFF"
+
+#: ../src/Browser/WebMusic.vala:44
+msgid "SEARCH_TERM"
+msgstr "SUCHBEGRIFF"
+
+#: ../src/Browser/WebMusic.vala:46
+msgid "Show given track with id TRACK_ID"
+msgstr "Zeige gegebenen Titel mit id TRACK_ID"
+
+#: ../src/Browser/WebMusic.vala:46
+msgid "TRACK_ID"
+msgstr "TRACK_ID"
+
+#: ../src/Browser/WebMusic.vala:48
+msgid "Show given album with id ALBUM_ID"
+msgstr "Zeige gegebenes Album mit id ALBUM_ID "
+
+#: ../src/Browser/WebMusic.vala:48
+msgid "ALBUM_ID"
+msgstr "ALBUM_ID"
+
 #: ../src/Browser/WebMusic.vala:50
+msgid "Show given artist with id ARTIST_ID"
+msgstr "Zeige gegebenen Künstler mit id ARTIST_ID"
+
+#: ../src/Browser/WebMusic.vala:50
+msgid "ARTIST_ID"
+msgstr "ARTIST_ID"
+
+#: ../src/Browser/WebMusic.vala:52
 msgid "List all supported services"
 msgstr "Liste aller unterstützten Services anzeigen"
 
-#: ../src/Browser/WebMusic.vala:134
+#: ../src/Browser/WebMusic.vala:150
 #, c-format
 msgid ""
 "Startup service %s file could not be loaded. Application shuts down. (%s)"
@@ -55,7 +102,7 @@ msgstr ""
 "Die start Service-Datei %s konnte nicht geladen werden. Anwendung wird nun "
 "beendet. (%s)"
 
-#: ../src/Browser/WebMusic.vala:200 ../src/Browser/Dialogs/AboutDialog.vala:37
+#: ../src/Browser/Dialogs/AboutDialog.vala:37
 msgid ""
 "A web based music player that integrates your favourite music service into "
 "the desktop."
@@ -63,42 +110,86 @@ msgstr ""
 "Ein webbasierter Musikspieler der ihren bevorzugten Musikdienst in den "
 "Desktop integriert."
 
-#: ../src/Browser/AppWindow.vala:217
-#: ../src/Webextension/WebMusicWebExtension.vala:118
-#: ../src/Webextension/Plugins/Notification.vala:49
-#, c-format
-msgid "by %s"
-msgstr "von %s"
-
-#: ../src/Browser/AppWindow.vala:218
-#: ../src/Webextension/WebMusicWebExtension.vala:119
-#: ../src/Webextension/Plugins/Notification.vala:50
-#, c-format
-msgid "from %s"
-msgstr "aus %s"
-
 #: ../src/Browser/Dialogs/AboutDialog.vala:39
 #, c-format
 msgid "Powered by WebKit %d.%d.%d\n"
 msgstr "Angetrieben von WebKit %d.%d.%d\n"
 
-#: ../src/Webextension/WebMusicWebExtension.vala:121
-#: ../src/Webextension/Plugins/Notification.vala:48
+#: ../src/Browser/Plugins/Notification.vala:71
 #, c-format
 msgid "Now playing %s"
 msgstr "Spielt gerade %s"
 
-#: ../src/Webextension/Plugins/Notification.vala:65
+#: ../src/Browser/Plugins/Notification.vala:88
 msgid "Previous"
 msgstr "Zurück"
 
-#: ../src/Webextension/Plugins/Notification.vala:69
+#: ../src/Browser/Plugins/Notification.vala:92
 msgid "Pause"
 msgstr "Pause"
 
-#: ../src/Webextension/Plugins/Notification.vala:74
+#: ../src/Browser/Plugins/Notification.vala:97
 msgid "Next"
 msgstr "Weiter"
+
+#: ../src/Resources/ui/application-menu.ui.h:1
+msgid "Pr_eferences"
+msgstr "_Einstellungen"
+
+#: ../src/Resources/ui/application-menu.ui.h:2
+msgid "_About"
+msgstr "_Info"
+
+#: ../src/Resources/ui/application-menu.ui.h:3
+msgid "_Quit"
+msgstr "_Beenden"
+
+#: ../src/Resources/ui/clear-data-dialog.ui.h:1
+msgid "Clear Temporary Data"
+msgstr "Temporäre Dateien löschen"
+
+#: ../src/Resources/ui/clear-data-dialog.ui.h:2
+#: ../src/Resources/ui/preferences-dialog.ui.h:12
+msgid "C_lear"
+msgstr "_Löschen"
+
+#: ../src/Resources/ui/clear-data-dialog.ui.h:3
+msgid "_Cancel"
+msgstr "_Abbrechen"
+
+#: ../src/Resources/ui/clear-data-dialog.ui.h:4
+msgid "Select the temporary data you wish to clear"
+msgstr "Wählen sie die zu löschenden temporären Daten aus"
+
+#: ../src/Resources/ui/clear-data-dialog.ui.h:5
+msgid ""
+"You are about to clear temporary data which was created by using music "
+"services you have visited. Check the types of information that you want to "
+"remove:"
+msgstr ""
+"Sie sind im Begriff temporäre Daten zu löschen, die durch den Besuch von "
+"Musikdiensten entstanden sind. Bitte wählen Sie die zu löschenden "
+"Informationen aus:"
+
+#: ../src/Resources/ui/clear-data-dialog.ui.h:6
+msgid "Cookies"
+msgstr "Cookies"
+
+#: ../src/Resources/ui/clear-data-dialog.ui.h:7
+msgid "Album Art"
+msgstr "Album Bilder"
+
+#: ../src/Resources/ui/clear-data-dialog.ui.h:8
+msgid "Internet files"
+msgstr "Internet Dateien"
+
+#: ../src/Resources/ui/clear-data-dialog.ui.h:9
+msgid ""
+"You cannot undo this action. The data you are choosing to clear will be "
+"removed forever."
+msgstr ""
+"Sie können diese Aktion nicht rückgängig machen. Die von Ihnen ausgewählten "
+"Daten werden unwiederruflich gelöscht."
 
 #: ../src/Resources/ui/main.ui.h:1
 msgid "More"
@@ -113,24 +204,16 @@ msgid "Mini-Mode"
 msgstr "Mini-Mode"
 
 #: ../src/Resources/ui/popover-menu.ui.h:2
+msgid "Show Mini-Widget"
+msgstr "Zeige Mini-Widget"
+
+#: ../src/Resources/ui/popover-menu.ui.h:3
 msgid "Deezer"
 msgstr "Deezer"
 
-#: ../src/Resources/ui/popover-menu.ui.h:3
+#: ../src/Resources/ui/popover-menu.ui.h:4
 msgid "Jamendo"
 msgstr "Jamendo"
-
-#: ../src/Resources/ui/application-menu.ui.h:1
-msgid "Pr_eferences"
-msgstr "_Einstellungen"
-
-#: ../src/Resources/ui/application-menu.ui.h:2
-msgid "_About"
-msgstr "_Info"
-
-#: ../src/Resources/ui/application-menu.ui.h:3
-msgid "_Quit"
-msgstr "_Beenden"
 
 #: ../src/Resources/ui/preferences-dialog.ui.h:1
 msgid "Always"
@@ -175,50 +258,3 @@ msgstr "Aktiviere MPRIS Unterstützung"
 #: ../src/Resources/ui/preferences-dialog.ui.h:11
 msgid "Temporary Data"
 msgstr "Temporäre Dateien"
-
-#: ../src/Resources/ui/preferences-dialog.ui.h:12
-#: ../src/Resources/ui/clear-data-dialog.ui.h:2
-msgid "C_lear"
-msgstr "_Löschen"
-
-#: ../src/Resources/ui/clear-data-dialog.ui.h:1
-msgid "Clear Temporary Data"
-msgstr "Temporäre Dateien löschen"
-
-#: ../src/Resources/ui/clear-data-dialog.ui.h:3
-msgid "_Cancel"
-msgstr "_Abbrechen"
-
-#: ../src/Resources/ui/clear-data-dialog.ui.h:4
-msgid "Select the temporary data you wish to clear"
-msgstr "Wählen sie die zu löschenden temporären Daten aus"
-
-#: ../src/Resources/ui/clear-data-dialog.ui.h:5
-msgid ""
-"You are about to clear temporary data which was created by using music "
-"services you have visited. Check the types of information that you want to "
-"remove:"
-msgstr ""
-"Sie sind im Begriff temporäre Daten zu löschen, die durch den Besuch von "
-"Musikdiensten entstanden sind. Bitte wählen Sie die zu löschenden "
-"Informationen aus:"
-
-#: ../src/Resources/ui/clear-data-dialog.ui.h:6
-msgid "Cookies"
-msgstr "Cookies"
-
-#: ../src/Resources/ui/clear-data-dialog.ui.h:7
-msgid "Album Art"
-msgstr "Album Bilder"
-
-#: ../src/Resources/ui/clear-data-dialog.ui.h:8
-msgid "Internet files"
-msgstr "Internet Dateien"
-
-#: ../src/Resources/ui/clear-data-dialog.ui.h:9
-msgid ""
-"You cannot undo this action. The data you are choosing to clear will be "
-"removed forever."
-msgstr ""
-"Sie können diese Aktion nicht rückgängig machen. Die von Ihnen ausgewählten "
-"Daten werden unwiederruflich gelöscht."
