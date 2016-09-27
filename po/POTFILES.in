@@ -4,9 +4,9 @@ data/org.WebMusic.desktop.in
 src/Browser/AppWindow.vala
 src/Browser/WebMusic.vala
 src/Browser/Dialogs/AboutDialog.vala
+src/Browser/Plugins/Notification.vala
 
 src/Webextension/WebMusicWebExtension.vala
-src/Webextension/Plugins/Notification.vala
 
 [type: gettext/glade]src/Resources/ui/application-menu.ui
 [type: gettext/glade]src/Resources/ui/application-window.ui
