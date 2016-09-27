@@ -71,7 +71,6 @@
                 this.volume        = dzPlayer.volume;
                 this.shuffle       = dzPlayer.shuffle;
 
-                this.trackLength   = currentSong.DURATION * 1000000;
                 let like = document.querySelector('.player-actions .icon-love')
                 if(like != null ) {
                     this.canLike = true;
@@ -81,8 +80,15 @@
                     this.like = false;
                 }
 
-                //parseInt is a workaround because dzPlayer.position is not always an integer
-                this.trackPosition = parseInt(dzPlayer.position * 1000000);
+                if(currentSong.DURATION != null) {
+                    this.trackLength   = currentSong.DURATION * 1000000;
+
+                    //parseInt is a workaround because dzPlayer.position is not always an integer
+                    this.trackPosition = parseInt(dzPlayer.position * 1000000);
+                } else {
+                    this.trackLength = 0;
+                    this.trackPosition = 0;
+                }
 
                 this.sendPropertyChange();
 
