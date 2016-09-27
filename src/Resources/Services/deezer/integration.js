@@ -40,15 +40,15 @@
 
                 let currentSong = dzPlayer.getCurrentSong();
 
-                switch(currentSong.__TYPE__) {
-                    case 'episode':
+                switch(dzPlayer.getMediaType()) {
+                    case dzPlayer.MEDIA_TYPE_TALK:
                         this.url    = 'http://www.deezer.com/show/' + currentSong.SHOW_ID + '#' + currentSong.EPISODE_ID;
                         this.artist = currentSong.SHOW_NAME;
                         this.track  = currentSong.EPISODE_TITLE;
                         this.album  = '';
                         this.artUrl = 'http://cdn-images.deezer.com/images/talk/' + currentSong.SHOW_ART_MD5 + '/300x300.jpg';
                         break;
-                    case 'song':
+                    case dzPlayer.MEDIA_TYPE_SONG:
                         this.url    = 'http://www.deezer.com/album/' + currentSong.ALB_ID + '#naboo_datagrid_track_' + currentSong.SNG_ID;
                         this.artist = currentSong.ART_NAME;
                         this.track  = currentSong.SNG_TITLE;
@@ -56,7 +56,7 @@
                         this.artUrl = 'http://cdn-images.deezer.com/images/cover/' + currentSong.ALB_PICTURE + '/300x300-000000-80-0-0.jpg';
                         break;
                     default:
-                        this.warning('Unknown type: ' + currentSong.__TYPE__);
+                        this.warning('Unknown type: ' + dzPlayer.getMediaType());
                 }
 
                 this.playbackStatus = dzPlayer.isPlaying()? this.PlaybackState.PLAY : this.PlaybackState.STOP;
