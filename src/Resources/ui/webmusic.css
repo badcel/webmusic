@@ -1,0 +1,21 @@
+#miniwidget {
+ border-style: solid;
+ border-width: 1px;
+ border-color: rgb(148, 151, 150);
+ background-color: rgb(57,63,63);
+}
+
+#miniwidget image {
+ border-style: solid;
+ border-width: 1px;
+ border-color: rgb(255,255,255);
+ background-color: rgb(255,255,255);
+}
+
+#miniwidget label {
+ color: rgb(255, 255, 255);
+}
+
+#miniwidget label#top_label {
+ font-weight: bold;
+}

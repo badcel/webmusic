@@ -7,6 +7,10 @@
         <attribute name="label" translatable="yes">Mini-Mode</attribute>
         <attribute name="action">win.minimode</attribute>
       </item>
+      <item>
+        <attribute name="label" translatable="yes">Show Mini-Widget</attribute>
+        <attribute name="action">win.show_mini_widget</attribute>
+      </item>
     </section>
     <section>
       <item>

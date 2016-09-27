@@ -31,6 +31,7 @@ vala_precompile(VALA_C
     Plugins/IPlugin.vala
     Plugins/MPRIS.vala
     Plugins/Notification.vala
+    Plugins/MiniWidget.vala
 OPTIONS
     ${VALAFLAGS}
 PACKAGES

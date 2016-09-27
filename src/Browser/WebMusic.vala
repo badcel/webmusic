@@ -282,6 +282,11 @@ namespace WebMusic.Browser {
             Gtk.IconTheme.get_default().append_search_path(Config.THEME_DIR);
             Gtk.Window.set_default_icon_name(Config.PACKAGE);
 
+            var screen = Gdk.Screen.get_default();
+            var provider = new Gtk.CssProvider();
+            provider.load_from_resource("/org/WebMusic/Browser/ui/webmusic.css");
+            Gtk.StyleContext.add_provider_for_screen(screen, provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION);
+
             WebMusic app = new WebMusic();
             return app.run(args);
         }

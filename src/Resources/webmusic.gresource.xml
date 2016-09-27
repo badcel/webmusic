@@ -5,9 +5,11 @@
     <file preprocess="xml-stripblanks">ui/application-window.ui</file>
     <file preprocess="xml-stripblanks">ui/clear-data-dialog.ui</file>
     <file preprocess="xml-stripblanks">ui/main.ui</file>
+    <file preprocess="xml-stripblanks">ui/mini-window.ui</file>
     <file preprocess="xml-stripblanks">ui/osd.ui</file>
     <file preprocess="xml-stripblanks">ui/popover-menu.ui</file>
     <file preprocess="xml-stripblanks">ui/preferences-dialog.ui</file>
+    <file>ui/webmusic.css</file>
   </gresource>
 </gresources>
 

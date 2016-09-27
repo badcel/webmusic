@@ -69,6 +69,7 @@ namespace WebMusic.Browser
 
         private const ActionEntry[] mActions = {
             { "minimode", WinMiniMode, null, "false"},
+            { "show_mini_widget", show_mini_widget, null, "false"},
             { "service",  WinService , "s", "'deezer'"}
         };
 
@@ -126,6 +127,14 @@ namespace WebMusic.Browser
             action.set_state(new Variant.boolean(mMiniMode));
         }
 
+        private void show_mini_widget(SimpleAction action, Variant? parameter) {
+            if(mPlugins.contains("miniwidget")) {
+                var b = !action.state.get_boolean();
+                mPlugins["miniwidget"].Enable = b;
+                action.set_state(new Variant.boolean(b));
+            }
+        }
+
         private void WinService(SimpleAction action, Variant? parameter) {
             try {
                 mService.Load(parameter.get_string());
@@ -145,6 +154,7 @@ namespace WebMusic.Browser
             mPlugins = new HashTable<string, IPlugin>(str_hash, str_equal);
             mPlugins.insert("mpris", new Mpris((WebMusic)this.application, mService));
             mPlugins.insert("notifications", new Notificationn());
+            mPlugins.insert("miniwidget", new MiniWidget());
 
             foreach(IPlugin plugin in mPlugins.get_values()) {
                 plugin.RegisterPlayer(mPlayer);
