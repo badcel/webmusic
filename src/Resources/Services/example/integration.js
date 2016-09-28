@@ -21,11 +21,34 @@
     class ExamplePlayer extends WebMusic.Api.BasePlayer {
         constructor() {
             super();
+
+            this.canControl = true;
+            this.canPlay    = true;
+            this.canPause   = false;
+            this.canSeek    = false;
+
+            this.canGoNext     = false;
+            this.canGoPrevious = false;
+            this.canShuffle    = false;
+            this.canRepeat     = false;
+
             setTimeout(this.update.bind(this), 2500);
         }
 
         update() {
-            this.ping();
+            //Test connection to webmusic
+            //this.ping();
+
+            this.url    = 'http://webmusic.tiede.org/id/1';
+            this.artist = 'Test Artist';
+            this.track  = 'Test Track';
+            this.album  = 'Test Album';
+
+            this.playbackStatus = this.PlaybackState.PLAY;
+
+            this.sendPropertyChange();
+
+            //setTimeout(this.update.bind(this), 5000);
         }
 
     }
