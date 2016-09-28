@@ -124,15 +124,29 @@ namespace WebMusic.Browser.Plugins {
             }
 
             public void set_album_art(string art_file) {
+
+                var style_context = this.album_art.get_style_context();
+
                 try {
                     if(art_file.length == 0) {
+
                         this.album_art.set_from_icon_name("media-optical-cd-audio", Gtk.IconSize.DIALOG);
+                        style_context.add_class("missing-album-art");
+
                     } else {
+
+                        if(style_context.has_class("missing-album-art")) {
+                            style_context.remove_class("missing-album-art");
+                        }
+
                         Gdk.Pixbuf pix = new Gdk.Pixbuf.from_file_at_size(art_file, 48, 48);
                         this.album_art.set_from_pixbuf(pix);
                     }
                 } catch(Error e) {
+
                     this.album_art.set_from_icon_name("media-optical-cd-audio", Gtk.IconSize.DIALOG);
+                    style_context.add_class("missing-album-art");
+
                     warning("Could not set image from pixbuf: %s (%s)", e.message, art_file);
                 }
             }

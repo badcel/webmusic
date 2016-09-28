@@ -1,8 +1,10 @@
+@define-color miniwidget_bg_color rgb(57,63,63);
+
 #miniwidget {
  border-style: solid;
  border-width: 1px;
  border-color: rgb(148, 151, 150);
- background-color: rgb(57,63,63);
+ background-color: @miniwidget_bg_color;
 }
 
 #miniwidget image {
@@ -18,4 +20,9 @@
 
 #miniwidget label#top_label {
  font-weight: bold;
+}
+
+#miniwidget .missing-album-art {
+ border-color: @miniwidget_bg_color;
+ background-color: rgba(0,0,0,0);
 }
