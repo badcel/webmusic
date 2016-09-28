@@ -59,6 +59,9 @@ namespace WebMusic.Browser.Plugins {
         public bool RegisterPlayer(IPlayer p) {
             player = p;
             player.PropertiesChanged.connect(OnPropertiesChanged);
+
+            mini_window.set_player(player);
+
             return true;
         }
 
@@ -91,6 +94,12 @@ namespace WebMusic.Browser.Plugins {
                 has_data = true;
             }
 
+            if(dict.contains(PlayerProperties.PLAYBACKSTATUS)) {
+                PlayStatus play_status = (PlayStatus) dict.get(PlayerProperties.PLAYBACKSTATUS).get_int64();
+
+                mini_window.set_playstatus(play_status);
+            }
+
             if(has_data) {
                 string by = artist.length > 0? _("by %s").printf(artist): "";
                 string from = album.length > 0? _("from %s").printf(album): "";
@@ -119,8 +128,27 @@ namespace WebMusic.Browser.Plugins {
             [GtkChild]
             private Gtk.Label bottom_label;
 
+            [GtkChild]
+            private Gtk.Image overlay_image;
+
+            [GtkChild]
+            private Gtk.EventBox album_art_event_box;
+
+            private IPlayer player;
+
             public MiniWindow() {
+
+                this.overlay_image.set_state_flags(Gtk.StateFlags.INSENSITIVE , true);
+
                 this.button_press_event.connect(this.on_button_press);
+
+                this.album_art_event_box.enter_notify_event.connect(this.on_enter_notify_event_album_art_event_box);
+                this.album_art_event_box.leave_notify_event.connect(this.on_leave_notify_event_album_art_event_box);
+                this.album_art_event_box.button_press_event.connect(this.on_button_press_album_art_event_box);
+            }
+
+            public void set_player(IPlayer p) {
+                this.player = p;
             }
 
             public void set_album_art(string art_file) {
@@ -158,11 +186,38 @@ namespace WebMusic.Browser.Plugins {
                 this.bottom_label.set_tooltip_text(bottom_label.replace("\n", " "));
             }
 
+            public void set_playstatus(PlayStatus play_status) {
+
+                if(play_status == PlayStatus.PLAY) {
+                    this.overlay_image.set_from_icon_name("media-playback-pause", Gtk.IconSize.DND );
+                } else {
+                    this.overlay_image.set_from_icon_name("media-playback-start", Gtk.IconSize.DND );
+                }
+            }
+
             private bool on_button_press(Gdk.EventButton event) {
                 this.begin_move_drag((int)event.button, (int)event.x_root, (int)event.y_root, event.time);
                 return true;
             }
 
+            private bool on_enter_notify_event_album_art_event_box(Gdk.EventCrossing event) {
+                overlay_image.set_state_flags(Gtk.StateFlags.NORMAL , true);
+                return true;
+            }
+
+            private bool on_leave_notify_event_album_art_event_box(Gdk.EventCrossing event) {
+                overlay_image.set_state_flags(Gtk.StateFlags.INSENSITIVE , true);
+                return true;
+            }
+
+            private bool on_button_press_album_art_event_box(Gdk.EventButton event) {
+                try {
+                    player.PlayPause();
+                } catch(Error e) {
+                    warning("Could not send PlayPause command via DBus (%s).", e.message);
+                }
+                return true;
+            }
         }
 
     }
