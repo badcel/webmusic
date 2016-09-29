@@ -22,25 +22,17 @@
         <property name="margin_right">4</property>
         <property name="margin_top">4</property>
         <property name="margin_bottom">4</property>
+        <property name="spacing">4</property>
         <child>
-          <object class="GtkOverlay">
+          <object class="WebMusicBrowserWidgetsImageOverlay" id="album_art">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <child>
-              <object class="GtkImage" id="album_art">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="margin_left">5</property>
-                <property name="margin_right">5</property>
-                <property name="margin_top">5</property>
-                <property name="margin_bottom">5</property>
-                <property name="icon_name">media-optical-cd-audio</property>
-                <property name="icon_size">6</property>
-              </object>
-              <packing>
-                <property name="index">-1</property>
-              </packing>
-            </child>
+            <property name="halign">center</property>
+            <property name="valign">center</property>
+            <property name="margin_left">4</property>
+            <property name="margin_right">4</property>
+            <property name="margin_top">4</property>
+            <property name="margin_bottom">4</property>
             <child type="overlay">
               <object class="GtkEventBox" id="album_art_event_box">
                 <property name="visible">True</property>
@@ -52,10 +44,6 @@
                     <property name="can_focus">False</property>
                     <property name="halign">center</property>
                     <property name="valign">center</property>
-                    <property name="margin_left">1</property>
-                    <property name="margin_right">1</property>
-                    <property name="margin_top">1</property>
-                    <property name="margin_bottom">1</property>
                     <property name="icon_name">media-playback-start</property>
                     <property name="icon_size">5</property>
                   </object>
@@ -74,13 +62,12 @@
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="orientation">vertical</property>
+            <property name="spacing">4</property>
             <child>
               <object class="GtkLabel" id="top_label">
                 <property name="name">top_label</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="margin_left">4</property>
-                <property name="margin_bottom">4</property>
                 <property name="label" translatable="yes">WebMusic</property>
                 <property name="ellipsize">end</property>
                 <property name="width_chars">20</property>
@@ -97,7 +84,6 @@
                 <property name="name">bottom_label</property>
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="margin_left">4</property>
                 <property name="label" translatable="yes">Listen to your music</property>
                 <property name="use_markup">True</property>
                 <property name="ellipsize">end</property>

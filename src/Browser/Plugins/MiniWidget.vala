@@ -15,6 +15,7 @@
  */
 
 using LibWebMusic;
+using WebMusic.Browser.Widgets;
 
 namespace WebMusic.Browser.Plugins {
 
@@ -120,7 +121,7 @@ namespace WebMusic.Browser.Plugins {
         private class MiniWindow : Gtk.Window {
 
             [GtkChild]
-            private Gtk.Image album_art;
+            private ImageOverlay album_art;
 
             [GtkChild]
             private Gtk.Label top_label;
@@ -138,7 +139,10 @@ namespace WebMusic.Browser.Plugins {
 
             public MiniWindow() {
 
-                this.overlay_image.set_state_flags(Gtk.StateFlags.INSENSITIVE , true);
+                album_art.set_size(48, 48);
+                this.set_album_art(""); //Initialize album art
+
+                this.overlay_image.set_state_flags(Gtk.StateFlags.INCONSISTENT , true);
 
                 this.button_press_event.connect(this.on_button_press);
 
@@ -152,30 +156,16 @@ namespace WebMusic.Browser.Plugins {
             }
 
             public void set_album_art(string art_file) {
+                if(art_file.length == 0) {
 
-                var style_context = this.album_art.get_style_context();
+                    this.album_art.LoadStockIcon("media-optical-cd-audio");
+                    this.album_art.add_style_class("image-overlay-missing-image");
 
-                try {
-                    if(art_file.length == 0) {
+                } else {
 
-                        this.album_art.set_from_icon_name("media-optical-cd-audio", Gtk.IconSize.DIALOG);
-                        style_context.add_class("missing-album-art");
+                    this.album_art.LoadImage(art_file);
+                    this.album_art.remove_style_class("image-overlay-missing-image");
 
-                    } else {
-
-                        if(style_context.has_class("missing-album-art")) {
-                            style_context.remove_class("missing-album-art");
-                        }
-
-                        Gdk.Pixbuf pix = new Gdk.Pixbuf.from_file_at_size(art_file, 48, 48);
-                        this.album_art.set_from_pixbuf(pix);
-                    }
-                } catch(Error e) {
-
-                    this.album_art.set_from_icon_name("media-optical-cd-audio", Gtk.IconSize.DIALOG);
-                    style_context.add_class("missing-album-art");
-
-                    warning("Could not set image from pixbuf: %s (%s)", e.message, art_file);
                 }
             }
 
@@ -206,7 +196,7 @@ namespace WebMusic.Browser.Plugins {
             }
 
             private bool on_leave_notify_event_album_art_event_box(Gdk.EventCrossing event) {
-                overlay_image.set_state_flags(Gtk.StateFlags.INSENSITIVE , true);
+                overlay_image.set_state_flags(Gtk.StateFlags.INCONSISTENT , true);
                 return true;
             }
 

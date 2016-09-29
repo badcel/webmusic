@@ -31,11 +31,8 @@ image.image-overlay-missing-image {
  background-color: @miniwidget_bg_color;
 }
 
-#miniwidget image {
- border-style: solid;
+#miniwidget image.image-overlay {
  border-width: 1px;
- border-color: rgb(255,255,255);
- background-color: rgb(255,255,255);
 }
 
 #miniwidget label {
@@ -44,11 +41,6 @@ image.image-overlay-missing-image {
 
 #miniwidget label#top_label {
  font-weight: bold;
-}
-
-#miniwidget .missing-album-art {
- border-color: @miniwidget_bg_color;
- background-color: rgba(0,0,0,0);
 }
 
 #miniwidget image#overlay_image {
@@ -60,6 +52,6 @@ image.image-overlay-missing-image {
  opacity: 1;
 }
 
-#miniwidget image#overlay_image:disabled {
+#miniwidget image#overlay_image:indeterminate {
  opacity: 0;
 }
