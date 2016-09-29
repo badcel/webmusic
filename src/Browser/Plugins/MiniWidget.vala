@@ -182,7 +182,7 @@ namespace WebMusic.Browser.Plugins {
             public void set_label(string top_label, string bottom_label) {
                 this.top_label.set_text(top_label);
                 this.top_label.set_tooltip_text(top_label);
-                this.bottom_label.set_markup(bottom_label);
+                this.bottom_label.set_markup(GLib.Markup.escape_text(bottom_label, -1));
                 this.bottom_label.set_tooltip_text(bottom_label.replace("\n", " "));
             }
 
