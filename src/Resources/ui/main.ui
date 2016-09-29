@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.18.3 -->
+<!-- Generated with glade 3.20.0 -->
 <interface>
   <requires lib="gtk+" version="3.12"/>
   <object class="GtkAction" id="ActionInfoBar">
@@ -70,13 +70,12 @@
                 <property name="layout_style">end</property>
                 <child>
                   <object class="GtkLinkButton" id="mInfoLinkButton">
-                    <property name="label" translatable="no">link button</property>
+                    <property name="label">link button</property>
                     <property name="related_action">ActionInfoBar</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
                     <property name="relief">none</property>
-                    <property name="uri"></property>
                   </object>
                   <packing>
                     <property name="expand">True</property>
@@ -134,11 +133,16 @@
             <property name="orientation">vertical</property>
             <property name="spacing">5</property>
             <child>
-              <object class="WebMusicBrowserWidgetsOsdCoverStage" id="mCoverStage">
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="halign">center</property>
-          </object>
+              <object class="WebMusicBrowserWidgetsImageOverlay" id="cover_overlay">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="halign">center</property>
+                <child type="overlay">
+                  <object class="WebMusicBrowserWidgetsOsdToolbar" id="osd_toolbar">
+                    <property name="visible">True</property>
+                  </object>
+                </child>
+              </object>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>

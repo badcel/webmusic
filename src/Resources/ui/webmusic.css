@@ -1,5 +1,29 @@
 @define-color miniwidget_bg_color rgb(57,63,63);
 
+image.image-overlay {
+ border-style: solid;
+ border-color: rgb(255,255,255);
+ background-color: rgb(255,255,255);
+}
+
+image.image-overlay-missing-image {
+ border-color: rgba(0,0,0,0);
+ background-color: rgba(0,0,0,0);
+}
+
+#cover_overlay image.image-overlay {
+ border-width: 5px;
+}
+
+#cover_overlay toolbar {
+ transition: 300ms ease;
+ opacity: 1;
+}
+
+#cover_overlay toolbar:indeterminate {
+ opacity: 0;
+}
+
 #miniwidget {
  border-style: solid;
  border-width: 1px;

@@ -278,7 +278,7 @@ namespace WebMusic.Browser {
             Intl.textdomain(Config.GETTEXT_PACKAGE);
             Intl.bindtextdomain(Config.GETTEXT_PACKAGE, Config.LOCALE_DIR);
 
-            GtkClutter.init (ref args);
+            Gtk.init(ref args);
             Gtk.IconTheme.get_default().append_search_path(Config.THEME_DIR);
             Gtk.Window.set_default_icon_name(Config.PACKAGE);
 

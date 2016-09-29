@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated with glade 3.20.0 -->
+<interface>
+  <requires lib="gtk+" version="3.20"/>
+  <object class="GtkImage" id="image_like">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="icon_name">emblem-favorite</property>
+  </object>
+  <object class="GtkImage" id="image_repeat">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="icon_name">media-playlist-repeat</property>
+  </object>
+  <object class="GtkImage" id="image_shuffle">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="icon_name">media-playlist-shuffle</property>
+  </object>
+  <template class="WebMusicBrowserWidgetsOsdToolbar" parent="GtkEventBox">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <child>
+      <object class="GtkToolbar" id="toolbar">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="halign">end</property>
+        <property name="valign">center</property>
+        <property name="margin_left">10</property>
+        <property name="margin_right">10</property>
+        <property name="margin_top">10</property>
+        <property name="margin_bottom">10</property>
+        <property name="orientation">vertical</property>
+        <property name="toolbar_style">icons</property>
+        <property name="show_arrow">False</property>
+        <property name="icon_size">4</property>
+        <child>
+          <object class="GtkToolItem">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <child>
+              <object class="GtkBox" id="button_box">
+                <property name="width_request">50</property>
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="orientation">vertical</property>
+                <child>
+                  <object class="GtkToggleButton" id="button_shuffle">
+                    <property name="visible">True</property>
+                    <property name="sensitive">False</property>
+                    <property name="can_focus">False</property>
+                    <property name="receives_default">False</property>
+                    <property name="image">image_shuffle</property>
+                    <property name="use_underline">True</property>
+                    <signal name="toggled" handler="on_button_shuffle_toggled" object="WebMusicBrowserWidgetsOsdToolbar" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="WebMusicBrowserWidgetsUiRepeatButton" id="button_repeat">
+                    <property name="visible">True</property>
+                    <property name="sensitive">False</property>
+                    <property name="can_focus">False</property>
+                    <property name="receives_default">False</property>
+                    <property name="image">image_repeat</property>
+                    <property name="use_underline">True</property>
+                    <property name="always_show_image">True</property>
+                    <signal name="clicked" handler="on_button_repeat_clicked" object="WebMusicBrowserWidgetsOsdToolbar" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkToggleButton" id="button_like">
+                    <property name="visible">True</property>
+                    <property name="sensitive">False</property>
+                    <property name="can_focus">False</property>
+                    <property name="receives_default">False</property>
+                    <property name="image">image_like</property>
+                    <property name="use_underline">True</property>
+                    <property name="always_show_image">True</property>
+                    <signal name="toggled" handler="on_button_like_toggled" object="WebMusicBrowserWidgetsOsdToolbar" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">2</property>
+                  </packing>
+                </child>
+                <style>
+                  <class name="linked"/>
+                </style>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="homogeneous">True</property>
+          </packing>
+        </child>
+        <style>
+          <class name="osd"/>
+        </style>
+      </object>
+    </child>
+  </template>
+</interface>

@@ -15,7 +15,7 @@
  */
 
 using LibWebMusic;
-using WebMusic.Browser.Widgets.Osd;
+using WebMusic.Browser.Widgets;
 using WebMusic.Browser.Plugins;
 using WebKit;
 using GLib;
@@ -48,7 +48,10 @@ namespace WebMusic.Browser
         private Gtk.Image mImgPlay;
 
         [GtkChild]
-        private CoverStage mCoverStage;
+        private ImageOverlay cover_overlay;
+
+        [GtkChild]
+        private OsdToolbar osd_toolbar;
 
         [GtkChild]
         private Gtk.InfoBar mInfoBar;
@@ -242,17 +245,23 @@ namespace WebMusic.Browser
 
             mWebViewBox.pack_start(this.mWebView);
 
-            mCoverStage.Init(mPlayer, mService);
-            SetCover(""); //Set default cover to initialize size of object
+
+            cover_overlay.name = "cover_overlay";
+            cover_overlay.set_size(300, 300);
+
+            osd_toolbar.init(mPlayer, mService);
+            SetCover(""); //Set default cover to initialize cover
         }
 
         private void SetCover(string file_name) {
             string name = file_name.replace("file://", "");
 
             if(name.length > 0) {
-                mCoverStage.LoadImage(name);
+                cover_overlay.LoadImage(name);
+                cover_overlay.remove_style_class("image-overlay-missing-image");
             } else {
-                mCoverStage.LoadStockIcon("media-optical-cd-audio");
+                cover_overlay.LoadStockIcon("media-optical-cd-audio");
+                cover_overlay.add_style_class("image-overlay-missing-image");
             }
         }
 
