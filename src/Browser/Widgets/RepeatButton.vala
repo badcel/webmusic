@@ -16,7 +16,7 @@
 
 using LibWebMusic;
 
-namespace WebMusic.Browser.Widgets.Ui {
+namespace WebMusic.Browser.Widgets {
 
     public class RepeatButton : Gtk.Button {
 

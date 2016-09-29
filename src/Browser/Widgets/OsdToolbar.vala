@@ -15,7 +15,6 @@
  */
 
 using LibWebMusic;
-using WebMusic.Browser.Widgets.Ui;
 
 namespace WebMusic.Browser.Widgets {
 

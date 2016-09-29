@@ -25,13 +25,13 @@ vala_precompile(VALA_C
     Dialogs/ClearDataDialog.vala
     Dialogs/AboutDialog.vala
     Dialogs/ErrorDialog.vala
-    Widgets/ImageOverlay.vala
-    Widgets/OsdToolbar.vala
-    Widgets/Ui/RepeatButton.vala
     Plugins/IPlugin.vala
     Plugins/MPRIS.vala
     Plugins/Notification.vala
     Plugins/MiniWidget.vala
+    Widgets/ImageOverlay.vala
+    Widgets/OsdToolbar.vala
+    Widgets/RepeatButton.vala
 OPTIONS
     ${VALAFLAGS}
 PACKAGES
