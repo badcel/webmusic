@@ -412,7 +412,7 @@ namespace LibWebMusic {
 
         protected override void properties_changed(HashTable<string, Variant> changes) {
 
-        	if(changes.contains(Player.Property.ART_URL)) {
+            if(changes.contains(Player.Property.ART_URL)) {
                 this.cache_cover(changes);
             } else {
                 this.PropertiesChanged(changes);
