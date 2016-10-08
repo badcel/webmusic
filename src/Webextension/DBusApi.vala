@@ -48,7 +48,7 @@ namespace WebMusic.Webextension {
 
             if(adapter == null) {
                 warning("Missing adapter, get_adapter_property request ignored!");
-                return new Variant.maybe(VariantType.BOOLEAN, null);;
+                return new Variant.string("/null/");
             }
 
             Idle.add(get_adapter_property.callback);
@@ -80,7 +80,7 @@ namespace WebMusic.Webextension {
 
             if(adapter == null) {
                 warning("Missing adapter, call_adapter_function request ignored!");
-                return new Variant.maybe(VariantType.BOOLEAN, null);;
+                return new Variant.string("/null/");
             }
 
             Variant? v;
