@@ -305,8 +305,8 @@ namespace LibWebMusic {
                 if(this.CacheProperties) {
                     dict.foreach ((key, val) => {
                         cache.set(key, val);
-	                });
-	            }
+                    });
+                }
 
                 this.properties_changed(dict);
 
