@@ -15,10 +15,12 @@
  #
 
 vala_precompile(VALA_C
-    Namespace.vala
-    IPlayer.vala
-    Service.vala
+    Api.vala
     Directory.vala
+    FileCache.vala
+    Namespace.vala
+    Player.vala
+    Service.vala
 OPTIONS
     ${VALAFLAGS}
 PACKAGES

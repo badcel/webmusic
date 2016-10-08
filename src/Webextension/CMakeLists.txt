@@ -15,14 +15,12 @@
  #
 
 vala_precompile(VALA_C
-    FileCache.vala
-    Player.vala
-    WebMusicWebExtension.vala
-    IJsAdapter.vala
-    JsApi.vala
-    JavascriptMusicPlayer.vala
+    DBusApi.vala
+    IApiAdapter.vala
+    JsAdapter.vala
     JsInterface/JsConverter.vala
     JsInterface/JsObject.vala
+    WebMusicWebExtension.vala
 OPTIONS
     ${VALAFLAGS}
 PACKAGES

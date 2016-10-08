@@ -29,8 +29,8 @@ namespace WebMusic.Browser
 
         private Service mService;
         private WebView mWebView;
-        private IPlayer mPlayer;
-        private int     mLastPage = 2;
+        private Player player;
+        private int mLastPage = 2;
 
         [GtkChild]
         private Gtk.Box mWebViewBox;
@@ -59,13 +59,13 @@ namespace WebMusic.Browser
         [GtkChild]
         private Gtk.LinkButton mInfoLinkButton;
 
-        public Browser(IPlayer player, Service service) {
-            mPlayer = player;
+        public Browser(Service service) {
             mService = service;
 
-            this.create_widgets();
+            player = Player.get_instance();
+            player.PropertiesChanged.connect(on_properties_changed);
 
-            mPlayer.PropertiesChanged.connect(OnPropertiesChanged);
+            this.create_widgets();
         }
 
         public Service CurrentService {
@@ -115,11 +115,7 @@ namespace WebMusic.Browser
 
                     mWebView.load_uri(uri);
                 } else if(searchTerm != null) {
-                    try {
-                        mPlayer.Search(searchTerm);
-                    } catch(GLib.IOError e) {
-                        warning("Failed executing player action 'search'. (%s, %s)", e.message, searchTerm);
-                    }
+                    player.Search(searchTerm);
                 }
 
                 if(!mService.IntegratesService) {
@@ -134,11 +130,7 @@ namespace WebMusic.Browser
          public void Show(string? service, string type, string id) {
 
             if(mWebView.uri != null) {
-                try {
-                    mPlayer.Show(type, id);
-                } catch(GLib.IOError e) {
-                    warning("Failed executing player action 'show'. (%s)", e.message);
-                }
+                player.Show(type, id);
             } else if(mWebView.uri == null && type == "track" && mService.HasTrackUrl){
                 string uri = mService.TrackUrl.printf(id);
                 mWebView.load_uri(uri);
@@ -167,26 +159,26 @@ namespace WebMusic.Browser
             mImgPlay.set_from_icon_name("media-playback-start", Gtk.IconSize.BUTTON);
         }
 
-        private void OnPropertiesChanged(HashTable<PlayerProperties, Variant> dict){
+        private void on_properties_changed(HashTable<string, Variant> dict){
 
-            if(dict.contains(PlayerProperties.ART_FILE_LOCAL)) {
-                this.SetCover(dict.get(PlayerProperties.ART_FILE_LOCAL).get_string());
+            if(dict.contains(Player.Property.ART_FILE_LOCAL)) {
+                this.SetCover(dict.get(Player.Property.ART_FILE_LOCAL).get_string());
             }
 
-            if(dict.contains(PlayerProperties.CAN_GO_NEXT)) {
-                var can_go_next = dict.get(PlayerProperties.CAN_GO_NEXT).get_boolean();
+            if(dict.contains(Player.Property.CAN_GO_NEXT)) {
+                var can_go_next = dict.get(Player.Property.CAN_GO_NEXT).get_boolean();
                 mBtnNext.sensitive = mService.IntegratesService && can_go_next;
             }
 
-            if(dict.contains(PlayerProperties.CAN_GO_PREVIOUS)) {
-                var can_go_previous = dict.get(PlayerProperties.CAN_GO_PREVIOUS).get_boolean();
+            if(dict.contains(Player.Property.CAN_GO_PREVIOUS)) {
+                var can_go_previous = dict.get(Player.Property.CAN_GO_PREVIOUS).get_boolean();
                 mBtnPrev.sensitive = mService.IntegratesService && can_go_previous;
             }
 
             mBtnPlayPause.sensitive = mService.IntegratesService;
 
-            if(dict.contains(PlayerProperties.PLAYBACKSTATUS)) {
-                PlayStatus play_status = (PlayStatus) dict.get(PlayerProperties.PLAYBACKSTATUS).get_int64();
+            if(dict.contains(Player.Property.PLAYBACKSTATUS)) {
+                PlayStatus play_status = (PlayStatus) dict.get(Player.Property.PLAYBACKSTATUS).get_int64();
 
                 if(play_status == PlayStatus.PLAY) {
                     mImgPlay.set_from_icon_name("media-playback-pause", Gtk.IconSize.BUTTON);
@@ -201,18 +193,18 @@ namespace WebMusic.Browser
             string album    = "";
             string artist   = "";
 
-            if(dict.contains(PlayerProperties.TRACK)) {
-                track = dict.get(PlayerProperties.TRACK).get_string();
+            if(dict.contains(Player.Property.TRACK)) {
+                track = dict.get(Player.Property.TRACK).get_string();
                 has_data = true;
             }
 
-            if(dict.contains(PlayerProperties.ALBUM)) {
-                album = dict.get(PlayerProperties.ALBUM).get_string();
+            if(dict.contains(Player.Property.ALBUM)) {
+                album = dict.get(Player.Property.ALBUM).get_string();
                 has_data = true;
             }
 
-            if(dict.contains(PlayerProperties.ARTIST)) {
-                artist = dict.get(PlayerProperties.ARTIST).get_string();
+            if(dict.contains(Player.Property.ARTIST)) {
+                artist = dict.get(Player.Property.ARTIST).get_string();
                 has_data = true;
             }
 
@@ -249,7 +241,7 @@ namespace WebMusic.Browser
             cover_overlay.name = "cover_overlay";
             cover_overlay.set_size(300, 300);
 
-            osd_toolbar.init(mPlayer, mService);
+            osd_toolbar.init(mService);
             SetCover(""); //Set default cover to initialize cover
         }
 
@@ -283,35 +275,17 @@ namespace WebMusic.Browser
 
         [GtkCallback]
         private void OnBtnPrevClicked(Gtk.Button button) {
-            if(mPlayer != null) {
-                try {
-                    mPlayer.Previous();
-                } catch(GLib.IOError e) {
-                    warning("Failed executing player action 'previous'. (%s)", e.message);
-                }
-            }
+            player.Previous();
         }
 
         [GtkCallback]
         private void OnBtnNextClicked(Gtk.Button button) {
-            if(mPlayer != null) {
-                try {
-                    mPlayer.Next();
-                } catch(GLib.IOError e) {
-                    warning("Failed executing player action 'next'. (%s)", e.message);
-                }
-            }
+            player.Next();
         }
 
         [GtkCallback]
         private void OnBtnPlayPauseClicked(Gtk.Button button) {
-            if(mPlayer != null) {
-                try {
-                    mPlayer.PlayPause();
-                } catch(GLib.IOError e) {
-                    warning("Failed executing player action 'pause'. (%s)", e.message);
-                }
-            }
+            player.PlayPause();
         }
     }
 }

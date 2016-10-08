@@ -44,7 +44,6 @@
         register(object) {
             if(object instanceof BaseApi) {
                 this._objects[object.type] = object;
-                this._sendCommand(object.type, this.Action.CALL_FUNCTION, "register", null);
             } else {
                 this.warning(this.Type.API, "Could not register object (wrong type).");
             }

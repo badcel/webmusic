@@ -58,14 +58,14 @@ namespace WebMusic.Browser
         [GtkChild]
         private Gtk.MenuButton   mBtnPopover;
         private Browser          mBrowser;
-        private IPlayer          mPlayer;
+        private Player           player;
         private Settings         mSettings;
         private Settings         mSettingsPlugins;
         private DarkThemeMode    mDarkThemeMode;
         private Service          mService;
         private HashTable<string, IPlugin> mPlugins;
 
-        private bool             mMiniMode = false;
+        private bool mMiniMode = false;
 
         private const ActionEntry[] mActions = {
             { "minimode", WinMiniMode, null, "false"},
@@ -89,13 +89,8 @@ namespace WebMusic.Browser
 
             mSettingsPlugins = new Settings("org.WebMusic.Browser.Plugins");
 
-            try {
-                mPlayer = Bus.get_proxy_sync(BusType.SESSION, "org.WebMusic.Webextension",
-                                        "/org/WebMusic/Webextension");
-                mPlayer.PropertiesChanged.connect(OnPropertiesChanged);
-            } catch(IOError e) {
-                error("Could not connect to webextension via DBus. (%s)", e.message);
-            }
+            player = Player.get_instance();
+            player.PropertiesChanged.connect(on_properties_changed);
 
             mService = service;
             mService.ServiceLoaded.connect(() =>  {
@@ -156,18 +151,14 @@ namespace WebMusic.Browser
             mPlugins.insert("notifications", new Notificationn());
             mPlugins.insert("miniwidget", new MiniWidget());
 
-            foreach(IPlugin plugin in mPlugins.get_values()) {
-                plugin.RegisterPlayer(mPlayer);
-            }
-
-            mSettingsPlugins.changed.connect(OnSettingsPluginsChanged);
+            mSettingsPlugins.changed.connect(on_settings_plugins_changed);
 
             mPlugins["mpris"].Enable = mSettingsPlugins.get_boolean("enable-mpris");
             mPlugins["notifications"].Enable = mSettingsPlugins.get_boolean("enable-notifications");
 
         }
 
-        private void OnSettingsPluginsChanged(string key) {
+        private void on_settings_plugins_changed(string key) {
             string index = key.replace("enable-", "");
             mPlugins[index].Enable = mSettingsPlugins.get_boolean(key);
         }
@@ -206,7 +197,7 @@ namespace WebMusic.Browser
 
         }
 
-        private void OnPropertiesChanged(HashTable<PlayerProperties, Variant> dict){
+        private void on_properties_changed(HashTable<string, Variant> dict){
 
             bool has_data = false;
 
@@ -214,18 +205,18 @@ namespace WebMusic.Browser
             string track  = "";
             string album  = "";
 
-            if(dict.contains(PlayerProperties.ARTIST)) {
-                artist = dict.get(PlayerProperties.ARTIST).get_string();
+            if(dict.contains(Player.Property.ARTIST)) {
+                artist = dict.get(Player.Property.ARTIST).get_string();
                 has_data = true;
             }
 
-            if(dict.contains(PlayerProperties.TRACK)) {
-                track = dict.get(PlayerProperties.TRACK).get_string();
+            if(dict.contains(Player.Property.TRACK)) {
+                track = dict.get(Player.Property.TRACK).get_string();
                 has_data = true;
             }
 
-            if(dict.contains(PlayerProperties.ALBUM)) {
-                album = dict.get(PlayerProperties.ALBUM).get_string();
+            if(dict.contains(Player.Property.ALBUM)) {
+                album = dict.get(Player.Property.ALBUM).get_string();
                 has_data = true;
             }
 
@@ -245,7 +236,7 @@ namespace WebMusic.Browser
 
             mBtnPopover.menu_model = b.get_object("popovermenu") as MenuModel;
 
-            mBrowser = new Browser(mPlayer, service);
+            mBrowser = new Browser(service);
             mBrowser.LoadChanged.connect((event) => {
                 mBtnPopover.sensitive = (event == WebKit.LoadEvent.FINISHED);
             });

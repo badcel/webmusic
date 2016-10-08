@@ -18,36 +18,6 @@ using WebMusic.Webextension.JsInterface;
 
 namespace WebMusic.Webextension {
 
-    public enum JsObjectType {
-        API,       // INT = 0
-        PLAYER,    // INT = 1
-        PLAYLIST,  // INT = 2
-        TRACKLIST; // INT = 3
-
-        public string to_string() {
-
-            string ret = "";
-
-            switch(this) {
-                case JsObjectType.API:
-                    ret = "API";
-                    break;
-                case JsObjectType.PLAYER:
-                    ret = "Player";
-                    break;
-                case JsObjectType.PLAYLIST:
-                    ret = "Playlist";
-                    break;
-                case JsObjectType.TRACKLIST:
-                    ret = "Tracklist";
-                    break;
-            }
-
-            return ret;
-        }
-    }
-
-
     public enum JsAction {
         GET_PROPERTY,  // INT = 0
         SET_PROPERTY,  // INT = 1
@@ -79,12 +49,12 @@ namespace WebMusic.Webextension {
 
     private class JsCommand : GLib.Object, Json.Serializable {
 
-        public JsObjectType Type  { get; set; }
+        public ObjectType Type  { get; set; }
         public JsAction Action    { get; set; }
         public string Identifier  { get; set; }
         public Variant? Parameter { get; set; }
 
-        public JsCommand(JsObjectType type, JsAction action,
+        public JsCommand(ObjectType type, JsAction action,
             string identifier, Variant? params) {
 
             this.Type = type;
@@ -221,7 +191,7 @@ namespace WebMusic.Webextension {
 
             switch(pspec.get_name()) {
                 case "Type":
-                    this.Type = (JsObjectType) value.get_int();
+                    this.Type = (ObjectType) value.get_int();
                     break;
                 case "Action":
                     this.Action = (JsAction) value.get_int();
@@ -249,47 +219,73 @@ namespace WebMusic.Webextension {
         }
     }
 
-    private class JsApi : GLib.Object{
+
+    public class JsAdapter : GLib.Object, IApiAdapter {
 
         private const int REQUIRED_API_VERSION = 1;
         private static const string API_NAME = "WebMusic";
-        private static JsApi? mSelf = null;
+        private static JsAdapter? self = null;
 
-        public signal void SignalSend(JsObjectType type, string name, Variant? params);
-
+        private ISignalSender signal_sender;
         private Service service;
         private JsObject js_api;
         private JsObject js_global_object;
-        private HashTable<JsObjectType, IJsAdapter> js_adapter;
 
-        private bool api_ready = false;
-
-        public JsApi(Service s){
+        public JsAdapter(Service s){
 
             service = s;
-            mSelf = this;
-
+            self = this;
             js_global_object = new JsObject();
-            js_adapter = new HashTable<JsObjectType, IJsAdapter>(direct_hash, direct_equal);
         }
 
-        public bool Ready {
-            get { return this.api_ready;}
+        public void set_signal_sender(ISignalSender sender) {
+            this.signal_sender = sender;
         }
 
-        public Service WebService {
-            get { return service; }
+        public void send_signal(ObjectType type, string name, Variant? parameter) {
+            this.signal_sender.send_signal(type, name, parameter);
+        }
+
+        public Variant? get_adapter_property(ObjectType type, string property_name) {
+
+            if(js_api == null) {
+                warning("js_api is not ready. Request for get_property ignored.");
+                return null;
+            }
+
+            var command = new JsCommand(type, JsAction.GET_PROPERTY, property_name, null);
+            return this.send_command(command);
+        }
+
+        public void set_adapter_property(ObjectType type, string property_name, Variant value) {
+
+            if(js_api == null) {
+                warning("js_api is not ready. Request for set_property ignored.");
+                return;
+            }
+
+            var command = new JsCommand(type, JsAction.SET_PROPERTY, property_name, value);
+            this.send_command(command);
+        }
+
+        public Variant? call_adapter_function(ObjectType type, string function_name, Variant? parameter) {
+
+            if(js_api == null) {
+                warning("js_api is not ready. Request for call_function ignored.");
+                return null;
+            }
+
+            var command = new JsCommand(type, JsAction.CALL_FUNCTION, function_name, parameter);
+            return this.send_command(command);
         }
 
         public void set_context(JSCore.GlobalContext context) {
             var apiClass = new JSCore.Class(definition);
             this.js_global_object.create_from_class(API_NAME, apiClass, context);
-            this.InjectApi();
-
-            js_api = js_global_object.get_property_object("Api");
+            this.inject_js_api();
         }
 
-        public Variant? send_command(JsCommand command){
+        private Variant? send_command(JsCommand command){
 
             Variant? ret = null;
             Variant[] args = new Variant[1];
@@ -316,9 +312,8 @@ namespace WebMusic.Webextension {
             return ret;
         }
 
-
         private static const JSCore.StaticFunction[] js_funcs = {
-            { "handleJsonCommand", handleJsonCommand, JSCore.PropertyAttribute.ReadOnly},
+            { "handleJsonCommand", handle_json_command, JSCore.PropertyAttribute.ReadOnly},
             { null, null, 0 }
         };
 
@@ -346,7 +341,7 @@ namespace WebMusic.Webextension {
             null                        // convertToType
         };
 
-        private static JSCore.Value handleJsonCommand(JSCore.Context ctx,
+        private static JSCore.Value handle_json_command(JSCore.Context ctx,
             JSCore.Object function,
             JSCore.Object thisObject,
             JSCore.Value[] arguments,
@@ -366,11 +361,7 @@ namespace WebMusic.Webextension {
                 if(obj.Action == JsAction.CALL_FUNCTION) {
 
                     if(obj.Parameter == null) {
-                        if(obj.Identifier == "register") {
-                            mSelf.register_js_object(obj.Type);
-                        } else {
-                            warning("Missing parameter in command. Ignoring command.");
-                        }
+                        warning("Missing parameter in command. Ignoring command.");
                     } else {
                         if(obj.Identifier == "warning"
                             && obj.Parameter.is_of_type(VariantType.STRING)) {
@@ -393,7 +384,7 @@ namespace WebMusic.Webextension {
 
                             var text = obj.Parameter.get_string() + " Ho!";
                             var cmd = new JsCommand(obj.Type, JsAction.CALL_FUNCTION, "pong", text);
-                            var ret = mSelf.send_command(cmd);
+                            var ret = self.send_command(cmd);
 
                             if(ret != null && ret.is_of_type(VariantType.STRING)) {
                                 debug("Got pong response: %s", ret.get_string());
@@ -402,7 +393,7 @@ namespace WebMusic.Webextension {
                     }
 
                 } else if(obj.Action == JsAction.SEND_SIGNAL) {
-                    mSelf.SignalSend(obj.Type, obj.Identifier, obj.Parameter);
+                    self.send_signal(obj.Type, obj.Identifier, obj.Parameter);
                 }
             } catch(Error e) {
                 warning("Could not parse json data. Ignoring command (%s).", e.message);
@@ -411,24 +402,8 @@ namespace WebMusic.Webextension {
             return new JSCore.Value.boolean(ctx, true);
         }
 
-        private void register_js_object(JsObjectType type) {
-            switch(type) {
-                case JsObjectType.PLAYER:
-                    if(!this.js_adapter.contains(type)) {
-                        var player = new JavascriptMusicPlayer();
-                        player.insert_js_api(this);
-                        this.js_adapter.insert(type, player);
-                    }
-                    break;
-                default:
-                    warning("Can not register object. Unknown type %s.", type.to_string());
-                    break;
-            }
-        }
-
-        private void InjectApi() {
+        private void inject_js_api() {
             if(service.ApiVersion != REQUIRED_API_VERSION) {
-                api_ready = false;
                 warning("Service %s is not supporting required API Version %i." +
                     " Integration not loaded.", service.Name, REQUIRED_API_VERSION);
             } else if(service.IntegratesService) {
@@ -447,13 +422,11 @@ namespace WebMusic.Webextension {
 
                     js_global_object.EvaluateScript(baseApi, path, 1);
                     js_global_object.EvaluateScript(serviceFile, path, 1);
-                    api_ready = true;
 
                     js_global_object.call_function("init", null);
 
+                    js_api = js_global_object.get_property_object("Api");
                 } catch(FileError e) {
-                    api_ready = false;
-
                     critical("Could not load content of service file (%s). " +
                             "Integration disabled. (%s)", path, e.message);
                 } catch(JavascriptError e) {
@@ -461,10 +434,10 @@ namespace WebMusic.Webextension {
                 }
 
             } else {
-                api_ready = false;
                 debug("No integration supported for service %s.", service.Name);
             }
         }
+
     }
 
 }

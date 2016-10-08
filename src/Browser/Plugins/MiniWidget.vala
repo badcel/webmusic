@@ -23,7 +23,7 @@ namespace WebMusic.Browser.Plugins {
 
 
         private bool enable = false;
-        private IPlayer player;
+        private Player player;
         private MiniWindow mini_window;
 
         public MiniWidget() {
@@ -40,6 +40,11 @@ namespace WebMusic.Browser.Plugins {
             } else {
                 warning("Could not determine screen size for mini window.");
             }
+
+            player = Player.get_instance();
+            player.PropertiesChanged.connect(on_properties_changed);
+
+            mini_window.set_player(player);
         }
 
         public bool Enable {
@@ -57,16 +62,7 @@ namespace WebMusic.Browser.Plugins {
             }
          }
 
-        public bool RegisterPlayer(IPlayer p) {
-            player = p;
-            player.PropertiesChanged.connect(OnPropertiesChanged);
-
-            mini_window.set_player(player);
-
-            return true;
-        }
-
-        private void OnPropertiesChanged(HashTable<PlayerProperties,Variant> dict) {
+        private void on_properties_changed(HashTable<string,Variant> dict) {
 
             bool has_data = false;
 
@@ -75,28 +71,28 @@ namespace WebMusic.Browser.Plugins {
             string album     = "";
             string file      = "";
 
-            if(dict.contains(PlayerProperties.TRACK)) {
-                track = dict.get(PlayerProperties.TRACK).get_string();
+            if(dict.contains(Player.Property.TRACK)) {
+                track = dict.get(Player.Property.TRACK).get_string();
                 has_data = true;
             }
 
-            if(dict.contains(PlayerProperties.ALBUM)) {
-                album = dict.get(PlayerProperties.ALBUM).get_string();
+            if(dict.contains(Player.Property.ALBUM)) {
+                album = dict.get(Player.Property.ALBUM).get_string();
                 has_data = true;
             }
 
-            if(dict.contains(PlayerProperties.ARTIST)) {
-                artist = dict.get(PlayerProperties.ARTIST).get_string();
+            if(dict.contains(Player.Property.ARTIST)) {
+                artist = dict.get(Player.Property.ARTIST).get_string();
                 has_data = true;
             }
 
-            if(dict.contains(PlayerProperties.ART_FILE_LOCAL)) {
-                file = dict.get(PlayerProperties.ART_FILE_LOCAL).get_string();
+            if(dict.contains(Player.Property.ART_FILE_LOCAL)) {
+                file = dict.get(Player.Property.ART_FILE_LOCAL).get_string();
                 has_data = true;
             }
 
-            if(dict.contains(PlayerProperties.PLAYBACKSTATUS)) {
-                PlayStatus play_status = (PlayStatus) dict.get(PlayerProperties.PLAYBACKSTATUS).get_int64();
+            if(dict.contains(Player.Property.PLAYBACKSTATUS)) {
+                PlayStatus play_status = (PlayStatus) dict.get(Player.Property.PLAYBACKSTATUS).get_int64();
 
                 mini_window.set_playstatus(play_status);
             }
@@ -135,7 +131,7 @@ namespace WebMusic.Browser.Plugins {
             [GtkChild]
             private Gtk.EventBox album_art_event_box;
 
-            private IPlayer player;
+            private Player player;
 
             public MiniWindow() {
 
@@ -151,7 +147,7 @@ namespace WebMusic.Browser.Plugins {
                 this.album_art_event_box.button_press_event.connect(this.on_button_press_album_art_event_box);
             }
 
-            public void set_player(IPlayer p) {
+            public void set_player(Player p) {
                 this.player = p;
             }
 
@@ -201,11 +197,7 @@ namespace WebMusic.Browser.Plugins {
             }
 
             private bool on_button_press_album_art_event_box(Gdk.EventButton event) {
-                try {
-                    player.PlayPause();
-                } catch(Error e) {
-                    warning("Could not send PlayPause command via DBus (%s).", e.message);
-                }
+                player.PlayPause();
                 return true;
             }
         }

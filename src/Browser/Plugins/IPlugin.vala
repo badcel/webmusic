@@ -19,6 +19,5 @@ using LibWebMusic;
 namespace WebMusic.Browser.Plugins {
     public interface IPlugin : GLib.Object {
         public abstract bool Enable { get; set; }
-        public abstract bool RegisterPlayer(IPlayer player);
     }
 }

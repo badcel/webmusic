@@ -21,7 +21,7 @@ namespace WebMusic.Browser.Widgets {
     [GtkTemplate (ui = "/org/WebMusic/Browser/ui/osd-toolbar.ui")]
     public class OsdToolbar : Gtk.EventBox {
 
-        private IPlayer player;
+        private Player player;
         private Service service;
 
         [GtkChild]
@@ -42,17 +42,17 @@ namespace WebMusic.Browser.Widgets {
             this.toolbar.enter_notify_event.connect(on_enter_notify_event);
         }
 
-        public void init(IPlayer p, Service s) {
-            player = p;
-            service = s;
+        public void init(Service s) {
+            this.service = s;
 
-            service.ServiceLoaded.connect(() => {
+            this.service.ServiceLoaded.connect(() => {warning("LOADED");
                 this.init_buttons();
             });
 
-            this.init_buttons();
+            this.player = Player.get_instance();
+            this.player.PropertiesChanged.connect(on_properties_changed);
 
-            player.PropertiesChanged.connect(on_properties_changed);
+            this.init_buttons();
         }
 
         private void init_buttons() {
@@ -104,30 +104,30 @@ namespace WebMusic.Browser.Widgets {
             player.Repeat = button_repeat.RepeatState;
         }
 
-        private void on_properties_changed(HashTable<PlayerProperties, Variant> dict){
+        private void on_properties_changed(HashTable<string, Variant> dict){
 
-            if(dict.contains(PlayerProperties.CAN_SHUFFLE)) {
-                button_shuffle.sensitive = dict.get(PlayerProperties.CAN_SHUFFLE).get_boolean();
+            if(dict.contains(Player.Property.CAN_SHUFFLE)) {
+                button_shuffle.sensitive = dict.get(Player.Property.CAN_SHUFFLE).get_boolean();
             }
 
-            if(dict.contains(PlayerProperties.SHUFFLE)) {
-                button_shuffle.active = dict.get(PlayerProperties.SHUFFLE).get_boolean();
+            if(dict.contains(Player.Property.SHUFFLE)) {
+                button_shuffle.active = dict.get(Player.Property.SHUFFLE).get_boolean();
             }
 
-            if(dict.contains(PlayerProperties.CAN_REPEAT)) {
-                button_repeat.sensitive = dict.get(PlayerProperties.CAN_REPEAT).get_boolean();
+            if(dict.contains(Player.Property.CAN_REPEAT)) {
+                button_repeat.sensitive = dict.get(Player.Property.CAN_REPEAT).get_boolean();
             }
 
-            if(dict.contains(PlayerProperties.REPEAT)) {
-                button_repeat.RepeatState = (RepeatStatus)dict.get(PlayerProperties.REPEAT).get_int64();
+            if(dict.contains(Player.Property.REPEAT)) {
+                button_repeat.RepeatState = (RepeatStatus)dict.get(Player.Property.REPEAT).get_int64();
             }
 
-            if(dict.contains(PlayerProperties.CAN_LIKE)) {
-                button_like.sensitive = dict.get(PlayerProperties.CAN_LIKE).get_boolean();
+            if(dict.contains(Player.Property.CAN_LIKE)) {
+                button_like.sensitive = dict.get(Player.Property.CAN_LIKE).get_boolean();
             }
 
-            if(dict.contains(PlayerProperties.LIKE)) {
-                button_like.active = dict.get(PlayerProperties.LIKE).get_boolean();
+            if(dict.contains(Player.Property.LIKE)) {
+                button_like.active = dict.get(Player.Property.LIKE).get_boolean();
             }
         }
     }

@@ -29,24 +29,25 @@ namespace WebMusic.Webextension {
 
     private class WebMusicControler {
 
-        private BrowserDBus mBrowser;
-        private JsApi js_api;
-        private Service mService;
+        private BrowserDBus browser;
+        private DBusApi api;
+        private JsAdapter js_adapter;
+        private Service service;
 
         public WebMusicControler() {
             try {
-                mBrowser = Bus.get_proxy_sync(BusType.SESSION, "org.WebMusic", "/org/WebMusic");
+                api = new DBusApi();
+                browser = Bus.get_proxy_sync(BusType.SESSION, "org.WebMusic", "/org/WebMusic");
             } catch(IOError e) {
                 error("Could not connect to browser via DBus. (%s)", e.message);
             }
-
         }
 
         public void DocumentLoaded(WebPage page) {
 
             string name = "";
             try {
-                name = mBrowser.GetCurrentService();
+                name = browser.GetCurrentService();
                 debug("Current service %s. (%s)", name, page.get_uri());
             } catch(IOError e) {
                 critical("Could not get current service from browser via DBus. " +
@@ -66,17 +67,22 @@ namespace WebMusic.Webextension {
             unowned JSCore.GlobalContext context = (JSCore.GlobalContext)f.get_javascript_global_context();
 
             try {
-                if(js_api == null) {
+                if(js_adapter == null) {
                     //First run initialize
-                    mService = new Service(name);
 
-                    js_api = new JsApi(mService);
-                    js_api.set_context(context);
+                    service = new Service(name);
+                    js_adapter = new JsAdapter(service);
+
+                    api.set_adapter(js_adapter);
+                    api.own_bus();
+
+                    //Start js injection
+                    js_adapter.set_context(context);
 
                 } else {
                     //Refresh objects
-                    mService.Load(name);
-                    js_api.set_context(context);
+                    service.Load(name);
+                    js_adapter.set_context(context);
                 }
             } catch(ServiceError e) {
                 critical("Service file for %s could not be loaded. " +
@@ -87,8 +93,8 @@ namespace WebMusic.Webextension {
         }
 
         private void Reset() {
-            mService = null;
-            js_api  = null;
+            service = null;
+            api  = null;
         }
     }
 }

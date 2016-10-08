@@ -21,22 +21,19 @@ namespace WebMusic.Browser.Plugins {
 
     private class Notificationn : GLib.Object, IPlugin {
 
-        private Notify.Notification mNotification;
-        private IPlayer mPlayer;
+        private Notify.Notification notification;
+        private Player player;
 
         public bool Enable { get; set; }
 
         public Notificationn() {
             Notify.init("WebMusic");
+
+            player = Player.get_instance();
+            player.PropertiesChanged.connect(on_properties_changed);
         }
 
-        public bool RegisterPlayer(IPlayer player) {
-            mPlayer = player;
-            mPlayer.PropertiesChanged.connect(OnPropertiesChanged);
-            return true;
-        }
-
-        private void OnPropertiesChanged(HashTable<PlayerProperties,Variant> dict) {
+        private void on_properties_changed(HashTable<string,Variant> dict) {
 
             bool has_data = false;
 
@@ -45,23 +42,23 @@ namespace WebMusic.Browser.Plugins {
             string album     = "";
             string file_name = Config.PACKAGE; //desktop icon
 
-            if(dict.contains(PlayerProperties.TRACK)) {
-                track = dict.get(PlayerProperties.TRACK).get_string();
+            if(dict.contains(Player.Property.TRACK)) {
+                track = dict.get(Player.Property.TRACK).get_string();
                 has_data = true;
             }
 
-            if(dict.contains(PlayerProperties.ALBUM)) {
-                album = dict.get(PlayerProperties.ALBUM).get_string();
+            if(dict.contains(Player.Property.ALBUM)) {
+                album = dict.get(Player.Property.ALBUM).get_string();
                 has_data = true;
             }
 
-            if(dict.contains(PlayerProperties.ARTIST)) {
-                artist = dict.get(PlayerProperties.ARTIST).get_string();
+            if(dict.contains(Player.Property.ARTIST)) {
+                artist = dict.get(Player.Property.ARTIST).get_string();
                 has_data = true;
             }
 
-            //if(dict.contains(PlayerProperties.ART_FILE_LOCAL)) {
-            //    file_name = dict.get(PlayerProperties.ART_FILE_LOCAL).get_string();
+            //if(dict.contains(Player.Property.ART_FILE_LOCAL)) {
+            //    file_name = dict.get(Player.Property.ART_FILE_LOCAL).get_string();
             //}
 
             if(!this.Enable || !has_data)
@@ -73,63 +70,51 @@ namespace WebMusic.Browser.Plugins {
                 string from = album.length > 0? _("from %s").printf(album): "";
                 string trackInfo = by + from;
 
-                if(mNotification == null) {
-                    mNotification = new Notify.Notification(nowPlaying, trackInfo, file_name);
+                if(notification == null) {
+                    notification = new Notify.Notification(nowPlaying, trackInfo, file_name);
                 }
                 else
                 {
-                    mNotification.clear_actions();
-                    mNotification.clear_hints();
-                    mNotification.update(nowPlaying, trackInfo, file_name);
+                    notification.clear_actions();
+                    notification.clear_hints();
+                    notification.update(nowPlaying, trackInfo, file_name);
                 }
 
-                if(mPlayer.CanGoPrevious)
+                if(player.CanGoPrevious)
                 {
-                    mNotification.add_action("media-skip-backward", _("Previous"), CheckNotificationAction);
+                    notification.add_action("media-skip-backward", _("Previous"), check_notification_action);
                 }
 
-                if(mPlayer.PlaybackStatus == PlayStatus.PLAY) {
-                    mNotification.add_action("media-playback-pause", _("Pause"), CheckNotificationAction);
+                if(player.PlaybackStatus == PlayStatus.PLAY) {
+                    notification.add_action("media-playback-pause", _("Pause"), check_notification_action);
                 }
 
-                if(mPlayer.CanGoNext)
+                if(player.CanGoNext)
                 {
-                    mNotification.add_action("media-skip-forward", _("Next"), CheckNotificationAction);
+                    notification.add_action("media-skip-forward", _("Next"), check_notification_action);
                 }
 
-                mNotification.set_urgency(Notify.Urgency.LOW);
-                mNotification.set_hint("desktop-entry", new Variant.string("webmusic"));
-                mNotification.set_hint("transient", new Variant.boolean(true));
-                mNotification.set_hint("action-icons", new Variant.boolean(true));
-                mNotification.show();
+                notification.set_urgency(Notify.Urgency.LOW);
+                notification.set_hint("desktop-entry", new Variant.string("webmusic"));
+                notification.set_hint("transient", new Variant.boolean(true));
+                notification.set_hint("action-icons", new Variant.boolean(true));
+                notification.show();
 
             } catch(GLib.Error e) {
-                critical("Could not prepare notification. (%s)", e.message);
+                warning("Could not show notification. (%s)", e.message);
             }
         }
 
-        private void CheckNotificationAction(Notify.Notification notification, string action) {
+        private void check_notification_action(Notify.Notification notification, string action) {
             switch(action) {
                 case "media-skip-forward":
-                    try {
-                        mPlayer.Next();
-                    } catch(GLib.IOError e) {
-                        warning("Could not execute 'next' command due to a dbus error. (%s)", e.message);
-                    }
+                    player.Next();
                     break;
                 case "media-playback-pause":
-                    try {
-                        mPlayer.Pause();
-                    } catch(GLib.IOError e) {
-                        warning("Could not execute 'pause' command due to a dbus error. (%s)", e.message);
-                    }
+                    player.Pause();
                     break;
                 case "media-skip-backward":
-                    try {
-                        mPlayer.Previous();
-                    } catch(GLib.IOError e) {
-                        warning("Could not execute 'previous' command due to a dbus error. (%s)", e.message);
-                    }
+                    player.Previous();
                     break;
                 default:
                     warning("Unknown notification action: %s", action);

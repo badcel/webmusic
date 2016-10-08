@@ -13,12 +13,20 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+using LibWebMusic;
 
 namespace WebMusic.Webextension {
 
-    private interface IJsAdapter : GLib.Object {
+    public interface ISignalSender : GLib.Object {
+        public abstract void send_signal(ObjectType type, string name, Variant? parameter);
+    }
 
-        public abstract void insert_js_api(JsApi api);
+    public interface IApiAdapter : GLib.Object {
+
+        public abstract void set_signal_sender(ISignalSender sender);
+        public abstract Variant? get_adapter_property(ObjectType type, string property_name);
+        public abstract void set_adapter_property(ObjectType type, string property_name, Variant value);
+        public abstract Variant? call_adapter_function(ObjectType type, string function_name, Variant? parameter);
 
     }
 
