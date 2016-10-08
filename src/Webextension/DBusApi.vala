@@ -52,7 +52,7 @@ namespace WebMusic.Webextension {
             }
 
             Idle.add(get_adapter_property.callback);
-		    yield;
+            yield;
 
             Variant? ret = adapter.get_adapter_property(type, property_name);
 
@@ -71,7 +71,7 @@ namespace WebMusic.Webextension {
             }
 
             Idle.add(set_adapter_property.callback);
-		    yield;
+            yield;
 
             adapter.set_adapter_property(type, property_name, value);
         }
@@ -91,7 +91,7 @@ namespace WebMusic.Webextension {
             }
 
             Idle.add(call_adapter_function.callback);
-		    yield;
+            yield;
 
             Variant? ret = adapter.call_adapter_function(type, function_name, v);
 
