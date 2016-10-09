@@ -113,6 +113,8 @@ namespace LibWebMusic {
                     dbus_api.SignalSend.connect(this.on_signal_send);
                     this.Ready = true;
 
+                    this.SignalSend(ObjectType.API, "ready", new Variant.boolean(true));
+
                     debug("Webextension appeared on dbus. Connected to %s. Api ready.", name);
 
                 } catch(IOError e) {
@@ -242,6 +244,12 @@ namespace LibWebMusic {
             }
         }
 
+        public bool api_ready {
+            get { return api.Ready; }
+        }
+
+        public signal void ApiReady(bool ready);
+
         public BaseApi(ObjectType t) {
             cache = new HashTable<string, Variant>(str_hash, str_equal);
 
@@ -282,7 +290,7 @@ namespace LibWebMusic {
         }
 
         protected void on_signal_send(ObjectType t, string signal_name, Variant? parameter) {
-            if(t != this.type) {
+            if(t != this.type && t != ObjectType.API) {
                 //Signal is not relevant
                 return;
             }
@@ -310,6 +318,14 @@ namespace LibWebMusic {
 
                 this.properties_changed(dict);
 
+            } else if(t == ObjectType.API && signal_name == "ready") {
+
+                if(v == null || !v.is_of_type(VariantType.BOOLEAN)) {
+                    warning("Can not send Ready signal. Parameter is not of type boolean.");
+                    return;
+                }
+
+                this.ApiReady(v.get_boolean());
             } else {
                 this.signal_send(signal_name, v);
             }
