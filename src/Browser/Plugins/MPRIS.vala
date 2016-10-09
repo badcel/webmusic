@@ -541,7 +541,7 @@ namespace WebMusic.Browser.Plugins {
     }
 
     [DBus(name = "org.mpris.MediaPlayer2.Playlists")]
-    private class MprisPlaylists : GLib.Object {
+    public class MprisPlaylists : GLib.Object {
 
         public signal void PlaylistChanged(Playlist playlist);
 
