@@ -50,12 +50,38 @@
 
             //setTimeout(this.update.bind(this), 5000);
         }
+    }
 
+    class ExamplePlaylist extends WebMusic.Api.BasePlaylist {
+        constructor() {
+            super();
+
+            setTimeout(this.update.bind(this), 3500);
+        }
+
+        update() {
+            this.count = 2;
+
+            let p = new WebMusic.Api.Playlist('/org/webmusic/playlist/1', 'Testplaylist', '');
+            this.activePlaylist = p;
+
+            this.sendPropertyChange();
+        }
+
+        actionGetPlaylists(index, maxcount, order, reverseorder) {
+            let p = new WebMusic.Api.Playlist('/org/webmusic/playlist/1', 'Testplaylist', '');
+
+            let p2 = new WebMusic.Api.Playlist('/org/webmusic/playlist/2', 'Testplaylist2', '');
+            return [p.toStructPlaylist(), p2.toStructPlaylist()];
+        }
     }
 
     WebMusicApi.init = function() {
         let player = new ExamplePlayer();
+        let playlist = new ExamplePlaylist();
+
         WebMusic.Api.register(player);
+        WebMusic.Api.register(playlist);
     };
 
 })(this); //WebMusicApi scope
