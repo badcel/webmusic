@@ -51,20 +51,24 @@ namespace WebMusic.Browser.Widgets {
 
             this.player = Player.get_instance();
             this.player.PropertiesChanged.connect(on_properties_changed);
+            this.player.ApiReady.connect(on_api_ready);
 
             this.init_buttons();
         }
 
+        private void on_api_ready(bool ready) {
+
+            //Complete initialization of buttons
+            button_shuffle.active     = player.Shuffle;
+            button_repeat.RepeatState = player.Repeat;
+            button_like.active        = player.Like;
+        }
+
         private void init_buttons() {
 
-            button_shuffle.active = player.Shuffle;
             button_shuffle.visible = service.SupportsShuffle;
-
-            button_repeat.RepeatState = player.Repeat;
-            button_repeat.visible = service.SupportsRepeat;
-
-            button_like.active = player.Like;
-            button_like.visible = service.SupportsLike;
+            button_repeat.visible  = service.SupportsRepeat;
+            button_like.visible    = service.SupportsLike;
 
             if(!service.SupportsRepeat
                 && !service.SupportsShuffle
