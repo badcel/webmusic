@@ -122,7 +122,7 @@
             dzPlayer.control.nextSong();
         }
 
-        actionPrevious(){
+        actionPrevious() {
             dzPlayer.control.prevSong();
         }
 
@@ -130,11 +130,11 @@
             dzPlayer.control.setRepeat(repeatstatus);
         }
 
-        actionVolume(volume){
+        actionVolume(volume) {
             dzPlayer.control.setVolume(volume);
         }
 
-        actionToggleShuffle(){
+        actionToggleShuffle() {
             dzPlayer.control.setShuffle(!dzPlayer.shuffle);
         }
 
@@ -147,11 +147,11 @@
             dzPlayer.control.seek(percent);
         }
 
-        actionSearch(searchstring){
+        actionSearch(searchstring) {
             www.navigate('/search/' + searchstring);
         }
 
-        actionShow(type, id){
+        actionShow(type, id) {
 
             let url = '';
 
