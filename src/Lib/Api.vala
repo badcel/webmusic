@@ -262,10 +262,6 @@ namespace LibWebMusic {
         protected abstract void properties_changed(HashTable<string, Variant> changes);
 
         protected Variant? get_adapter_property(string property) {
-            if(!api.Ready) {
-                return null;
-            }
-
             Variant? ret = null;
 
             if(this.CacheProperties && cache.contains(property)) {
@@ -282,10 +278,6 @@ namespace LibWebMusic {
         }
 
         protected Variant? call_adapter_function(string name, Variant? parameter) {
-            if(!api.Ready) {
-                return null;
-            }
-
             return  api.call_adapter_function(this.type, name, parameter);
         }
 
