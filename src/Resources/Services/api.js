@@ -121,7 +121,7 @@
                             ret = object[command.Identifier]();
                         } else {
                             if(Array.isArray(command.Parameter)) {
-                                ret = object[command.Identifier].apply(this, command.Parameter);
+                                ret = object[command.Identifier].apply(object, command.Parameter);
                             } else {
                                 ret = object[command.Identifier](command.Parameter);
                             }
