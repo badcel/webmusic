@@ -361,7 +361,7 @@ namespace WebMusic.Webextension {
                 if(obj.Action == JsAction.CALL_FUNCTION) {
 
                     if(obj.Parameter == null) {
-                        warning("Missing parameter in command. Ignoring command.");
+                        warning("Missing parameter in command. Ignoring command (%s).", json);
                     } else {
                         if(obj.Identifier == "warning"
                             && obj.Parameter.is_of_type(VariantType.STRING)) {
