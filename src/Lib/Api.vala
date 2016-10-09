@@ -144,7 +144,7 @@ namespace LibWebMusic {
         public void set_adapter_property(ObjectType type, string property, Variant value) {
 
             if(!this.Ready) {
-                warning("Api is not ready. Please wait.");
+                warning("Can't set adapter property %s. Api is not ready. Please wait.", property);
                 return;
             }
 
@@ -160,7 +160,7 @@ namespace LibWebMusic {
         public Variant? get_adapter_property(ObjectType type, string property) {
 
             if(!this.Ready) {
-                warning("Api is not ready. Please wait.");
+                warning("Can't get adapter property %s. Api is not ready. Please wait.", property);
                 return null;
             }
 
@@ -189,7 +189,7 @@ namespace LibWebMusic {
         public Variant? call_adapter_function(ObjectType type, string name, Variant? parameter) {
 
             if(!this.Ready) {
-                warning("Api is not ready. Please wait.");
+                warning("Can't call adapter function %s. Api is not ready. Please wait.", name);
                 return null;
             }
 
