@@ -594,6 +594,97 @@
         }
     }
 
+    class BasePlaylist extends BaseApi {
+        constructor() {
+            super(WebMusic.Api.Type.PLAYLIST);
+
+            this._count = 0;
+            this._orderings = ['user'];
+            this._activePlaylist = Playlist.getEmptyPlaylist();
+        }
+
+        get count() {
+            return this._count;
+        }
+
+        set count(value) {
+            if(value != this._count) {
+                this.changes.count = value;
+                this._count = value;
+            }
+        }
+
+        get orderings() {
+            return this._orderings;
+        }
+
+        set orderings(value) {
+            if(value != this._orderings) {
+                this.changes.orderings = value;
+                this._orderings = value;
+            }
+        }
+
+        get activeMaybePlaylist() {
+            return this._activePlaylist.toMaybeStructPlaylist();
+        }
+
+        get activePlaylist() {
+            return this._activePlaylist;
+        }
+
+        set activePlaylist(value) {
+
+            if(value instanceof Playlist) {
+
+                if(value.Id != this._activePlaylist.Id
+                    || value.Name != this._activePlaylist.Name
+                    || value.Icon != this._activePlaylist.Icon) {
+
+                    this._activePlaylist = value;
+                    this.changes.activePlaylist = value.toMaybeStructPlaylist();
+
+                }
+
+            } else {
+                this.warning("Can not set active playlist. Wrong type.");
+            }
+        }
+
+        actionActivatePlaylist(playlistId) {
+            this.warning("Function actionActivatePlaylist is not available");
+        }
+
+        actionGetPlaylists(index, maxcount, order, reverseorder) {
+            this.warning("Function actionGetPlaylists is not available");
+        }
+
+    }
+
+    class Playlist {
+        constructor(id, name, icon) {
+            this.Id   = id;
+            this.Name = name;
+            this.Icon = icon;
+        }
+
+        static getEmptyPlaylist() {
+            return new Playlist('/', '', '');
+        }
+
+        toStructPlaylist() {
+            return [this.Id, this.Name, this.Icon];
+        }
+
+        toMaybeStructPlaylist() {
+            let valid = false;
+            if(this.Id.length > 1 && this.Name.length > 0) {
+                valid = true;
+            }
+
+            return [valid, this.toStructPlaylist()];
+        }
+    }
 
     function Browser() {}
     Browser.prototype.ActionShowType = {
@@ -605,6 +696,8 @@
 
     WebMusic.Api = new Api();
     WebMusic.Api.BasePlayer = BasePlayer;
+    WebMusic.Api.BasePlaylist = BasePlaylist;
+    WebMusic.Api.Playlist = Playlist;
     WebMusic.Api.Browser = new Browser();
 
 })(this); //WebMusicApi scope

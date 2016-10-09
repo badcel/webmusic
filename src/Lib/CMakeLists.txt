@@ -20,6 +20,7 @@ vala_precompile(VALA_C
     FileCache.vala
     Namespace.vala
     Player.vala
+    PlaylistApi.vala
     Service.vala
 OPTIONS
     ${VALAFLAGS}

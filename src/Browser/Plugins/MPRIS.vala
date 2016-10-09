@@ -37,12 +37,15 @@ namespace WebMusic.Browser.Plugins {
         private uint owner_id;
         private uint root_id;
         private uint player_id;
+        private uint playlist_id;
         private bool enable;
 
         private Player player;
+        private PlaylistApi playlist;
         private Service service;
         private MprisRoot mpris_root;
         private MprisPlayer mpris_player;
+        private MprisPlaylists mpris_playlists;
 
         private DBusConnection dbus_connection;
 
@@ -64,24 +67,32 @@ namespace WebMusic.Browser.Plugins {
             service.ServiceLoaded.connect(OnServiceChanged);
 
             player = Player.get_instance();
-            player.PropertiesChanged.connect(on_properties_changed);
+            player.PropertiesChanged.connect(on_player_properties_changed);
+            player.ApiReady.connect(on_api_ready); //ApiReay signal is the same for player / playlist
+
+            playlist = PlaylistApi.get_instance();
+            playlist.PropertiesChanged.connect(on_playlist_properties_changed);
 
             mpris_root = new MprisRoot(webmusic, service);
             mpris_player = new MprisPlayer(player);
+            mpris_playlists = new MprisPlaylists(playlist);
         }
 
         ~Mpris() {
             release_bus();
         }
 
-        private bool own_bus() {
-            owner_id = Bus.own_name(BusType.SESSION,
-                                        "org.mpris.MediaPlayer2.WebMusic.instance1",
-                                         GLib.BusNameOwnerFlags.NONE,
-                                         on_bus_acquired,
-                                         on_name_acquired,
-                                         on_name_lost);
-            return owner_id != 0;
+        private void own_bus() {
+
+            if(player.api_ready && owner_id == 0) {
+                //api is ready and bus unowned
+                owner_id = Bus.own_name(BusType.SESSION,
+                                            "org.mpris.MediaPlayer2.WebMusic.instance1",
+                                             GLib.BusNameOwnerFlags.NONE,
+                                             on_bus_acquired,
+                                             on_name_acquired,
+                                             on_name_lost);
+            }
         }
 
         private void release_bus() {
@@ -89,6 +100,11 @@ namespace WebMusic.Browser.Plugins {
             if(player_id != 0) {
                 dbus_connection.unregister_object(player_id);
                 player_id = 0;
+            }
+
+            if(playlist_id != 0) {
+                dbus_connection.unregister_object(playlist_id);
+                playlist_id = 0;
             }
 
             if(root_id != 0) {
@@ -102,16 +118,38 @@ namespace WebMusic.Browser.Plugins {
             }
         }
 
-        private void on_bus_acquired(DBusConnection connection, string name) {
-            this.dbus_connection = connection;
+        private void on_api_ready(bool ready) {
+            if(this.Enable) {
+                this.own_bus();
+            }
+        }
+
+        private void register_objects() {
+
+            if(!this.Enable || this.owner_id == 0 || !player.api_ready) {
+                return;
+            }
+
             try {
-                debug("DBus: Bus %s acquired\n", name);
-                root_id = connection.register_object("/org/mpris/MediaPlayer2", mpris_root);
-                player_id = connection.register_object("/org/mpris/MediaPlayer2", mpris_player);
+                root_id = dbus_connection.register_object("/org/mpris/MediaPlayer2", mpris_root);
+                player_id = dbus_connection.register_object("/org/mpris/MediaPlayer2", mpris_player);
+
+                if(service.SupportsPlaylists) {
+                    playlist_id = dbus_connection.register_object("/org/mpris/MediaPlayer2", mpris_playlists);
+                }
+
+                debug("MPRIS objects registered");
             }
             catch(IOError e) {
                 warning("Could not register dbus object (%s).", e.message);
             }
+        }
+
+        private void on_bus_acquired(DBusConnection connection, string name) {
+            this.dbus_connection = connection;
+            debug("DBus: Bus %s acquired", name);
+
+            this.register_objects();
         }
 
         private void on_name_acquired(DBusConnection connection, string name) {
@@ -151,20 +189,47 @@ namespace WebMusic.Browser.Plugins {
             if(!service.IntegratesService) {
                this.reset_data();
             }
+
+            if(service.SupportsPlaylists) {
+
+                if(playlist_id == 0) {
+                    try {
+                        playlist_id = dbus_connection.register_object("/org/mpris/MediaPlayer2", mpris_playlists);
+                    } catch(IOError e) {
+                        warning("Could not register dbus playlist object (%s).", e.message);
+                    }
+                }
+
+            } else {
+                if(playlist_id != 0) {
+                    dbus_connection.unregister_object(playlist_id);
+                    playlist_id = 0;
+                }
+            }
         }
 
-        private void on_properties_changed(HashTable<string,Variant> dict) {
+        private void on_player_properties_changed(HashTable<string,Variant> dict) {
 
             if(!this.Enable || dbus_connection.closed)
                 return;
 
 	        bool has_metadata;
-	        var data = this.get_properties_changed_data(dict, out has_metadata);
+	        var data = this.get_player_properties_changed_data(dict, out has_metadata);
 
             if(has_metadata) {
                 mpris_player.set_metadata(dict);
                 data.insert("Metadata", mpris_player.Metadata);
             }
+
+            this.send_property_change(data);
+        }
+
+        private void on_playlist_properties_changed(HashTable<string,Variant> dict) {
+
+            if(!this.Enable || dbus_connection.closed)
+                return;
+
+	        var data = this.get_playlist_properties_changed_data(dict);
 
             this.send_property_change(data);
         }
@@ -193,7 +258,28 @@ namespace WebMusic.Browser.Plugins {
 
         }
 
-        public HashTable<string, Variant> get_properties_changed_data(HashTable<string, Variant> dict, out bool has_metadata) {
+        public HashTable<string, Variant> get_playlist_properties_changed_data(HashTable<string, Variant> dict) {
+
+            HashTable<string, Variant> data = new HashTable<string, Variant>(str_hash, str_equal);
+
+            dict.foreach ((key, val) => {
+                switch(key) {
+                    case PlaylistApi.Property.PLAYLIST_COUNT:
+                        data.insert("PlaylistCount", val);
+                        break;
+                    case PlaylistApi.Property.ORDERINGS:
+                        data.insert("Orderings", val);
+                        break;
+                    case PlaylistApi.Property.ACTIVE_MAYBE_PLAYLIST:
+                        data.insert("ActivePlaylist", val);
+                        break;
+                }
+            });
+
+            return data;
+        }
+
+        public HashTable<string, Variant> get_player_properties_changed_data(HashTable<string, Variant> dict, out bool has_metadata) {
 
             HashTable<string, Variant> data = new HashTable<string, Variant>(str_hash, str_equal);
             bool _has_metadata = false;
@@ -451,6 +537,50 @@ namespace WebMusic.Browser.Plugins {
 
         private void on_seeked(int64 position) {
             this.Seeked(position); // Forward signal
+        }
+    }
+
+    [DBus(name = "org.mpris.MediaPlayer2.Playlists")]
+    private class MprisPlaylists : GLib.Object {
+
+        public signal void PlaylistChanged(Playlist playlist);
+
+        private PlaylistApi playlist_api;
+
+        public MprisPlaylists(PlaylistApi p) {
+            playlist_api = p;
+            playlist_api.PlaylistChanged.connect(this.on_playlist_changed);
+        }
+
+        public uint32 PlaylistCount {
+            get { return playlist_api.PlaylistCount; }
+        }
+
+        public string[] Orderings {
+            owned get { return playlist_api.Orderings; }
+        }
+
+        public MaybePlaylist ActivePlaylist {
+            get { return playlist_api.ActivePlaylist; }
+        }
+
+        public void ActivatePlaylist(ObjectPath playlist_id) {
+            playlist_api.activate_playlist(playlist_id);
+        }
+
+        public Playlist[] GetPlaylists(uint32 index, uint32 max_count, string order, bool reverse_order) {
+
+            PlaylistOrdering ordering = PlaylistOrdering.USER;
+            if(PlaylistOrdering.try_parse_name(order, out ordering)) {
+                return playlist_api.get_playlists(index, max_count, ordering, reverse_order);
+            } else {
+                warning("Unknown ordering. Ignoring request to get playlists.");
+                return new Playlist[0];
+            }
+        }
+
+        private void on_playlist_changed(Playlist playlist) {
+            this.PlaylistChanged(playlist);
         }
     }
 

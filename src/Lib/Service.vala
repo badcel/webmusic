@@ -42,6 +42,7 @@ namespace LibWebMusic {
         private bool   mSupportsRepeat         = false;
         private bool   mSupportsLike           = false;
         private bool   mSupportsSearch         = false;
+        private bool   mSupportsPlaylists      = false;
 
         public Service(string name) throws ServiceError {
             this.Load(name);
@@ -133,6 +134,10 @@ namespace LibWebMusic {
 
         public bool SupportsSearch {
             get { return mSupportsSearch; }
+        }
+
+        public bool SupportsPlaylists {
+            get { return mSupportsPlaylists; }
         }
 
         public string to_string() {
@@ -264,6 +269,10 @@ namespace LibWebMusic {
                     mSupportsSearch = keyFile.get_boolean(ident, "SupportsSearch");
                 }
 
+                if(keyFile.has_key(ident, "SupportsPlaylists")) {
+                    mSupportsPlaylists = keyFile.get_boolean(ident, "SupportsPlaylists");
+                }
+
             } catch(KeyFileError e) {
                 warning("Failed to look up optional key from ini file. " +
                         "Certain features may be disabled. (%s)", e.message);
@@ -285,6 +294,7 @@ namespace LibWebMusic {
             mSupportsRepeat         = false;
             mSupportsLike           = false;
             mSupportsSearch         = false;
+            mSupportsPlaylists      = false;
         }
     }
 
