@@ -19,7 +19,7 @@ vala_precompile(VALA_C
     Directory.vala
     FileCache.vala
     Namespace.vala
-    Player.vala
+    PlayerApi.vala
     PlaylistApi.vala
     Service.vala
 OPTIONS

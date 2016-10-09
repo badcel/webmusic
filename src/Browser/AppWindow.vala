@@ -58,7 +58,7 @@ namespace WebMusic.Browser
         [GtkChild]
         private Gtk.MenuButton   mBtnPopover;
         private Browser          mBrowser;
-        private Player           player;
+        private PlayerApi        player;
         private Settings         mSettings;
         private Settings         mSettingsPlugins;
         private DarkThemeMode    mDarkThemeMode;
@@ -89,7 +89,7 @@ namespace WebMusic.Browser
 
             mSettingsPlugins = new Settings("org.WebMusic.Browser.Plugins");
 
-            player = Player.get_instance();
+            player = PlayerApi.get_instance();
             player.PropertiesChanged.connect(on_properties_changed);
 
             mService = service;
@@ -205,18 +205,18 @@ namespace WebMusic.Browser
             string track  = "";
             string album  = "";
 
-            if(dict.contains(Player.Property.ARTIST)) {
-                artist = dict.get(Player.Property.ARTIST).get_string();
+            if(dict.contains(PlayerApi.Property.ARTIST)) {
+                artist = dict.get(PlayerApi.Property.ARTIST).get_string();
                 has_data = true;
             }
 
-            if(dict.contains(Player.Property.TRACK)) {
-                track = dict.get(Player.Property.TRACK).get_string();
+            if(dict.contains(PlayerApi.Property.TRACK)) {
+                track = dict.get(PlayerApi.Property.TRACK).get_string();
                 has_data = true;
             }
 
-            if(dict.contains(Player.Property.ALBUM)) {
-                album = dict.get(Player.Property.ALBUM).get_string();
+            if(dict.contains(PlayerApi.Property.ALBUM)) {
+                album = dict.get(PlayerApi.Property.ALBUM).get_string();
                 has_data = true;
             }
 

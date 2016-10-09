@@ -21,7 +21,7 @@ namespace WebMusic.Browser.Widgets {
     [GtkTemplate (ui = "/org/WebMusic/Browser/ui/osd-toolbar.ui")]
     public class OsdToolbar : Gtk.EventBox {
 
-        private Player player;
+        private PlayerApi player;
         private Service service;
 
         [GtkChild]
@@ -49,7 +49,7 @@ namespace WebMusic.Browser.Widgets {
                 this.init_buttons();
             });
 
-            this.player = Player.get_instance();
+            this.player = PlayerApi.get_instance();
             this.player.PropertiesChanged.connect(on_properties_changed);
             this.player.ApiReady.connect(on_api_ready);
 
@@ -110,28 +110,28 @@ namespace WebMusic.Browser.Widgets {
 
         private void on_properties_changed(HashTable<string, Variant> dict){
 
-            if(dict.contains(Player.Property.CAN_SHUFFLE)) {
-                button_shuffle.sensitive = dict.get(Player.Property.CAN_SHUFFLE).get_boolean();
+            if(dict.contains(PlayerApi.Property.CAN_SHUFFLE)) {
+                button_shuffle.sensitive = dict.get(PlayerApi.Property.CAN_SHUFFLE).get_boolean();
             }
 
-            if(dict.contains(Player.Property.SHUFFLE)) {
-                button_shuffle.active = dict.get(Player.Property.SHUFFLE).get_boolean();
+            if(dict.contains(PlayerApi.Property.SHUFFLE)) {
+                button_shuffle.active = dict.get(PlayerApi.Property.SHUFFLE).get_boolean();
             }
 
-            if(dict.contains(Player.Property.CAN_REPEAT)) {
-                button_repeat.sensitive = dict.get(Player.Property.CAN_REPEAT).get_boolean();
+            if(dict.contains(PlayerApi.Property.CAN_REPEAT)) {
+                button_repeat.sensitive = dict.get(PlayerApi.Property.CAN_REPEAT).get_boolean();
             }
 
-            if(dict.contains(Player.Property.REPEAT)) {
-                button_repeat.RepeatState = (RepeatStatus)dict.get(Player.Property.REPEAT).get_int64();
+            if(dict.contains(PlayerApi.Property.REPEAT)) {
+                button_repeat.RepeatState = (RepeatStatus)dict.get(PlayerApi.Property.REPEAT).get_int64();
             }
 
-            if(dict.contains(Player.Property.CAN_LIKE)) {
-                button_like.sensitive = dict.get(Player.Property.CAN_LIKE).get_boolean();
+            if(dict.contains(PlayerApi.Property.CAN_LIKE)) {
+                button_like.sensitive = dict.get(PlayerApi.Property.CAN_LIKE).get_boolean();
             }
 
-            if(dict.contains(Player.Property.LIKE)) {
-                button_like.active = dict.get(Player.Property.LIKE).get_boolean();
+            if(dict.contains(PlayerApi.Property.LIKE)) {
+                button_like.active = dict.get(PlayerApi.Property.LIKE).get_boolean();
             }
         }
     }

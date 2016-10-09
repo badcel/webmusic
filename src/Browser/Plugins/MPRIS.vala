@@ -40,7 +40,7 @@ namespace WebMusic.Browser.Plugins {
         private uint playlist_id;
         private bool enable;
 
-        private Player player;
+        private PlayerApi player;
         private PlaylistApi playlist;
         private Service service;
         private MprisRoot mpris_root;
@@ -66,7 +66,7 @@ namespace WebMusic.Browser.Plugins {
             service = s;
             service.ServiceLoaded.connect(OnServiceChanged);
 
-            player = Player.get_instance();
+            player = PlayerApi.get_instance();
             player.PropertiesChanged.connect(on_player_properties_changed);
             player.ApiReady.connect(on_api_ready); //ApiReay signal is the same for player / playlist
 
@@ -286,53 +286,53 @@ namespace WebMusic.Browser.Plugins {
 
             dict.foreach ((key, val) => {
                 switch(key) {
-                    case Player.Property.CAN_CONTROL:
+                    case PlayerApi.Property.CAN_CONTROL:
                         data.insert("CanControl", val);
                         break;
-                    case Player.Property.CAN_PLAY:
+                    case PlayerApi.Property.CAN_PLAY:
                         data.insert("CanPlay", val);
                         break;
-                    case Player.Property.CAN_PAUSE:
+                    case PlayerApi.Property.CAN_PAUSE:
                         data.insert("CanPause", val);
                         break;
-                    case Player.Property.CAN_SEEK:
+                    case PlayerApi.Property.CAN_SEEK:
                         data.insert("CanSeek", val);
                         break;
-                    case Player.Property.CAN_GO_NEXT:
+                    case PlayerApi.Property.CAN_GO_NEXT:
                         data.insert("CanGoNext", val);
                         break;
-                    case Player.Property.CAN_GO_PREVIOUS:
+                    case PlayerApi.Property.CAN_GO_PREVIOUS:
                         data.insert("CanGoPrevious", val);
                         break;
-                    case Player.Property.CAN_SHUFFLE:
+                    case PlayerApi.Property.CAN_SHUFFLE:
                         data.insert("CanShuffle", val);
                         break;
-                    case Player.Property.CAN_REPEAT:
+                    case PlayerApi.Property.CAN_REPEAT:
                         data.insert("CanRepeat", val);
                         break;
-                    case Player.Property.CAN_LIKE:
+                    case PlayerApi.Property.CAN_LIKE:
                         data.insert("CanLike", val);
                         break;
-                    case Player.Property.PLAYBACKSTATUS:
+                    case PlayerApi.Property.PLAYBACKSTATUS:
                         var playstatus = (PlayStatus) val.get_int64();
                         data.insert("PlaybackStatus", playstatus.to_string());
                         break;
-                    case Player.Property.SHUFFLE:
+                    case PlayerApi.Property.SHUFFLE:
                         data.insert("Shuffle", val);
                         break;
-                    case Player.Property.REPEAT:
+                    case PlayerApi.Property.REPEAT:
                         var repeat = (RepeatStatus) val.get_int64();
                         data.insert("LoopStatus", repeat.to_string());
                         break;
-                    case Player.Property.VOLUME:
+                    case PlayerApi.Property.VOLUME:
                         data.insert("Volume", val);
                         break;
-                    case Player.Property.URL:
-                    case Player.Property.ARTIST:
-                    case Player.Property.TRACK:
-                    case Player.Property.ALBUM:
-                    case Player.Property.ART_URL:
-                    case Player.Property.TRACK_LENGTH:
+                    case PlayerApi.Property.URL:
+                    case PlayerApi.Property.ARTIST:
+                    case PlayerApi.Property.TRACK:
+                    case PlayerApi.Property.ALBUM:
+                    case PlayerApi.Property.ART_URL:
+                    case PlayerApi.Property.TRACK_LENGTH:
                         _has_metadata = true;
                         break;
                 }
@@ -397,9 +397,9 @@ namespace WebMusic.Browser.Plugins {
 
         public signal void Seeked(int64 position);
 
-        private Player player;
+        private PlayerApi player;
 
-        public MprisPlayer(Player p) {
+        public MprisPlayer(PlayerApi p) {
             player = p;
             player.Seeked.connect(on_seeked);
         }
@@ -500,22 +500,22 @@ namespace WebMusic.Browser.Plugins {
 
             dict.foreach ((key, val) => {
                 switch(key) {
-                    case Player.Property.URL:
+                    case PlayerApi.Property.URL:
                         _metadata.insert("xesam:url", val);
                         break;
-                    case Player.Property.ARTIST:
+                    case PlayerApi.Property.ARTIST:
                         _metadata.insert("xesam:artist", val);
                         break;
-                    case Player.Property.TRACK:
+                    case PlayerApi.Property.TRACK:
                         _metadata.insert("xesam:title", val);
                         break;
-                    case Player.Property.ALBUM:
+                    case PlayerApi.Property.ALBUM:
                         _metadata.insert("xesam:album", val);
                         break;
-                    case Player.Property.ART_FILE_LOCAL:
+                    case PlayerApi.Property.ART_FILE_LOCAL:
                         _metadata.insert("mpris:artUrl", val);
                         break;
-                    case Player.Property.TRACK_LENGTH:
+                    case PlayerApi.Property.TRACK_LENGTH:
                         _metadata.insert("mpris:length", val);
                         break;
                 }

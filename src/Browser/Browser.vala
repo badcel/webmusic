@@ -29,7 +29,7 @@ namespace WebMusic.Browser
 
         private Service mService;
         private WebView mWebView;
-        private Player player;
+        private PlayerApi player;
         private int mLastPage = 2;
 
         [GtkChild]
@@ -62,7 +62,7 @@ namespace WebMusic.Browser
         public Browser(Service service) {
             mService = service;
 
-            player = Player.get_instance();
+            player = PlayerApi.get_instance();
             player.PropertiesChanged.connect(on_properties_changed);
 
             this.create_widgets();
@@ -161,24 +161,24 @@ namespace WebMusic.Browser
 
         private void on_properties_changed(HashTable<string, Variant> dict){
 
-            if(dict.contains(Player.Property.ART_FILE_LOCAL)) {
-                this.SetCover(dict.get(Player.Property.ART_FILE_LOCAL).get_string());
+            if(dict.contains(PlayerApi.Property.ART_FILE_LOCAL)) {
+                this.SetCover(dict.get(PlayerApi.Property.ART_FILE_LOCAL).get_string());
             }
 
-            if(dict.contains(Player.Property.CAN_GO_NEXT)) {
-                var can_go_next = dict.get(Player.Property.CAN_GO_NEXT).get_boolean();
+            if(dict.contains(PlayerApi.Property.CAN_GO_NEXT)) {
+                var can_go_next = dict.get(PlayerApi.Property.CAN_GO_NEXT).get_boolean();
                 mBtnNext.sensitive = mService.IntegratesService && can_go_next;
             }
 
-            if(dict.contains(Player.Property.CAN_GO_PREVIOUS)) {
-                var can_go_previous = dict.get(Player.Property.CAN_GO_PREVIOUS).get_boolean();
+            if(dict.contains(PlayerApi.Property.CAN_GO_PREVIOUS)) {
+                var can_go_previous = dict.get(PlayerApi.Property.CAN_GO_PREVIOUS).get_boolean();
                 mBtnPrev.sensitive = mService.IntegratesService && can_go_previous;
             }
 
             mBtnPlayPause.sensitive = mService.IntegratesService;
 
-            if(dict.contains(Player.Property.PLAYBACKSTATUS)) {
-                PlayStatus play_status = (PlayStatus) dict.get(Player.Property.PLAYBACKSTATUS).get_int64();
+            if(dict.contains(PlayerApi.Property.PLAYBACKSTATUS)) {
+                PlayStatus play_status = (PlayStatus) dict.get(PlayerApi.Property.PLAYBACKSTATUS).get_int64();
 
                 if(play_status == PlayStatus.PLAY) {
                     mImgPlay.set_from_icon_name("media-playback-pause", Gtk.IconSize.BUTTON);
@@ -193,18 +193,18 @@ namespace WebMusic.Browser
             string album    = "";
             string artist   = "";
 
-            if(dict.contains(Player.Property.TRACK)) {
-                track = dict.get(Player.Property.TRACK).get_string();
+            if(dict.contains(PlayerApi.Property.TRACK)) {
+                track = dict.get(PlayerApi.Property.TRACK).get_string();
                 has_data = true;
             }
 
-            if(dict.contains(Player.Property.ALBUM)) {
-                album = dict.get(Player.Property.ALBUM).get_string();
+            if(dict.contains(PlayerApi.Property.ALBUM)) {
+                album = dict.get(PlayerApi.Property.ALBUM).get_string();
                 has_data = true;
             }
 
-            if(dict.contains(Player.Property.ARTIST)) {
-                artist = dict.get(Player.Property.ARTIST).get_string();
+            if(dict.contains(PlayerApi.Property.ARTIST)) {
+                artist = dict.get(PlayerApi.Property.ARTIST).get_string();
                 has_data = true;
             }
 

@@ -99,9 +99,9 @@ namespace LibWebMusic {
         }
     }
 
-    public class Player : BaseApi {
+    public class PlayerApi : BaseApi {
 
-        private static Player player;
+        private static PlayerApi player_api;
 
         private bool shuffle = false;
         private bool like    = false;
@@ -109,16 +109,16 @@ namespace LibWebMusic {
         public signal void PropertiesChanged(HashTable<string, Variant> dict);
         public signal void Seeked(int64 position);
 
-        public Player() {
+        public PlayerApi() {
             base(ObjectType.PLAYER);
         }
 
-        public static Player get_instance() {
-            if(player == null) {
-                player = new Player();
+        public static PlayerApi get_instance() {
+            if(player_api == null) {
+                player_api = new PlayerApi();
             }
 
-            return player;
+            return player_api;
         }
 
         public bool CanControl {
@@ -412,7 +412,7 @@ namespace LibWebMusic {
 
         protected override void properties_changed(HashTable<string, Variant> changes) {
 
-            if(changes.contains(Player.Property.ART_URL)) {
+            if(changes.contains(PlayerApi.Property.ART_URL)) {
                 this.cache_cover(changes);
             } else {
                 this.PropertiesChanged(changes);
