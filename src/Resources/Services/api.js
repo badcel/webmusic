@@ -642,7 +642,8 @@
                     || value.Icon != this._activePlaylist.Icon) {
 
                     this._activePlaylist = value;
-                    this.changes.activePlaylist = value.toMaybeStructPlaylist();
+                    //Always send MaybePlaylists in direction of vala
+                    this.changes.activeMaybePlaylist = value.toMaybeStructPlaylist();
 
                 }
 
