@@ -143,11 +143,11 @@
         }
 
         start() {
-            document.onreadystatechange = function () {
+            document.addEventListener('readystatechange', function() {
                 if (document.readyState === "complete") {
                     this.update();
                 }
-            }.bind(this);
+            }.bind(this), false);
         }
 
         update() {
