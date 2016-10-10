@@ -66,6 +66,10 @@
             this.activePlaylist = p;
 
             this.sendPropertyChange();
+
+            //Only send this for playlists which changed and are not active.
+            //If the active playlists changes a property change is emited automatically.
+            this.sendPlaylistChanged(p);
         }
 
         actionGetPlaylists(index, maxcount, order, reverseorder) {
