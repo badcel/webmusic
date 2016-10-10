@@ -187,10 +187,62 @@
         }
     }
 
+    class DeezerPlaylist extends WebMusic.Api.BasePlaylist {
+        constructor() {
+            super();
+        }
+
+        update() {
+            try {
+                this.count = userData.data.FAVORITES_PLAYLISTS.count;
+                this.sendPropertyChange();
+            } catch(e) {
+                this.warning("Error:" + e.message);
+            } finally {
+                setTimeout(this.update.bind(this), 500);
+            }
+        }
+
+        actionActivatePlaylist(playlistId) {
+
+            let re = /^\/org\/webmusic\/deezer\/playlist\/(\w+)$/;
+            let result = re.exec(playlistId);
+
+            if(result == null) {
+                this.warning("Can not activate playlist, because playlistId has wrong format: " + playlistId);
+            } else {
+                dzPlayer.play({type: 'playlist', id:result[1]})
+            }
+        }
+
+        actionGetPlaylists(index, maxcount, order, reverseorder) {
+            let playlists = new Array();
+
+            let data = userData.data.FAVORITES_PLAYLISTS.data;
+
+            for(let i = 0; i < data.length; i++) {
+
+                let id = '/org/webmusic/deezer/playlist/' + data[i].PLAYLIST_ID;
+                let name = data[i].TITLE;
+                let icon = '';
+
+                let playlist = new WebMusic.Api.Playlist(id, name, icon);
+                playlists.push(playlist.toStructPlaylist());
+            }
+
+            return playlists;
+        }
+    }
+
     WebMusic.init = function() {
-        let player = new DeezerPlayer();
+        let player   = new DeezerPlayer();
+        let playlist = new DeezerPlaylist();
+
         WebMusic.Api.register(player);
+        WebMusic.Api.register(playlist);
+
         player.start();
+        playlist.start();
     };
 
 })(this); //WebMusicApi scope
