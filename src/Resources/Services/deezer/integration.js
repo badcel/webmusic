@@ -220,7 +220,14 @@
 
             let data = userData.data.FAVORITES_PLAYLISTS.data;
 
-            for(let i = 0; i < data.length; i++) {
+            let count = data.length;
+            if(maxcount < count) {
+                count = maxcount;
+            }
+
+            count = count + index;
+
+            for(let i = index; i < count; i++) {
 
                 let id = '/org/webmusic/deezer/playlist/' + data[i].PLAYLIST_ID;
                 let name = data[i].TITLE;
