@@ -228,13 +228,13 @@ namespace LibWebMusic {
 
         private HashTable<string, Variant> cache;
         private ObjectType type;
-        private bool cache_properties = true;
+        private bool cache_props = true;
         protected Api api;
 
-        public bool CacheProperties {
-            get { return this.cache_properties; }
+        public bool cache_properties {
+            get { return this.cache_props; }
             set {
-                this.cache_properties = value;
+                this.cache_props = value;
 
                 if(value) {
                     debug("Caching for properties of ObjectType %s enabled.", this.type.to_string());
@@ -264,12 +264,12 @@ namespace LibWebMusic {
         protected Variant? get_adapter_property(string property) {
             Variant? ret = null;
 
-            if(this.CacheProperties && cache.contains(property)) {
+            if(this.cache_properties && cache.contains(property)) {
                 ret = cache.get(property);
             } else {
                 ret = api.get_adapter_property(this.type, property);
 
-                if(this.CacheProperties && ret != null) {
+                if(this.cache_properties && ret != null) {
                     cache.set(property, ret);
                 }
             }
@@ -302,7 +302,7 @@ namespace LibWebMusic {
 
                 HashTable<string, Variant> dict = (HashTable<string, Variant>) parameter;
 
-                if(this.CacheProperties) {
+                if(this.cache_properties) {
                     dict.foreach ((key, val) => {
                         cache.set(key, val);
                     });
