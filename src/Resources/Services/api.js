@@ -651,6 +651,14 @@
             }
         }
 
+        sendPlaylistChanged(playlist) {
+            if(playlist instanceof Playlist) {
+                this.sendSignal("PlaylistChanged", playlist.toStructPlaylist());
+            } else {
+                this.warning("Can not send signal PlaylistChanged, because parameter is no playlist.");
+            }
+        }
+
         actionActivatePlaylist(playlistId) {
             this.warning("Function actionActivatePlaylist is not available");
         }
