@@ -625,10 +625,12 @@
             }
         }
 
+        //ActivePlaylist property which is called from vala
         get activeMaybePlaylist() {
             return this._activePlaylist.toMaybeStructPlaylist();
         }
 
+        //ActivePlaylist property for integration scripts (internal)
         get activePlaylist() {
             return this._activePlaylist;
         }
@@ -642,6 +644,7 @@
                     || value.Icon != this._activePlaylist.Icon) {
 
                     this._activePlaylist = value;
+
                     //Always send MaybePlaylists in direction of vala
                     this.changes.activeMaybePlaylist = value.toMaybeStructPlaylist();
 
