@@ -39,10 +39,10 @@
             //Test connection to webmusic
             //this.ping();
 
-            this.url    = 'http://webmusic.tiede.org/id/1';
-            this.artist = 'Test Artist';
-            this.track  = 'Test Track';
-            this.album  = 'Test Album';
+            this.url     = 'http://webmusic.tiede.org/id/1';
+            this.artists =  ['Artist 1', 'Artist 2'];
+            this.track   = 'Test Track';
+            this.album   = 'Test Album';
 
             this.playbackStatus = this.PlaybackState.PLAY;
 
