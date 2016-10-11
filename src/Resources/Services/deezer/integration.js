@@ -110,7 +110,7 @@
 
                 if(currentSong.DURATION != null) {
                     this.trackLength   = currentSong.DURATION * 1000000;
-                    this.trackPosition = Number(dzPlayer.position) * 1000000;
+                    this.trackPosition = parseInt(dzPlayer.position) * 1000000;
                 } else {
                     this.trackLength = 0;
                     this.trackPosition = 0;
