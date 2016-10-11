@@ -42,25 +42,37 @@
 
                 switch(dzPlayer.getMediaType()) {
                     case dzPlayer.MEDIA_TYPE_TALK:
-                        this.url    = 'http://www.deezer.com/show/' + currentSong.SHOW_ID + '#' + currentSong.EPISODE_ID;
-                        this.artist = currentSong.SHOW_NAME;
-                        this.track  = currentSong.EPISODE_TITLE;
-                        this.album  = '';
-                        this.artUrl = 'http://cdn-images.deezer.com/images/talk/' + currentSong.SHOW_ART_MD5 + '/300x300.jpg';
+                        this.url     = 'http://www.deezer.com/show/' + currentSong.SHOW_ID + '#' + currentSong.EPISODE_ID;
+                        this.artists = [currentSong.SHOW_NAME];
+                        this.track   = currentSong.EPISODE_TITLE;
+                        this.album   = '';
+                        this.artUrl  = 'http://cdn-images.deezer.com/images/talk/' + currentSong.SHOW_ART_MD5 + '/300x300.jpg';
                         break;
                     case dzPlayer.MEDIA_TYPE_SONG:
                         this.url    = 'http://www.deezer.com/album/' + currentSong.ALB_ID + '#naboo_datagrid_track_' + currentSong.SNG_ID;
-                        this.artist = currentSong.ART_NAME;
-                        this.track  = currentSong.SNG_TITLE;
-                        this.album  = currentSong.ALB_TITLE;
-                        this.artUrl = 'http://cdn-images.deezer.com/images/cover/' + currentSong.ALB_PICTURE + '/300x300-000000-80-0-0.jpg';
+
+                        let a = new Array();
+                        if(typeof currentSong.ARTISTS !== 'undefined'
+                            && Array.isArray(currentSong.ARTISTS)) {
+                            let data = currentSong.ARTISTS;
+                            for (let i = 0; i < data.length; i++) {
+                                a.push(data[i].ART_NAME);
+                            }
+                        } else {
+                            a.push(currentSong.ART_NAME);
+                        }
+                        this.artists = a;
+
+                        this.track   = currentSong.SNG_TITLE;
+                        this.album   = currentSong.ALB_TITLE;
+                        this.artUrl  = 'http://cdn-images.deezer.com/images/cover/' + currentSong.ALB_PICTURE + '/300x300-000000-80-0-0.jpg';
                         break;
                     case dzPlayer.MEDIA_TYPE_LIVE_STREAM:
-                        this.url    = currentSong.MD5_ORIGN;
-                        this.artist = '';
-                        this.track  = currentSong.SNG_TITLE;
-                        this.album  = '';
-                        this.artUrl = 'http://cdn-images.deezer.com/images/misc/' + currentSong.PICTURE_URL + '/300x300.jpg';
+                        this.url     = currentSong.MD5_ORIGN;
+                        this.artists = [''];
+                        this.track   = currentSong.SNG_TITLE;
+                        this.album   = '';
+                        this.artUrl  = 'http://cdn-images.deezer.com/images/misc/' + currentSong.PICTURE_URL + '/300x300.jpg';
                         break;
                     default:
                         this.warning('Unknown type: ' + dzPlayer.getMediaType());
