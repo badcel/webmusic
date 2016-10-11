@@ -56,7 +56,11 @@
                             && Array.isArray(currentSong.ARTISTS)) {
                             let data = currentSong.ARTISTS;
                             for (let i = 0; i < data.length; i++) {
-                                a.push(data[i].ART_NAME);
+                                if(Number(data[i].ROLE_ID) === 0 || Number(data[i].ROLE_ID) === 5) {
+                                    if(!a.includes(data[i].ART_NAME)) {
+                                        a.push(data[i].ART_NAME);
+                                    }
+                                }
                             }
                         } else {
                             a.push(currentSong.ART_NAME);
