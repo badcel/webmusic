@@ -22,6 +22,7 @@ vala_precompile(VALA_C
     PlayerApi.vala
     PlaylistApi.vala
     Service.vala
+    VariantHelper.vala
 OPTIONS
     ${VALAFLAGS}
 PACKAGES

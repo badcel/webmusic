@@ -66,7 +66,7 @@ namespace WebMusic.Browser.Plugins {
 
             bool has_data = false;
 
-            string artist    = "";
+            string artists   = "";
             string track     = "";
             string album     = "";
             string file      = "";
@@ -81,8 +81,9 @@ namespace WebMusic.Browser.Plugins {
                 has_data = true;
             }
 
-            if(dict.contains(PlayerApi.Property.ARTIST)) {
-                artist = dict.get(PlayerApi.Property.ARTIST).get_string();
+            if(dict.contains(PlayerApi.Property.ARTISTS)) {
+                var artists_array = dict.get(PlayerApi.Property.ARTISTS);
+                artists = string.joinv (", ", VariantHelper.get_string_array(artists_array));
                 has_data = true;
             }
 
@@ -98,7 +99,7 @@ namespace WebMusic.Browser.Plugins {
             }
 
             if(has_data) {
-                string by = artist.length > 0? _("by %s").printf(artist): "";
+                string by = artists.length > 0? _("by %s").printf(artists): "";
                 string from = album.length > 0? _("from %s").printf(album): "";
 
                 string seperator = "";

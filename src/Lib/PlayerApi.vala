@@ -423,9 +423,10 @@ namespace LibWebMusic {
 
             string art_url = changes.get(Property.ART_URL).get_string();
 
-            string artist = "";
-            if(changes.contains(Property.ARTIST)) {
-                artist = changes.get(Property.ARTIST).get_string();
+            string artists = "";
+            if(changes.contains(Property.ARTISTS)) {
+                var artists_array = changes.get(Property.ARTISTS);
+                artists = string.joinv ("_", VariantHelper.get_string_array(artists_array));
             }
 
             string album = "";
@@ -439,7 +440,7 @@ namespace LibWebMusic {
             }
 
             string url_extension = art_url.substring(art_url.last_index_of_char('.'));
-            string file_artist   = artist.length > 0 ? artist + "_" : "";
+            string file_artists  = artists.length > 0 ? artists + "_" : "";
             string file_album    = album.length  > 0 ? album : track;
 
             if(file_album.length == 0) {
@@ -448,7 +449,7 @@ namespace LibWebMusic {
                 file_album = GLib.Checksum.compute_for_string(ChecksumType.MD5, date, date.length);
             }
 
-            string file_name = (file_artist + file_album + url_extension).replace(" ", "_").replace("/", "_");
+            string file_name = (file_artists + file_album + url_extension).replace(" ", "_").replace("/", "_");
             file_name = Directory.GetAlbumArtDir() + file_name;
 
             var file_cache = new FileCache();
@@ -477,7 +478,7 @@ namespace LibWebMusic {
             public const string CAN_REPEAT      = "canRepeat";
             public const string CAN_LIKE        = "canLike";
             public const string URL             = "url";
-            public const string ARTIST          = "artist";
+            public const string ARTISTS         = "artists";
             public const string TRACK           = "track";
             public const string ALBUM           = "album";
             public const string ART_URL         = "artUrl";

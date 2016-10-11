@@ -210,7 +210,7 @@
             this._trackPosition  = 0;
 
             this._url         = '';
-            this._artist      = '';
+            this._artists     = [''];
             this._track       = '';
             this._album       = '';
             this._artUrl      = '';
@@ -464,15 +464,19 @@
             return this._url;
         }
 
-        set artist(value) {
-            if(value != this._artist) {
+        set artists(value) {
+            //Compare array content if it is !(equal)
+            if(!(value.length == this._artists.length
+                && value.every((v, i) => {
+                    return v === this._artists[i];
+                }))) {
                 this._metadataChanged = true;
-                this._artist = value;
+                this._artists = value;
             }
         }
 
-        get artist() {
-            return this._artist;
+        get artists() {
+            return this._artists;
         }
 
         set track(value) {
@@ -578,7 +582,7 @@
             if(this._metadataChanged) {
                 //Always send complete metadata
                 this.changes.url         = this.url;
-                this.changes.artist      = this.artist;
+                this.changes.artists     = this.artists;
                 this.changes.track       = this.track;
                 this.changes.album       = this.album;
                 this.changes.trackLength = this.trackLength;

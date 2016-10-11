@@ -201,12 +201,13 @@ namespace WebMusic.Browser
 
             bool has_data = false;
 
-            string artist = "";
-            string track  = "";
-            string album  = "";
+            string artists = "";
+            string track   = "";
+            string album   = "";
 
-            if(dict.contains(PlayerApi.Property.ARTIST)) {
-                artist = dict.get(PlayerApi.Property.ARTIST).get_string();
+            if(dict.contains(PlayerApi.Property.ARTISTS)) {
+                var artists_array = dict.get(PlayerApi.Property.ARTISTS);
+                artists = string.joinv (", ", VariantHelper.get_string_array(artists_array));
                 has_data = true;
             }
 
@@ -221,7 +222,7 @@ namespace WebMusic.Browser
             }
 
             if(has_data) {
-                this.SetTitle(artist, track, album);
+                this.SetTitle(artists, track, album);
             }
         }
 
@@ -256,10 +257,10 @@ namespace WebMusic.Browser
             RefreshDarkThemeMode();
         }
 
-        private void SetTitle(string artist, string track, string album) {
+        private void SetTitle(string artists, string track, string album) {
             mHeader.set_title(track.length >0? track : _("WebMusic"));
 
-            string by = artist.length > 0? _("by %s").printf(artist) + " ": "";
+            string by = artists.length > 0? _("by %s").printf(artists) + " ": "";
             string from = album.length > 0? _("from %s").printf(album) : "";
 
             if(by.length == 0 && from.length == 0) {

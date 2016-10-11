@@ -191,7 +191,7 @@ namespace WebMusic.Browser
 
             string track    = "";
             string album    = "";
-            string artist   = "";
+            string artists  = "";
 
             if(dict.contains(PlayerApi.Property.TRACK)) {
                 track = dict.get(PlayerApi.Property.TRACK).get_string();
@@ -203,16 +203,17 @@ namespace WebMusic.Browser
                 has_data = true;
             }
 
-            if(dict.contains(PlayerApi.Property.ARTIST)) {
-                artist = dict.get(PlayerApi.Property.ARTIST).get_string();
+            if(dict.contains(PlayerApi.Property.ARTISTS)) {
+                var artists_array = dict.get(PlayerApi.Property.ARTISTS);
+                artists = string.joinv (", ", VariantHelper.get_string_array(artists_array));
                 has_data = true;
             }
 
             if(has_data) {
-                string by = artist.length > 0? _("by %s").printf(artist) + " " : "";
+                string by = artists.length > 0? _("by %s").printf(artists) + " " : "";
                 string from = album.length > 0? _("from %s").printf(album): "";
 
-                stdout.printf(_("Now playing %s") + " " + by + from +"\n", track, album, artist);
+                stdout.printf(_("Now playing %s") + " " + by + from +"\n", track, album, artists);
             }
         }
 

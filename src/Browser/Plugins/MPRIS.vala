@@ -328,7 +328,7 @@ namespace WebMusic.Browser.Plugins {
                         data.insert("Volume", val);
                         break;
                     case PlayerApi.Property.URL:
-                    case PlayerApi.Property.ARTIST:
+                    case PlayerApi.Property.ARTISTS:
                     case PlayerApi.Property.TRACK:
                     case PlayerApi.Property.ALBUM:
                     case PlayerApi.Property.ART_URL:
@@ -503,8 +503,9 @@ namespace WebMusic.Browser.Plugins {
                     case PlayerApi.Property.URL:
                         _metadata.insert("xesam:url", val);
                         break;
-                    case PlayerApi.Property.ARTIST:
-                        _metadata.insert("xesam:artist", val);
+                    case PlayerApi.Property.ARTISTS:
+                        var artists = VariantHelper.get_string_array(val);
+                        _metadata.insert("xesam:artist", new Variant.strv(artists));
                         break;
                     case PlayerApi.Property.TRACK:
                         _metadata.insert("xesam:title", val);
