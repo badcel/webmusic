@@ -63,7 +63,12 @@
                         }
                         this.artists = a;
 
-                        this.track   = currentSong.SNG_TITLE;
+                        let version = '';
+                        if(typeof currentSong.VERSION !== 'undefined') {
+                            version = ' ' + currentSong.VERSION;
+                        }
+
+                        this.track   = currentSong.SNG_TITLE + version;
                         this.album   = currentSong.ALB_TITLE;
                         this.artUrl  = 'http://cdn-images.deezer.com/images/cover/' + currentSong.ALB_PICTURE + '/300x300-000000-80-0-0.jpg';
                         break;
