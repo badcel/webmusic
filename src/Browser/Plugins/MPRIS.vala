@@ -558,7 +558,17 @@ namespace WebMusic.Browser.Plugins {
         }
 
         public string[] Orderings {
-            owned get { return playlist_api.Orderings; }
+            owned get {
+                var o = playlist_api.Orderings;
+
+                string[] ret = new string[o.length];
+
+                for(var i = 0; i < o.length; i++) {
+                    ret[i] = o[i].to_string();
+                }
+
+                return ret;
+            }
         }
 
         public MaybePlaylist ActivePlaylist {

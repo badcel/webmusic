@@ -603,8 +603,18 @@
             super(WebMusic.Api.Type.PLAYLIST);
 
             this._count = 0;
-            this._orderings = ['user'];
+            this._orderings = [this.ordering.USER];
             this._activePlaylist = Playlist.getEmptyPlaylist();
+        }
+
+        get ordering() {
+            return {
+                ALPHABETICAL : 0,
+                CREATED      : 1,
+                MODIFIED     : 2,
+                PLAYED       : 3,
+                USER         : 4
+            };
         }
 
         get count() {
@@ -623,7 +633,11 @@
         }
 
         set orderings(value) {
-            if(value != this._orderings) {
+            //Compare array content if it is !(equal)
+            if(!(value.length == this._orderings.length
+                && value.every((v, i) => {
+                    return v === this._orderings[i];
+                }))) {
                 this.changes.orderings = value;
                 this._orderings = value;
             }

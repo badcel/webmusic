@@ -145,17 +145,17 @@ namespace LibWebMusic {
             }
         }
 
-        public string[] Orderings {
+        public PlaylistOrdering[] Orderings {
             owned get {
 
-                string[] ret = new string[0];
+                PlaylistOrdering[] ret = new PlaylistOrdering[0];
 
                 var prop = this.get_adapter_property(Property.ORDERINGS);
                 if(prop != null) {
                     if(prop.is_of_type(VariantType.ARRAY)) {
 
                         var count = prop.n_children();
-                        ret = new string[count];
+                        ret = new PlaylistOrdering[count];
 
                         for(int i = 0; i < count; i++) {
                             var v = prop.get_child_value(i);
@@ -164,11 +164,11 @@ namespace LibWebMusic {
                                 v = v.get_variant();
                             }
 
-                            if(v.is_of_type(VariantType.STRING)) {
-                                ret[i] = v.get_string();
+                            if(v.is_of_type(VariantType.INT64)) {
+                                ret[i] = (PlaylistOrdering)v.get_int64();
                             } else {
                                 warning("Could not get orderings. Wrong datatype (%s).", v.get_type_string());
-                                return new string[0];
+                                return new PlaylistOrdering[0];
                             }
                         }
                     } else {
