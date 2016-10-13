@@ -62,6 +62,9 @@
         update() {
             this.count = 2;
 
+            //Default: this.orderings = [this.ordering.USER]
+            //this.orderings = [this.ordering.USER, this.ordering.ALPHABETICAL];
+
             let p = new WebMusic.Api.Playlist('/org/webmusic/playlist/1', 'Testplaylist', '');
             this.activePlaylist = p;
 
