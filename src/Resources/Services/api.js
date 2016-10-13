@@ -220,9 +220,10 @@
         }
 
         get PlaybackState() {
-            return { STOP : 0,
-                     PLAY : 1,
-                     PAUSE: 2
+            return {
+                STOP : 0,
+                PLAY : 1,
+                PAUSE: 2
             };
         }
 
