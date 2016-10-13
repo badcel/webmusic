@@ -117,7 +117,7 @@ namespace LibWebMusic {
         public signal void PropertiesChanged(HashTable<string, Variant> dict);
         public signal void PlaylistChanged(Playlist playlist);
 
-        private MaybePlaylist active_playlist;
+        private MaybePlaylist act_playlist;
 
         public PlaylistApi() {
             base(ObjectType.PLAYLIST);
@@ -132,7 +132,7 @@ namespace LibWebMusic {
         }
 
 
-        public uint32 PlaylistCount {
+        public uint32 playlist_count {
             get {
                 uint32 ret = 0;
 
@@ -145,7 +145,7 @@ namespace LibWebMusic {
             }
         }
 
-        public PlaylistOrdering[] Orderings {
+        public PlaylistOrdering[] orderings {
             owned get {
 
                 PlaylistOrdering[] ret = new PlaylistOrdering[0];
@@ -181,15 +181,15 @@ namespace LibWebMusic {
             }
         }
 
-        public weak MaybePlaylist ActivePlaylist {
+        public weak MaybePlaylist active_playlist {
             get {
-                //Return a weak reference, because we own the active_playlist
+                //Return a weak reference, because we own the act_playlist
                 //and we keep the object the whole lifetime
 
                 var prop = this.get_adapter_property(Property.ACTIVE_MAYBE_PLAYLIST);
-                active_playlist = this.get_maybe_playlist(prop);
+                act_playlist = this.get_maybe_playlist(prop);
 
-                return active_playlist;
+                return act_playlist;
             }
         }
 

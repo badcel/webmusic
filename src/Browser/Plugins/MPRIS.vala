@@ -554,12 +554,12 @@ namespace WebMusic.Browser.Plugins {
         }
 
         public uint32 PlaylistCount {
-            get { return playlist_api.PlaylistCount; }
+            get { return playlist_api.playlist_count; }
         }
 
         public string[] Orderings {
             owned get {
-                var o = playlist_api.Orderings;
+                var o = playlist_api.orderings;
 
                 string[] ret = new string[o.length];
 
@@ -572,7 +572,7 @@ namespace WebMusic.Browser.Plugins {
         }
 
         public MaybePlaylist ActivePlaylist {
-            get { return playlist_api.ActivePlaylist; }
+            get { return playlist_api.active_playlist; }
         }
 
         public void ActivatePlaylist(ObjectPath playlist_id) {
