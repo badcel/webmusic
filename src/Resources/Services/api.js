@@ -186,6 +186,113 @@
         }
     }
 
+    class Metadata {
+        constructor() {
+
+            this._url         = '';
+            this._artists     = [''];
+            this._track       = '';
+            this._album       = '';
+            this._artUrl      = '';
+            this._trackLength = 0;
+
+            this.changed = false;
+
+        }
+
+        copy() {
+            let copy = new Metadata();
+
+            copy.url         = this._url;
+            copy.artists     = this._artists;
+            copy.track       = this._track;
+            copy.album       = this._album;
+            copy.artUrl      = this._artUrl;
+            copy.trackLength = this._trackLength;
+
+            return copy;
+        }
+
+        /*
+         * URL to identify track
+         */
+        set url(value) {
+            if(value != this._url) {
+                this.changed = true;
+                this._url = value;
+            }
+        }
+
+        get url() {
+            return this._url;
+        }
+
+        set artists(value) {
+            //Compare array content if it is !(equal)
+            if(!(value.length == this._artists.length
+                && value.every((v, i) => {
+                    return v === this._artists[i];
+                }))) {
+                this.changed = true;
+                this._artists = value;
+            }
+        }
+
+        get artists() {
+            return this._artists;
+        }
+
+        set track(value) {
+            if(value != this._track) {
+                this.changed = true;
+                this._track = value;
+            }
+        }
+
+        get track() {
+            return this._track;
+        }
+
+        set album(value) {
+            if(value != this._album) {
+                this.changed = true;
+                this._album = value;
+            }
+        }
+
+        get album() {
+            return this._album;
+        }
+
+        /*
+         * Url of album picture
+         */
+        set artUrl(value) {
+            if(value != this._artUrl) {
+                this.changed = true;
+                this._artUrl = value;
+            }
+        }
+
+        get artUrl() {
+            return this._artUrl;
+        }
+
+        /*
+         * trackLength is specified in microseconds
+         */
+        set trackLength(value) {
+            if(value != this._trackLength) {
+                this.changed = true;
+                this._trackLength = value;
+            }
+        }
+
+        get trackLength() {
+            return this._trackLength;
+        }
+    }
+
     class BasePlayer extends BaseApi {
         constructor() {
             super(WebMusic.Api.Type.PLAYER);
@@ -209,14 +316,7 @@
             this._like           = false;
             this._trackPosition  = 0;
 
-            this._url         = '';
-            this._artists     = [''];
-            this._track       = '';
-            this._album       = '';
-            this._artUrl      = '';
-            this._trackLength = 0;
-
-            this._metadataChanged = false;
+            this._metadata       = new Metadata();
         }
 
         get PlaybackState() {
@@ -446,88 +546,13 @@
             return this._trackPosition;
         }
 
-        /*
-         * The following data belongs to the Metadata property
-         * of the MPRIS Specification
-         */
-
-        /*
-         * URL to identify track
-         */
-        set url(value) {
-            if(value != this._url) {
-                this._metadataChanged = true;
-                this._url = value;
-            }
+        set metadata(value) {
+            this._metadata = value;
+            this._metadata.changed = true;
         }
 
-        get url() {
-            return this._url;
-        }
-
-        set artists(value) {
-            //Compare array content if it is !(equal)
-            if(!(value.length == this._artists.length
-                && value.every((v, i) => {
-                    return v === this._artists[i];
-                }))) {
-                this._metadataChanged = true;
-                this._artists = value;
-            }
-        }
-
-        get artists() {
-            return this._artists;
-        }
-
-        set track(value) {
-            if(value != this._track) {
-                this._metadataChanged = true;
-                this._track = value;
-            }
-        }
-
-        get track() {
-            return this._track;
-        }
-
-        set album(value) {
-            if(value != this._album) {
-                this._metadataChanged = true;
-                this._album = value;
-            }
-        }
-
-        get album() {
-            return this._album;
-        }
-
-        /*
-         * Url of album picture
-         */
-        set artUrl(value) {
-            if(value != this._artUrl) {
-                this._metadataChanged = true;
-                this._artUrl = value;
-            }
-        }
-
-        get artUrl() {
-            return this._artUrl;
-        }
-
-        /*
-         * trackLength is specified in microseconds
-         */
-        set trackLength(value) {
-            if(value != this._trackLength) {
-                this._metadataChanged = true;
-                this._trackLength = value;
-            }
-        }
-
-        get trackLength() {
-            return this._trackLength;
+        get metadata() {
+            return this._metadata;
         }
 
         actionPlay() {
@@ -580,19 +605,11 @@
 
         sendPropertyChange() {
 
-            if(this._metadataChanged) {
-                //Always send complete metadata
-                this.changes.url         = this.url;
-                this.changes.artists     = this.artists;
-                this.changes.track       = this.track;
-                this.changes.album       = this.album;
-                this.changes.trackLength = this.trackLength;
+            if(this._metadata.changed) {
+                this.changes.metadata = this._metadata.copy();
+                delete this.changes.metadata.changed; //Remove changed property
 
-                if(this.artUrl.length > 0) {
-                    this.changes.artUrl = this.artUrl;
-                }
-
-                this._metadataChanged = false;
+                this._metadata.changed = false;
             }
 
             super.sendPropertyChange();

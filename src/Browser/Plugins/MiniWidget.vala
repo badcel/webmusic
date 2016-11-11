@@ -64,54 +64,35 @@ namespace WebMusic.Browser.Plugins {
 
         private void on_properties_changed(HashTable<string,Variant> dict) {
 
-            bool has_data = false;
-
-            string artists   = "";
-            string track     = "";
-            string album     = "";
-            string file      = "";
-
-            if(dict.contains(PlayerApi.Property.TRACK)) {
-                track = dict.get(PlayerApi.Property.TRACK).get_string();
-                has_data = true;
-            }
-
-            if(dict.contains(PlayerApi.Property.ALBUM)) {
-                album = dict.get(PlayerApi.Property.ALBUM).get_string();
-                has_data = true;
-            }
-
-            if(dict.contains(PlayerApi.Property.ARTISTS)) {
-                var artists_array = dict.get(PlayerApi.Property.ARTISTS);
-                artists = string.joinv (", ", VariantHelper.get_string_array(artists_array));
-                has_data = true;
-            }
-
-            if(dict.contains(PlayerApi.Property.ART_FILE_LOCAL)) {
-                file = dict.get(PlayerApi.Property.ART_FILE_LOCAL).get_string();
-                has_data = true;
-            }
-
             if(dict.contains(PlayerApi.Property.PLAYBACKSTATUS)) {
                 PlayStatus play_status = (PlayStatus) dict.get(PlayerApi.Property.PLAYBACKSTATUS).get_int64();
 
                 mini_window.set_playstatus(play_status);
             }
 
-            if(has_data) {
-                string by = artists.length > 0? _("by %s").printf(artists): "";
-                string from = album.length > 0? _("from %s").printf(album): "";
-
-                string seperator = "";
-                if(by.length > 0 && from.length> 0) {
-                    seperator = "\n";
-                }
-
-                mini_window.set_label(track, by + seperator + from);
-                mini_window.set_album_art(file.replace("file://", ""));
-
-                mini_window.resize(1,1);
+            if(!dict.contains(PlayerApi.Property.METADATA)) {
+                return;
             }
+
+            Metadata metadata = PlayerApi.get_instance().Metadata;
+
+            string artists   = string.joinv (", ", metadata.Artists);
+            string track     = metadata.Track;
+            string album     = metadata.Album;
+            string file      = metadata.ArtFileLocal;
+
+            string by = artists.length > 0? _("by %s").printf(artists): "";
+            string from = album.length > 0? _("from %s").printf(album): "";
+
+            string seperator = "";
+            if(by.length > 0 && from.length> 0) {
+                seperator = "\n";
+            }
+
+            mini_window.set_label(track, by + seperator + from);
+            mini_window.set_album_art(file.replace("file://", ""));
+
+            mini_window.resize(1,1);
         }
 
         [GtkTemplate (ui = "/org/WebMusic/Browser/ui/mini-window.ui")]

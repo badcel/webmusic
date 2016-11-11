@@ -35,35 +35,20 @@ namespace WebMusic.Browser.Plugins {
 
         private void on_properties_changed(HashTable<string,Variant> dict) {
 
-            bool has_data = false;
-
-            string artists   = "";
-            string track     = "";
-            string album     = "";
-            string file_name = Config.PACKAGE; //desktop icon
-
-            if(dict.contains(PlayerApi.Property.TRACK)) {
-                track = dict.get(PlayerApi.Property.TRACK).get_string();
-                has_data = true;
-            }
-
-            if(dict.contains(PlayerApi.Property.ALBUM)) {
-                album = dict.get(PlayerApi.Property.ALBUM).get_string();
-                has_data = true;
-            }
-
-            if(dict.contains(PlayerApi.Property.ARTISTS)) {
-                var artists_array = dict.get(PlayerApi.Property.ARTISTS);
-                artists = string.joinv (", ", VariantHelper.get_string_array(artists_array));
-                has_data = true;
-            }
-
-            //if(dict.contains(PlayerApi.Property.ART_FILE_LOCAL)) {
-            //    file_name = dict.get(PlayerApi.Property.ART_FILE_LOCAL).get_string();
-            //}
-
-            if(!this.Enable || !has_data)
+            if(!this.Enable)
                 return;
+
+            if(!dict.contains(PlayerApi.Property.METADATA)) {
+                return;
+            }
+
+            Metadata metadata = PlayerApi.get_instance().Metadata;
+
+            string artists   = string.joinv (", ", metadata.Artists);
+            string track     = metadata.Track;
+            string album     = metadata.Album;
+            string file_name = Config.PACKAGE; //desktop icon
+            //string file_name = metadata.ArtFileLocal; //album art
 
             try {
                 string nowPlaying = _("Now playing %s").printf(track) + " ";

@@ -213,11 +213,11 @@ namespace WebMusic.Browser.Plugins {
             if(!this.Enable || dbus_connection.closed)
                 return;
 
-	        bool has_metadata;
-	        var data = this.get_player_properties_changed_data(dict, out has_metadata);
+	        var data = this.get_player_properties_changed_data(dict);
 
-            if(has_metadata) {
-                mpris_player.set_metadata(dict);
+            if(dict.contains(PlayerApi.Property.METADATA)) {
+                var metadata = (HashTable<string, Variant>) dict.get(PlayerApi.Property.METADATA);
+                mpris_player.set_metadata(metadata);
                 data.insert("Metadata", mpris_player.Metadata);
             }
 
@@ -279,10 +279,9 @@ namespace WebMusic.Browser.Plugins {
             return data;
         }
 
-        public HashTable<string, Variant> get_player_properties_changed_data(HashTable<string, Variant> dict, out bool has_metadata) {
+        public HashTable<string, Variant> get_player_properties_changed_data(HashTable<string, Variant> dict) {
 
             HashTable<string, Variant> data = new HashTable<string, Variant>(str_hash, str_equal);
-            bool _has_metadata = false;
 
             dict.foreach ((key, val) => {
                 switch(key) {
@@ -327,18 +326,9 @@ namespace WebMusic.Browser.Plugins {
                     case PlayerApi.Property.VOLUME:
                         data.insert("Volume", val);
                         break;
-                    case PlayerApi.Property.URL:
-                    case PlayerApi.Property.ARTISTS:
-                    case PlayerApi.Property.TRACK:
-                    case PlayerApi.Property.ALBUM:
-                    case PlayerApi.Property.ART_URL:
-                    case PlayerApi.Property.TRACK_LENGTH:
-                        _has_metadata = true;
-                        break;
                 }
 	        });
 
-            has_metadata = _has_metadata;
             return data;
         }
     }
@@ -494,29 +484,29 @@ namespace WebMusic.Browser.Plugins {
         }
 
         [DBus (visible = false)]
-        public void set_metadata(HashTable<string,Variant> dict) {
+        public void set_metadata(HashTable<string,Variant> metadata) {
 
             _metadata = new HashTable<string,Variant>(str_hash, str_equal);
 
-            dict.foreach ((key, val) => {
+            metadata.foreach ((key, val) => {
                 switch(key) {
-                    case PlayerApi.Property.URL:
+                    case PlayerApi.Property.METADATA_URL:
                         _metadata.insert("xesam:url", val);
                         break;
-                    case PlayerApi.Property.ARTISTS:
-                        var artists = VariantHelper.get_string_array(val);
+                    case PlayerApi.Property.METADATA_ARTISTS:
+                        string[] artists = VariantHelper.get_string_array(val);
                         _metadata.insert("xesam:artist", new Variant.strv(artists));
                         break;
-                    case PlayerApi.Property.TRACK:
+                    case PlayerApi.Property.METADATA_TRACK:
                         _metadata.insert("xesam:title", val);
                         break;
-                    case PlayerApi.Property.ALBUM:
+                    case PlayerApi.Property.METADATA_ALBUM:
                         _metadata.insert("xesam:album", val);
                         break;
-                    case PlayerApi.Property.ART_FILE_LOCAL:
+                    case PlayerApi.Property.METADATA_ART_FILE_LOCAL:
                         _metadata.insert("mpris:artUrl", val);
                         break;
-                    case PlayerApi.Property.TRACK_LENGTH:
+                    case PlayerApi.Property.METADATA_TRACK_LENGTH:
                         _metadata.insert("mpris:length", val);
                         break;
                 }

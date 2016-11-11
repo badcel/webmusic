@@ -199,31 +199,17 @@ namespace WebMusic.Browser
 
         private void on_properties_changed(HashTable<string, Variant> dict){
 
-            bool has_data = false;
-
-            string artists = "";
-            string track   = "";
-            string album   = "";
-
-            if(dict.contains(PlayerApi.Property.ARTISTS)) {
-                var artists_array = dict.get(PlayerApi.Property.ARTISTS);
-                artists = string.joinv (", ", VariantHelper.get_string_array(artists_array));
-                has_data = true;
+            if(!dict.contains(PlayerApi.Property.METADATA)) {
+                return;
             }
 
-            if(dict.contains(PlayerApi.Property.TRACK)) {
-                track = dict.get(PlayerApi.Property.TRACK).get_string();
-                has_data = true;
-            }
+            Metadata metadata = PlayerApi.get_instance().Metadata;
 
-            if(dict.contains(PlayerApi.Property.ALBUM)) {
-                album = dict.get(PlayerApi.Property.ALBUM).get_string();
-                has_data = true;
-            }
+            string artists = string.joinv (", ", metadata.Artists);
+            string track   = metadata.Track;
+            string album   = metadata.Album;
 
-            if(has_data) {
-                this.SetTitle(artists, track, album);
-            }
+            this.SetTitle(artists, track, album);
         }
 
         private void CreateWidgets(Service service) {

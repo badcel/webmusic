@@ -106,6 +106,8 @@ namespace LibWebMusic {
         private bool shuffle = false;
         private bool like    = false;
 
+        private Metadata metadata;
+
         public signal void PropertiesChanged(HashTable<string, Variant> dict);
         public signal void Seeked(int64 position);
 
@@ -276,6 +278,23 @@ namespace LibWebMusic {
             }
         }
 
+        public Metadata Metadata {
+            get {
+
+                if(metadata == null) {
+                    var prop = this.get_adapter_property(Property.METADATA);
+
+                    if(!get_metadata(prop, out metadata)) {
+                        warning("Could not get metadata for property Metadata.");
+                    }
+
+                    return metadata;
+                } else {
+                    return metadata;
+                }
+            }
+        }
+
         public bool Shuffle {
             get {
                 bool ret = false;
@@ -412,7 +431,7 @@ namespace LibWebMusic {
 
         protected override void properties_changed(HashTable<string, Variant> changes) {
 
-            if(changes.contains(PlayerApi.Property.ART_URL)) {
+            if(changes.contains(PlayerApi.Property.METADATA)) {
                 this.cache_cover(changes);
             } else {
                 this.PropertiesChanged(changes);
@@ -421,23 +440,29 @@ namespace LibWebMusic {
 
         private void cache_cover(HashTable<string, Variant> changes) {
 
-            string art_url = changes.get(Property.ART_URL).get_string();
+            Metadata metadata;
+            if(!get_metadata_from_properties_changed(changes, out metadata)) {
+                warning("Metadata is not present. Can not cache.");
+                return;
+            }
+
+            this.metadata = metadata;
+
+            string art_url = metadata.ArtUrl;
+
+            if(art_url.length == 0) {
+                //Nothing to cache
+                this.PropertiesChanged(changes);
+                return;
+            }
 
             string artists = "";
-            if(changes.contains(Property.ARTISTS)) {
-                var artists_array = changes.get(Property.ARTISTS);
-                artists = string.joinv ("_", VariantHelper.get_string_array(artists_array));
+            if(metadata.Artists.length > 0) {
+                artists = string.joinv ("_", metadata.Artists);
             }
 
-            string album = "";
-            if(changes.contains(Property.ALBUM)) {
-                album = changes.get(Property.ALBUM).get_string();
-            }
-
-            string track = "";
-            if(changes.contains(Property.TRACK)) {
-                track = changes.get(Property.TRACK).get_string();
-            }
+            string album = metadata.Album;
+            string track = metadata.Track;
 
             string url_extension = art_url.substring(art_url.last_index_of_char('.'));
             string file_artists  = artists.length > 0 ? artists + "_" : "";
@@ -457,13 +482,95 @@ namespace LibWebMusic {
             file_cache.file_cached.connect((file_name, success) => {
 
                 if(success) {
-                    changes.insert(Property.ART_FILE_LOCAL, new Variant.string("file://" + file_name));
+                    var variant_metadata = changes.get(Property.METADATA);
+                    if(variant_metadata.is_of_type(VariantType.DICTIONARY)) {
+
+                        string file_uri = "file://" + file_name;
+
+                        HashTable<string, Variant> hashtable = (HashTable<string, Variant>) variant_metadata;
+                        hashtable.insert(Property.METADATA_ART_FILE_LOCAL, new Variant.string(file_uri));
+
+                        changes.insert(Property.METADATA, hashtable);
+                        this.metadata.ArtFileLocal = file_uri;
+                    } else {
+                        warning("Metadata is no dictionary. Can not add local art file.");
+                    }
                 }
 
                 this.PropertiesChanged(changes);
             });
 
            file_cache.cache_async(art_url, file_name);
+        }
+
+        public static bool get_metadata_from_properties_changed(Variant properties_changed, out Metadata result) {
+
+            result = new LibWebMusic.Metadata();
+
+            if(!properties_changed.is_of_type(VariantType.DICTIONARY)) {
+                return false;
+            }
+
+            HashTable<string, Variant> hashtable = (HashTable<string, Variant>) properties_changed;
+
+            if(!hashtable.contains(Property.METADATA)) {
+                return false;
+            }
+
+            return get_metadata(hashtable.get(Property.METADATA), out result);
+
+        }
+
+        public static bool get_metadata(Variant metadata, out Metadata result) {
+
+            Metadata ret = new LibWebMusic.Metadata();
+
+            Variant data = metadata;
+
+            if(data.get_type().is_variant()) {
+                data = data.get_variant();
+            }
+
+            if(!data.is_of_type(VariantType.DICTIONARY)) {
+                warning("Can not convert metadata. Type is no dictionary but type <%s>.", data.get_type_string());
+                result = ret;
+                return false;
+            }
+
+            HashTable<string, Variant> data_table = (HashTable<string, Variant>) data;
+
+            data_table.foreach ((key, val) => {
+
+                switch(key) {
+                    case Property.METADATA_URL:
+                        ret.Url = val.get_string();
+                        break;
+                    case Property.METADATA_ARTISTS:
+                        ret.Artists = VariantHelper.get_string_array(val);
+                        break;
+                    case Property.METADATA_TRACK:
+                        ret.Track = val.get_string();
+                        break;
+                    case Property.METADATA_ALBUM:
+                        ret.Album = val.get_string();
+                        break;
+                    case Property.METADATA_ART_URL:
+                        ret.ArtUrl = val.get_string();
+                        break;
+                    case Property.METADATA_ART_FILE_LOCAL:
+                        ret.ArtFileLocal = val.get_string();
+                        break;
+                    case Property.METADATA_TRACK_LENGTH:
+                        ret.TrackLength = val.get_int64();
+                        break;
+                    default:
+                        warning("Unkonwn metadata property <%s>. Ignoring.", key);
+                        break;
+                }
+            });
+
+            result = ret;
+            return true;
         }
 
         public class Property {
@@ -477,19 +584,21 @@ namespace LibWebMusic {
             public const string CAN_SHUFFLE     = "canShuffle";
             public const string CAN_REPEAT      = "canRepeat";
             public const string CAN_LIKE        = "canLike";
-            public const string URL             = "url";
-            public const string ARTISTS         = "artists";
-            public const string TRACK           = "track";
-            public const string ALBUM           = "album";
-            public const string ART_URL         = "artUrl";
-            public const string ART_FILE_LOCAL  = "artFileLocal";
             public const string PLAYBACKSTATUS  = "playbackStatus";
             public const string LIKE            = "like";
+            public const string METADATA        = "metadata";
             public const string SHUFFLE         = "shuffle";
             public const string REPEAT          = "repeat";
             public const string VOLUME          = "volume";
-            public const string TRACK_LENGTH    = "trackLength";
             public const string TRACK_POSITION  = "trackPosition";
+
+            public const string METADATA_URL             = "_url";
+            public const string METADATA_ARTISTS         = "_artists";
+            public const string METADATA_TRACK           = "_track";
+            public const string METADATA_ALBUM           = "_album";
+            public const string METADATA_ART_URL         = "_artUrl";
+            public const string METADATA_ART_FILE_LOCAL  = "_artFileLocal";
+            public const string METADATA_TRACK_LENGTH    = "_trackLength";
         }
 
         private class Action {
@@ -511,5 +620,61 @@ namespace LibWebMusic {
             public const string SHOW    = "actionShow";
         }
 
+    }
+
+    public class Metadata {
+
+        private string url;
+        private string[] artists;
+        private string track;
+        private string album;
+        private string art_url;
+        private string art_file_local;
+        private int64 track_length;
+
+        public Metadata() {
+            url = "";
+            artists = new string[0];
+            track = "";
+            album = "";
+            art_url = "";
+            art_file_local = "";
+            track_length = 0;
+        }
+
+        public string Url {
+            get { return url; }
+            set { url = value; }
+        }
+
+        public string[] Artists {
+            get { return artists; }
+            set { artists = value; }
+        }
+
+        public string Track {
+            get { return track; }
+            set { track = value; }
+        }
+
+        public string Album {
+            get { return album; }
+            set { album = value; }
+        }
+
+        public string ArtUrl {
+            get { return art_url; }
+            set { art_url = value; }
+        }
+
+        public string ArtFileLocal {
+            get { return art_file_local; }
+            set { art_file_local = value; }
+        }
+
+        public int64 TrackLength {
+            get { return track_length; }
+            set { track_length = value; }
+        }
     }
 }
