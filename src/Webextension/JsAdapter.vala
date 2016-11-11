@@ -223,7 +223,7 @@ namespace WebMusic.Webextension {
     public class JsAdapter : GLib.Object, IApiAdapter {
 
         private const int REQUIRED_API_VERSION = 1;
-        private static const string API_NAME = "WebMusic";
+        private const string API_NAME = "WebMusic";
         private static JsAdapter? self = null;
 
         private ISignalSender signal_sender;
@@ -312,7 +312,7 @@ namespace WebMusic.Webextension {
             return ret;
         }
 
-        private static const JSCore.StaticFunction[] js_funcs = {
+        private const JSCore.StaticFunction[] js_funcs = {
             { "handleJsonCommand", handle_json_command, JSCore.PropertyAttribute.ReadOnly},
             { null, null, 0 }
         };
