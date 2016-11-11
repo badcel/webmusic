@@ -42,14 +42,14 @@
 
                 switch(dzPlayer.getMediaType()) {
                     case dzPlayer.MEDIA_TYPE_TALK:
-                        this.url     = 'http://www.deezer.com/show/' + currentSong.SHOW_ID + '#' + currentSong.EPISODE_ID;
-                        this.artists = [currentSong.SHOW_NAME];
-                        this.track   = currentSong.EPISODE_TITLE;
-                        this.album   = '';
-                        this.artUrl  = 'http://cdn-images.deezer.com/images/talk/' + currentSong.SHOW_ART_MD5 + '/300x300.jpg';
+                        this.metadata.url     = 'http://www.deezer.com/show/' + currentSong.SHOW_ID + '#' + currentSong.EPISODE_ID;
+                        this.metadata.artists = [currentSong.SHOW_NAME];
+                        this.metadata.track   = currentSong.EPISODE_TITLE;
+                        this.metadata.album   = '';
+                        this.metadata.artUrl  = 'http://cdn-images.deezer.com/images/talk/' + currentSong.SHOW_ART_MD5 + '/300x300.jpg';
                         break;
                     case dzPlayer.MEDIA_TYPE_SONG:
-                        this.url    = 'http://www.deezer.com/album/' + currentSong.ALB_ID + '#naboo_datagrid_track_' + currentSong.SNG_ID;
+                        this.metadata.url    = 'http://www.deezer.com/album/' + currentSong.ALB_ID + '#naboo_datagrid_track_' + currentSong.SNG_ID;
 
                         let a = new Array();
                         if(typeof currentSong.ARTISTS !== 'undefined'
@@ -65,23 +65,23 @@
                         } else {
                             a.push(currentSong.ART_NAME);
                         }
-                        this.artists = a;
+                        this.metadata.artists = a;
 
                         let version = '';
                         if(typeof currentSong.VERSION !== 'undefined') {
                             version = ' ' + currentSong.VERSION;
                         }
 
-                        this.track   = currentSong.SNG_TITLE + version;
-                        this.album   = currentSong.ALB_TITLE;
-                        this.artUrl  = 'http://cdn-images.deezer.com/images/cover/' + currentSong.ALB_PICTURE + '/300x300-000000-80-0-0.jpg';
+                        this.metadata.track   = currentSong.SNG_TITLE + version;
+                        this.metadata.album   = currentSong.ALB_TITLE;
+                        this.metadata.artUrl  = 'http://cdn-images.deezer.com/images/cover/' + currentSong.ALB_PICTURE + '/300x300-000000-80-0-0.jpg';
                         break;
                     case dzPlayer.MEDIA_TYPE_LIVE_STREAM:
-                        this.url     = currentSong.MD5_ORIGN;
-                        this.artists = [''];
-                        this.track   = currentSong.SNG_TITLE;
-                        this.album   = '';
-                        this.artUrl  = 'http://cdn-images.deezer.com/images/misc/' + currentSong.PICTURE_URL + '/300x300.jpg';
+                        this.metadata.url     = currentSong.MD5_ORIGN;
+                        this.metadata.artists = [''];
+                        this.metadata.track   = currentSong.SNG_TITLE;
+                        this.metadata.album   = '';
+                        this.metadata.artUrl  = 'http://cdn-images.deezer.com/images/misc/' + currentSong.PICTURE_URL + '/300x300.jpg';
                         break;
                     default:
                         this.warning('Unknown type: ' + dzPlayer.getMediaType());
@@ -109,10 +109,10 @@
                 }
 
                 if(currentSong.DURATION != null) {
-                    this.trackLength   = currentSong.DURATION * 1000000;
+                    this.metadata.trackLength   = currentSong.DURATION * 1000000;
                     this.trackPosition = parseInt(dzPlayer.position) * 1000000;
                 } else {
-                    this.trackLength = 0;
+                    this.metadata.trackLength = 0;
                     this.trackPosition = 0;
                 }
 
