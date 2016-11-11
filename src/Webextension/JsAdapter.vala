@@ -118,7 +118,7 @@ namespace WebMusic.Webextension {
             return ret;
         }
 
-        public new unowned ParamSpec find_property (string name) {
+        public new unowned ParamSpec? find_property (string name) {
             Type type = typeof (JsCommand);
 	        ObjectClass ocl = (ObjectClass) type.class_ref();
 	        return ocl.find_property(name);
