@@ -226,10 +226,10 @@ namespace LibWebMusic {
 
     protected abstract class BaseApi : GLib.Object {
 
-        private HashTable<string, Variant> cache;
         private ObjectType type;
         private bool cache_props = true;
         protected Api api;
+        protected HashTable<string, Variant> cache;
 
         public bool cache_properties {
             get { return this.cache_props; }
@@ -270,7 +270,7 @@ namespace LibWebMusic {
                 ret = api.get_adapter_property(this.type, property);
 
                 if(this.cache_properties && ret != null) {
-                    cache.set(property, ret);
+                    this.cache_property(property, ret);
                 }
             }
 
@@ -304,7 +304,7 @@ namespace LibWebMusic {
 
                 if(this.cache_properties) {
                     dict.foreach ((key, val) => {
-                        cache.set(key, val);
+                        this.cache_property(key, val);
                     });
                 }
 
@@ -321,6 +321,10 @@ namespace LibWebMusic {
             } else {
                 this.signal_send(signal_name, v);
             }
+        }
+
+        protected virtual void cache_property(string key, Variant value) {
+            cache.set(key, value);
         }
 
     }
