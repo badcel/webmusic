@@ -94,6 +94,58 @@ namespace LibWebMusic {
         public string to_string() {
             return "<Playlist id:%s name:%s icon:%s>".printf(this.id, this.name, this.icon);
         }
+
+        public static Playlist from_variant(Variant playlist) {
+
+            Playlist ret = Playlist(new ObjectPath("/"), "", "");
+
+            Variant plist = playlist;
+
+            if(plist.get_type().is_variant()) {
+                plist = plist.get_variant();
+            }
+
+            if(!plist.is_of_type(VariantType.ARRAY)) {
+                warning("Can not convert playlist. Type is no array but type <%s>.", plist.get_type_string());
+                return ret;
+            }
+
+            var count = plist.n_children();
+            if(count != 3) {
+                warning("Can not convert playlist. Wrong count of data (%s/3).", count.to_string());
+                return ret;
+            }
+
+            var id   = plist.get_child_value(0);
+            var name = plist.get_child_value(1);
+            var icon = plist.get_child_value(2);
+
+            if(id.get_type().is_variant()) {
+                id = id.get_variant();
+            }
+
+            if(name.get_type().is_variant()) {
+                name = name.get_variant();
+            }
+
+            if(icon.get_type().is_variant()) {
+                icon = icon.get_variant();
+            }
+
+            if(!id.is_of_type(VariantType.STRING)
+                || !name.is_of_type(VariantType.STRING)
+                || !icon.is_of_type(VariantType.STRING)) {
+
+                warning("Can not convert playlist. Content is no string.");
+                return ret;
+            }
+
+            ret.id   = new ObjectPath(id.get_string());
+            ret.name = name.get_string();
+            ret.icon = icon.get_string();
+
+            return ret;
+        }
     }
 
     public struct MaybePlaylist {
@@ -107,6 +159,36 @@ namespace LibWebMusic {
 
         public string to_string() {
             return "<MaybePlaylist valid:%s %s>".printf(this.valid.to_string(), playlist.to_string());
+        }
+
+        public static MaybePlaylist from_variant(Variant? maybe_playlist) {
+
+            MaybePlaylist ret = MaybePlaylist();
+
+            if(maybe_playlist == null
+                || !maybe_playlist.is_of_type(VariantType.ARRAY)
+                || maybe_playlist.n_children() != 2) {
+
+                warning("Can not convert maybe playlist. Wrong type.");
+                return ret;
+            }
+
+            var valid    = maybe_playlist.get_child_value(0);
+            var playlist = maybe_playlist.get_child_value(1);
+
+            if(valid.get_type().is_variant()) {
+                valid = valid.get_variant();
+            }
+
+            if(!valid.is_of_type(VariantType.BOOLEAN)) {
+                warning("Can not convert maybe playlist. Wrong type for valid field.");
+                return ret;
+            }
+
+            ret.valid = valid.get_boolean();
+            ret.playlist = Playlist.from_variant(playlist);
+
+            return ret;
         }
     }
 
@@ -187,7 +269,7 @@ namespace LibWebMusic {
                 //and we keep the object the whole lifetime
 
                 var prop = this.get_adapter_property(Property.ACTIVE_MAYBE_PLAYLIST);
-                act_playlist = this.get_maybe_playlist(prop);
+                act_playlist = MaybePlaylist.from_variant(prop);
 
                 return act_playlist;
             }
@@ -214,7 +296,7 @@ namespace LibWebMusic {
             Playlist[] playlists = new Playlist[count];
 
             for(int i = 0; i < count; i++) {
-                playlists[i] = this.get_playlist(v.get_child_value(i));
+                playlists[i] = Playlist.from_variant(v.get_child_value(i));
             }
             return playlists;
         }
@@ -229,94 +311,12 @@ namespace LibWebMusic {
 
         protected override void signal_send(string signal_name, Variant? parameter) {
             if(signal_name == "PlaylistChanged" && parameter != null) {
-                this.PlaylistChanged(this.get_playlist(parameter));
+                this.PlaylistChanged(Playlist.from_variant(parameter));
             }
         }
 
         protected override void properties_changed(HashTable<string, Variant> changes) {
             this.PropertiesChanged(changes);
-        }
-
-        private Playlist get_playlist(Variant playlist) {
-
-            Playlist ret = Playlist(new ObjectPath("/"), "", "");
-
-            Variant plist = playlist;
-
-            if(plist.get_type().is_variant()) {
-                plist = plist.get_variant();
-            }
-
-            if(!plist.is_of_type(VariantType.ARRAY)) {
-                warning("Can not convert playlist. Type is no array but type <%s>.", plist.get_type_string());
-                return ret;
-            }
-
-            var count = plist.n_children();
-            if(count != 3) {
-                warning("Can not convert playlist. Wrong count of data (%s/3).", count.to_string());
-                return ret;
-            }
-
-            var id   = plist.get_child_value(0);
-            var name = plist.get_child_value(1);
-            var icon = plist.get_child_value(2);
-
-            if(id.get_type().is_variant()) {
-                id = id.get_variant();
-            }
-
-            if(name.get_type().is_variant()) {
-                name = name.get_variant();
-            }
-
-            if(icon.get_type().is_variant()) {
-                icon = icon.get_variant();
-            }
-
-            if(!id.is_of_type(VariantType.STRING)
-                || !name.is_of_type(VariantType.STRING)
-                || !icon.is_of_type(VariantType.STRING)) {
-
-                warning("Can not convert playlist. Content is no string.");
-                return ret;
-            }
-
-            ret.id   = new ObjectPath(id.get_string());
-            ret.name = name.get_string();
-            ret.icon = icon.get_string();
-
-            return ret;
-        }
-
-        private MaybePlaylist get_maybe_playlist(Variant? maybe_playlist) {
-
-            MaybePlaylist ret = MaybePlaylist();
-
-            if(maybe_playlist == null
-                || !maybe_playlist.is_of_type(VariantType.ARRAY)
-                || maybe_playlist.n_children() != 2) {
-
-                warning("Can not convert maybe playlist. Wrong type.");
-                return ret;
-            }
-
-            var valid    = maybe_playlist.get_child_value(0);
-            var playlist = maybe_playlist.get_child_value(1);
-
-            if(valid.get_type().is_variant()) {
-                valid = valid.get_variant();
-            }
-
-            if(!valid.is_of_type(VariantType.BOOLEAN)) {
-                warning("Can not convert maybe playlist. Wrong type for valid field.");
-                return ret;
-            }
-
-            ret.valid = valid.get_boolean();
-            ret.playlist = this.get_playlist(playlist);
-
-            return ret;
         }
 
         public class Property {
