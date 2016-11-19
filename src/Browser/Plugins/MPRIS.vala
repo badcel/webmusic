@@ -268,7 +268,8 @@ namespace WebMusic.Browser.Plugins {
                         data.insert("PlaylistCount", val);
                         break;
                     case PlaylistApi.Property.ORDERINGS:
-                        data.insert("Orderings", val);
+                        //TODO Orderings must be converted into strings because they correspond to enum "PlaylistOrdering"
+                        //data.insert("Orderings", val);
                         break;
                     case PlaylistApi.Property.ACTIVE_MAYBE_PLAYLIST:
                         data.insert("ActivePlaylist", val);
