@@ -272,9 +272,7 @@ namespace WebMusic.Browser.Plugins {
                         //data.insert("Orderings", val);
                         break;
                     case PlaylistApi.Property.ACTIVE_MAYBE_PLAYLIST:
-                        var mb = MaybePlaylist.from_variant(val);
-                        var v = new Variant ("(b(oss))", mb.valid, mb.playlist.id, mb.playlist.name, mb.playlist.icon);
-                        data.insert("ActivePlaylist", v);
+                        data.insert("ActivePlaylist", MaybePlaylist.from_variant(val));
                         break;
                 }
             });
