@@ -253,7 +253,7 @@
                 let icon = '';
 
                 let playlist = new WebMusic.Api.Playlist(id, name, icon);
-                playlists.push(playlist.toStructPlaylist());
+                playlists.push(playlist);
             }
 
             return playlists;
