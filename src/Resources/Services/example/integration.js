@@ -79,7 +79,7 @@
             let p = new WebMusic.Api.Playlist('/org/webmusic/playlist/1', 'Testplaylist', '');
 
             let p2 = new WebMusic.Api.Playlist('/org/webmusic/playlist/2', 'Testplaylist2', '');
-            return [p.toStructPlaylist(), p2.toStructPlaylist()];
+            return [p, p2];
         }
     }
 
