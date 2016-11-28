@@ -78,7 +78,7 @@
 
         _handleJsonCommand(json) {
 
-            let ret = false;
+            let ret = null;
             let command = JSON.parse(json);
 
             if(command.Parameter != null) {
@@ -627,7 +627,7 @@
 
             this._count = 0;
             this._orderings = [this.ordering.USER];
-            this._activePlaylist = Playlist.getEmptyPlaylist();
+            this._activePlaylist = null;
         }
 
         get ordering() {
@@ -666,12 +666,6 @@
             }
         }
 
-        //ActivePlaylist property which is called from vala
-        get activeMaybePlaylist() {
-            return this._activePlaylist.toMaybeStructPlaylist();
-        }
-
-        //ActivePlaylist property for integration scripts (internal)
         get activePlaylist() {
             return this._activePlaylist;
         }
@@ -680,15 +674,13 @@
 
             if(value instanceof Playlist) {
 
-                if(value.Id != this._activePlaylist.Id
-                    || value.Name != this._activePlaylist.Name
-                    || value.Icon != this._activePlaylist.Icon) {
+                if(this._activePlaylist == null
+                    || value.id != this._activePlaylist.id
+                    || value.name != this._activePlaylist.name
+                    || value.icon != this._activePlaylist.icon) {
 
                     this._activePlaylist = value;
-
-                    //Always send MaybePlaylists in direction of vala
-                    this.changes.activeMaybePlaylist = value.toMaybeStructPlaylist();
-
+                    this.changes.activePlaylist = value;
                 }
 
             } else {
@@ -698,7 +690,7 @@
 
         sendPlaylistChanged(playlist) {
             if(playlist instanceof Playlist) {
-                this.sendSignal("PlaylistChanged", playlist.toStructPlaylist());
+                this.sendSignal("PlaylistChanged", playlist);
             } else {
                 this.warning("Can not send signal PlaylistChanged, because parameter is no playlist.");
             }
@@ -716,26 +708,13 @@
 
     class Playlist {
         constructor(id, name, icon) {
-            this.Id   = id;
-            this.Name = name;
-            this.Icon = icon;
+            this.id   = id;
+            this.name = name;
+            this.icon = icon;
         }
 
         static getEmptyPlaylist() {
             return new Playlist('/', '', '');
-        }
-
-        toStructPlaylist() {
-            return [this.Id, this.Name, this.Icon];
-        }
-
-        toMaybeStructPlaylist() {
-            let valid = false;
-            if(this.Id.length > 1 && this.Name.length > 0) {
-                valid = true;
-            }
-
-            return [valid, this.toStructPlaylist()];
         }
     }
 

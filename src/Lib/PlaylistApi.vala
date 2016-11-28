@@ -105,20 +105,16 @@ namespace LibWebMusic {
                 plist = plist.get_variant();
             }
 
-            if(!plist.is_of_type(VariantType.ARRAY)) {
-                warning("Can not convert playlist. Type is no array but type <%s>.", plist.get_type_string());
+            if(!plist.is_of_type(VariantType.DICTIONARY)) {
+                warning("Can not convert playlist. Type is no dictionary but type <%s>.", plist.get_type_string());
                 return ret;
             }
 
-            var count = plist.n_children();
-            if(count != 3) {
-                warning("Can not convert playlist. Wrong count of data (%s/3).", count.to_string());
-                return ret;
-            }
+            HashTable<string, Variant> dict = (HashTable<string, Variant>) plist;
 
-            var id   = plist.get_child_value(0);
-            var name = plist.get_child_value(1);
-            var icon = plist.get_child_value(2);
+            var id   = dict.get(PlaylistApi.Property.PLAYLIST_ID);
+            var name = dict.get(PlaylistApi.Property.PLAYLIST_NAME);
+            var icon = dict.get(PlaylistApi.Property.PLAYLIST_ICON);
 
             if(id.get_type().is_variant()) {
                 id = id.get_variant();
@@ -148,58 +144,12 @@ namespace LibWebMusic {
         }
     }
 
-    public struct MaybePlaylist {
-        public bool valid;
-        public Playlist playlist;
-
-        public MaybePlaylist() {
-            this.valid = false;
-            this.playlist = Playlist(new ObjectPath("/"), "", "");
-        }
-
-        public string to_string() {
-            return "<MaybePlaylist valid:%s %s>".printf(this.valid.to_string(), playlist.to_string());
-        }
-
-        public static MaybePlaylist from_variant(Variant? maybe_playlist) {
-
-            MaybePlaylist ret = MaybePlaylist();
-
-            if(maybe_playlist == null
-                || !maybe_playlist.is_of_type(VariantType.ARRAY)
-                || maybe_playlist.n_children() != 2) {
-
-                warning("Can not convert maybe playlist. Wrong type.");
-                return ret;
-            }
-
-            var valid    = maybe_playlist.get_child_value(0);
-            var playlist = maybe_playlist.get_child_value(1);
-
-            if(valid.get_type().is_variant()) {
-                valid = valid.get_variant();
-            }
-
-            if(!valid.is_of_type(VariantType.BOOLEAN)) {
-                warning("Can not convert maybe playlist. Wrong type for valid field.");
-                return ret;
-            }
-
-            ret.valid = valid.get_boolean();
-            ret.playlist = Playlist.from_variant(playlist);
-
-            return ret;
-        }
-    }
-
     public class PlaylistApi : BaseApi {
 
         private static PlaylistApi playlist_api;
 
         public signal void PropertiesChanged(HashTable<string, Variant> dict);
         public signal void PlaylistChanged(Playlist playlist);
-
-        private MaybePlaylist act_playlist;
 
         public PlaylistApi() {
             base(ObjectType.PLAYLIST);
@@ -263,13 +213,16 @@ namespace LibWebMusic {
             }
         }
 
-        public weak MaybePlaylist active_playlist {
-            get {
-                //Return a weak reference, because we own the act_playlist
-                //and we keep the object the whole lifetime
+        public Playlist? active_playlist {
+            owned get {
 
-                var prop = this.get_adapter_property(Property.ACTIVE_MAYBE_PLAYLIST);
-                act_playlist = MaybePlaylist.from_variant(prop);
+                var prop = this.get_adapter_property(Property.ACTIVE_PLAYLIST);
+                Playlist? act_playlist;
+                if(prop != null) {
+                    act_playlist = Playlist.from_variant(prop);
+                } else {
+                    act_playlist = null;
+                }
 
                 return act_playlist;
             }
@@ -320,9 +273,13 @@ namespace LibWebMusic {
         }
 
         public class Property {
-            public const string PLAYLIST_COUNT        = "count";
-            public const string ORDERINGS             = "orderings";
-            public const string ACTIVE_MAYBE_PLAYLIST = "activeMaybePlaylist";
+            public const string PLAYLIST_COUNT  = "count";
+            public const string ORDERINGS       = "orderings";
+            public const string ACTIVE_PLAYLIST = "activePlaylist";
+
+            public const string PLAYLIST_ID   = "id";
+            public const string PLAYLIST_NAME = "name";
+            public const string PLAYLIST_ICON = "icon";
         }
 
         private class Action {

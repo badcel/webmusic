@@ -271,8 +271,10 @@ namespace WebMusic.Browser.Plugins {
                         //TODO Orderings must be converted into strings because they correspond to enum "PlaylistOrdering"
                         //data.insert("Orderings", val);
                         break;
-                    case PlaylistApi.Property.ACTIVE_MAYBE_PLAYLIST:
-                        data.insert("ActivePlaylist", MaybePlaylist.from_variant(val));
+                    case PlaylistApi.Property.ACTIVE_PLAYLIST:
+                        var playlist = Playlist.from_variant(val);
+                        var maybe_playlist = MaybePlaylist.from_playlist(playlist);
+                        data.insert("ActivePlaylist", maybe_playlist);
                         break;
                 }
             });
@@ -538,6 +540,7 @@ namespace WebMusic.Browser.Plugins {
         public signal void PlaylistChanged(Playlist playlist);
 
         private PlaylistApi playlist_api;
+        private MaybePlaylist active_playlist;
 
         public MprisPlaylists(PlaylistApi p) {
             playlist_api = p;
@@ -562,8 +565,13 @@ namespace WebMusic.Browser.Plugins {
             }
         }
 
-        public MaybePlaylist ActivePlaylist {
-            get { return playlist_api.active_playlist; }
+        public weak MaybePlaylist ActivePlaylist {
+            get {
+                //Return a weak reference, because we own the active_playlist
+                //and we keep the object the whole lifetime
+                active_playlist = MaybePlaylist.from_playlist(playlist_api.active_playlist);
+                return active_playlist;
+            }
         }
 
         public void ActivatePlaylist(ObjectPath playlist_id) {
@@ -583,6 +591,36 @@ namespace WebMusic.Browser.Plugins {
 
         private void on_playlist_changed(Playlist playlist) {
             this.PlaylistChanged(playlist);
+        }
+    }
+
+    public struct MaybePlaylist {
+        public bool valid;
+        public Playlist playlist;
+
+        public MaybePlaylist() {
+
+            this.valid = false;
+            this.playlist = Playlist(new ObjectPath("/"), "", "");
+
+        }
+
+        public string to_string() {
+            return "<MaybePlaylist valid:%s %s>"
+                .printf(this.valid.to_string(), this.playlist.to_string());
+        }
+
+        public static MaybePlaylist from_playlist(Playlist? maybe_playlist) {
+
+            MaybePlaylist ret = MaybePlaylist();
+
+            if(maybe_playlist == null) {
+                return ret;
+            }
+
+            ret.playlist = maybe_playlist;
+
+            return ret;
         }
     }
 
