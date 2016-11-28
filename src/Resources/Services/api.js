@@ -92,7 +92,12 @@
                 }
             }
 
-            return JSON.stringify(ret); //Return in json format
+            if(ret != null) {
+                //Return in json format
+                ret = JSON.stringify(ret)
+            }
+
+            return ret;
         }
 
         _handle_command(object, command) {
