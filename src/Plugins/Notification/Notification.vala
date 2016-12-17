@@ -19,13 +19,11 @@ using Notify;
 
 namespace WebMusic.Plugins.Notification {
 
-    public class Notification: Object, LibWebMusic.PlayerPlugin {
+    public class Notification: Object, PlayerPlugin {
 
         private Notify.Notification notification;
         public PlayerApi player_api { get; construct set; }
         public PlaylistApi playlist_api { get; construct set; }
-
-        private PlayerApi api;
 
         construct {
             Notify.init("WebMusic");
@@ -45,7 +43,7 @@ namespace WebMusic.Plugins.Notification {
                 return;
             }
 
-            Metadata metadata = PlayerApi.get_instance().Metadata;
+            Metadata metadata = player_api.Metadata;
 
             string artists   = string.joinv (", ", metadata.Artists);
             string track     = metadata.Track;
@@ -117,6 +115,6 @@ namespace WebMusic.Plugins.Notification {
 [ModuleInit]
 public void peas_register_types(TypeModule module) {
 	var objmodule = module as Peas.ObjectModule;
-	objmodule.register_extension_type(typeof (LibWebMusic.PlayerPlugin),
+	objmodule.register_extension_type(typeof (PlayerPlugin),
 	    typeof (WebMusic.Plugins.Notification.Notification));
 }
