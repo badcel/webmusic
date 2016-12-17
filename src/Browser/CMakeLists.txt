@@ -27,7 +27,6 @@ vala_precompile(VALA_C
     Dialogs/ErrorDialog.vala
     Plugins/IPlugin.vala
     Plugins/MPRIS.vala
-    Plugins/Notification.vala
     Plugins/MiniWidget.vala
     Widgets/ImageOverlay.vala
     Widgets/OsdToolbar.vala
@@ -38,7 +37,6 @@ PACKAGES
     glib-2.0
     gtk+-3.0
     WebKit2-4.0
-    libnotify
 CUSTOM_VAPIS
     ${CMAKE_BINARY_DIR}/src/Lib/libwebmusic.vapi
     ${CMAKE_SOURCE_DIR}/vapi/config.vapi
@@ -46,9 +44,9 @@ CUSTOM_VAPIS
 )
 
 add_executable(webmusic-bin ${VALA_C} ${RESOURCE_FILE})
-target_link_libraries(webmusic-bin webmusic ${GLIB_LDFLAGS} ${WEBKIT_LDFLAGS} ${NOTIFY_LDFLAGS})
+target_link_libraries(webmusic-bin webmusic ${GLIB_LDFLAGS} ${GTK_LDFLAGS} ${WEBKIT_LDFLAGS})
 set_target_properties(webmusic-bin PROPERTIES
-                      COMPILE_FLAGS "${GLIB_CFLAGS} ${GTK_CFLAGS} ${WEBKIT_CFLAGS} ${NOTIFY_CFLAGS} ${COMMON_CFLAGS}"
+                      COMPILE_FLAGS "${GLIB_CFLAGS} ${GTK_CFLAGS} ${WEBKIT_CFLAGS} ${COMMON_CFLAGS}"
                       INCLUDE_DIRECTORIES "${CMAKE_BINARY_DIR}/src/Lib"
                       OUTPUT_NAME webmusic)
 

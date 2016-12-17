@@ -1,5 +1,5 @@
  #
- #   Copyright (C) 2014  Marcel Tiede
+ #   Copyright (C) 2016  Marcel Tiede
  #
  #   This program is free software: you can redistribute it and/or modify
  #   it under the terms of the GNU General Public License as published by
@@ -14,14 +14,9 @@
  #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  #
 
-add_subdirectory(Lib)
-add_subdirectory(Browser)
-add_subdirectory(Webextension)
-add_subdirectory(SearchProvider)
-add_subdirectory(Plugins)
-
-install(DIRECTORY Resources/Services
-        DESTINATION "${PKG_DATADIR}"
-        PATTERN "*.in" EXCLUDE)
-
-webmusic_configure(FILES desktop example.ini ${PKG_DATADIR}/Services/example ${CMAKE_CURRENT_SOURCE_DIR}/Resources/Services/example)
+if(PLUGIN_NOTIFICATION)
+    message(STATUS "[OPTION] PLUGIN NOTIFICATION IS ENABLED")
+    add_subdirectory(Notification)
+else()
+    message(STATUS "[OPTION] PLUGIN NOTIFICATION IS DISABLED")
+endif()

@@ -1,0 +1,4 @@
+[Plugin]
+Module=notification
+Name=Notification
+Description=Uses libnotify to display new song information

@@ -21,13 +21,15 @@ vala_precompile(VALA_C
     Namespace.vala
     PlayerApi.vala
     PlaylistApi.vala
+    PluginManager.vala
     Service.vala
     VariantHelper.vala
 OPTIONS
     ${VALAFLAGS}
 PACKAGES
-    glib-2.0
     gio-2.0
+    glib-2.0
+    libpeas-1.0
 CUSTOM_VAPIS
     ${CMAKE_SOURCE_DIR}/vapi/config.vapi
 GENERATE_VAPI
@@ -39,10 +41,10 @@ GENERATE_GIR
 )
 
 add_library(webmusic SHARED ${VALA_C})
-target_link_libraries(webmusic ${GLIB_LDFLAGS})
+target_link_libraries(webmusic ${GLIB_LDFLAGS} ${LIBPEAS_LDFLAGS})
 set_target_properties(webmusic PROPERTIES
-                      COMPILE_FLAGS "${GLIB_CFLAGS} ${COMMON_CFLAGS}")
-install(TARGETS webmusic DESTINATION "${CMAKE_INSTALL_FULL_LIBDIR}")
+                      COMPILE_FLAGS "${GLIB_CFLAGS} ${LIBPEAS_CFLAGS} ${COMMON_CFLAGS}")
+install(TARGETS webmusic DESTINATION "${PKG_LIBDIR}")
 
 
 add_custom_command(OUTPUT libwebmusic-0.1.typelib

@@ -17,26 +17,29 @@
 using LibWebMusic;
 using Notify;
 
-namespace WebMusic.Browser.Plugins {
+namespace WebMusic.Plugins.Notification {
 
-    private class Notificationn : GLib.Object, IPlugin {
+    public class Notification: Object, LibWebMusic.PlayerPlugin {
 
         private Notify.Notification notification;
-        private PlayerApi player;
+        public PlayerApi player_api { get; construct set; }
+        public PlaylistApi playlist_api { get; construct set; }
 
-        public bool Enable { get; set; }
+        private PlayerApi api;
 
-        public Notificationn() {
+        construct {
             Notify.init("WebMusic");
-
-            player = PlayerApi.get_instance();
-            player.PropertiesChanged.connect(on_properties_changed);
         }
 
-        private void on_properties_changed(HashTable<string,Variant> dict) {
+        public void activate() {
+            player_api.PropertiesChanged.connect(on_properties_changed);
+        }
 
-            if(!this.Enable)
-                return;
+        public void deactivate() {
+            player_api.PropertiesChanged.disconnect(on_properties_changed);
+        }
+
+        public void on_properties_changed(HashTable<string,Variant> dict) {
 
             if(!dict.contains(PlayerApi.Property.METADATA)) {
                 return;
@@ -66,16 +69,16 @@ namespace WebMusic.Browser.Plugins {
                     notification.update(nowPlaying, trackInfo, file_name);
                 }
 
-                if(player.CanGoPrevious)
+                if(player_api.CanGoPrevious)
                 {
                     notification.add_action("media-skip-backward", _("Previous"), check_notification_action);
                 }
 
-                if(player.PlaybackStatus == PlayStatus.PLAY) {
+                if(player_api.PlaybackStatus == PlayStatus.PLAY) {
                     notification.add_action("media-playback-pause", _("Pause"), check_notification_action);
                 }
 
-                if(player.CanGoNext)
+                if(player_api.CanGoNext)
                 {
                     notification.add_action("media-skip-forward", _("Next"), check_notification_action);
                 }
@@ -94,13 +97,13 @@ namespace WebMusic.Browser.Plugins {
         private void check_notification_action(Notify.Notification notification, string action) {
             switch(action) {
                 case "media-skip-forward":
-                    player.Next();
+                    player_api.Next();
                     break;
                 case "media-playback-pause":
-                    player.Pause();
+                    player_api.Pause();
                     break;
                 case "media-skip-backward":
-                    player.Previous();
+                    player_api.Previous();
                     break;
                 default:
                     warning("Unknown notification action: %s", action);
@@ -108,6 +111,12 @@ namespace WebMusic.Browser.Plugins {
             }
 
         }
-
     }
+}
+
+[ModuleInit]
+public void peas_register_types(TypeModule module) {
+	var objmodule = module as Peas.ObjectModule;
+	objmodule.register_extension_type(typeof (LibWebMusic.PlayerPlugin),
+	    typeof (WebMusic.Plugins.Notification.Notification));
 }

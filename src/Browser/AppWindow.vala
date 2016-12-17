@@ -64,6 +64,7 @@ namespace WebMusic.Browser
         private DarkThemeMode    mDarkThemeMode;
         private Service          mService;
         private HashTable<string, IPlugin> mPlugins;
+        private PluginManager plugin_manager;
 
         private bool mMiniMode = false;
 
@@ -148,19 +149,35 @@ namespace WebMusic.Browser
 
             mPlugins = new HashTable<string, IPlugin>(str_hash, str_equal);
             mPlugins.insert("mpris", new Mpris((WebMusic)this.application, mService));
-            mPlugins.insert("notifications", new Notificationn());
             mPlugins.insert("miniwidget", new MiniWidget());
 
             mSettingsPlugins.changed.connect(on_settings_plugins_changed);
 
             mPlugins["mpris"].Enable = mSettingsPlugins.get_boolean("enable-mpris");
-            mPlugins["notifications"].Enable = mSettingsPlugins.get_boolean("enable-notifications");
+
+            plugin_manager = new PluginManager();
+            plugin_manager.init();
+
+            if(mSettingsPlugins.get_boolean("enable-notifications")) {
+                plugin_manager.load_plugin("notification");
+            }
 
         }
 
         private void on_settings_plugins_changed(string key) {
             string index = key.replace("enable-", "");
-            mPlugins[index].Enable = mSettingsPlugins.get_boolean(key);
+            bool enable = mSettingsPlugins.get_boolean(key);
+
+            //TODO Workaround until plugin system is completely dynamic
+            if(index == "notifications") {
+                if(enable) {
+                    plugin_manager.load_plugin("notification");
+                } else {
+                    plugin_manager.unload_plugin("notification");
+                }
+            } else {
+                mPlugins[index].Enable = enable;
+            }
         }
 
         private void ReadDarkThemeMode() {

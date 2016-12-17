@@ -20,7 +20,9 @@ namespace Config {
 	public const string LOCALE_DIR;
 	public const string THEME_DIR;
 	public const string PKG_DATA_DIR;
+    public const string PKG_DATA_DIR_PLUGINS;
 	public const string PKG_LIB_DIR;
+	public const string PKG_LIB_DIR_PLUGINS;
 	public const string PACKAGE_NAME;
 	public const string PACKAGE_VERSION;
 	public const string PACKAGE;
