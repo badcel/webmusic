@@ -718,6 +718,32 @@
         }
     }
 
+
+  class BaseTracklist extends BaseApi {
+        constructor() {
+            super(WebMusic.Api.Type.TRACKLIST);
+
+            this._tracks = [];
+            this._canEditTracks = false;
+        }
+
+        get canEditTracks() {
+            return this._canEditTracks;
+        }
+
+        set canEditTracks(value) {
+            if(value != this._canEditTracks) {
+                this.changes.canEditTracks = value;
+                this._canEditTracks = value;
+            }
+        }
+
+        sendTrackListReplaced(tracks, currentTrack) {
+            this.sendSignal("TrackListReplaced", [tracks, currentTrack]);
+        }
+    }
+
+
     function Browser() {}
     Browser.prototype.ActionShowType = {
         TRACK    : 'track',
