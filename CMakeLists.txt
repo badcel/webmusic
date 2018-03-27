@@ -31,7 +31,7 @@ find_package(Vala       0.24 REQUIRED)
 
 webmusic_check_modules(GTK          REQUIRED gtk+-3.0>=3.12)
 webmusic_check_modules(NOTIFY       REQUIRED libnotify>=0.7)
-webmusic_check_modules(WEBEXTENSION REQUIRED webkit2gtk-web-extension-4.0>=2.6 )
+webmusic_check_modules(WEBEXTENSION REQUIRED webkit2gtk-web-extension-4.0>=2.6)
 webmusic_check_modules(WEBKIT       REQUIRED webkit2gtk-4.0>=2.6)
 webmusic_check_modules(GLIB         REQUIRED glib-2.0>=2.40)
 webmusic_check_modules(INTROSPECTON REQUIRED gobject-introspection-1.0>=1.40)
