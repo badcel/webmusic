@@ -27,7 +27,7 @@ PACKAGES
     glib-2.0
     gtk+-3.0
     json-glib-1.0
-    WebKit2WebExtension-4.0
+    webkit2gtk-web-extension-4.0
 CUSTOM_VAPIS
     ${CMAKE_BINARY_DIR}/src/Lib/libwebmusic.vapi
     ${CMAKE_SOURCE_DIR}/vapi/config.vapi

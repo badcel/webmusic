@@ -36,7 +36,7 @@ OPTIONS
 PACKAGES
     glib-2.0
     gtk+-3.0
-    WebKit2-4.0
+    webkit2gtk-4.0
 CUSTOM_VAPIS
     ${CMAKE_BINARY_DIR}/src/Lib/libwebmusic.vapi
     ${CMAKE_SOURCE_DIR}/vapi/config.vapi
