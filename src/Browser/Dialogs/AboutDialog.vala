@@ -36,7 +36,7 @@ namespace WebMusic.Browser.Dialogs {
 
             string comments = _("A web based music player that "
                                 + "integrates your favourite music service into the desktop.") + "\n\n"
-                                + _("Powered by WebKit %d.%d.%d\n").printf(
+                                + _("Powered by WebKit %u.%u.%u\n").printf(
                                 WebKit.Version.major,
                                 WebKit.Version.minor,
                                 WebKit.Version.micro);
