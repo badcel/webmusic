@@ -1,14 +1,14 @@
 [Desktop Entry]
 Version=1.0
 
-_Name=WebMusic
-_Comment=Listen to your music
+Name=WebMusic
+Comment=Listen to your music
 
 Icon=webmusic
 Type=Application
 DBusActivatable=true
-Exec=@WEBMUSIC_LOCAL_BINDIR@webmusic
+Exec=webmusic
 
 StartupNotify=true
 Categories=GNOME;GTK;AudioVideo;Audio;Player;
-_Keywords=webmusic;music;
+Keywords=webmusic;music;
