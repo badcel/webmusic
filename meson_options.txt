@@ -1,0 +1,4 @@
+option('searchprovider', type: 'boolean', value: true, description: 'Creates the gnome-shell search-provider.')
+option('plugin_notification', type: 'boolean', value: true, description: 'Include plugin for desktop notification.')
+option('manpage', type: 'boolean', value: true, description: 'Enable building man pages.')
+

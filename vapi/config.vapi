@@ -14,7 +14,7 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-[CCode (cprefix = "", lower_case_cprefix = "")]
+[CCode (lower_case_cprefix = "", cheader_filename = "config.h")]
 namespace Config {
 	public const string GETTEXT_PACKAGE;
 	public const string LOCALE_DIR;
