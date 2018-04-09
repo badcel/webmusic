@@ -10,17 +10,16 @@ makedepends=(meson vala intltool)
 
 #source=(https://github.com/badcel/webmusic/archive/webmusic-${pkgver}.tar.gz)
 sha256sums=('SKIP')
+prepare() {
+  cd $pkgname
+}
 
 build() {
-  cd "$srcdir/$pkgname"
-
   arch-meson $pkgname build
   ninja -C build
 }
 
 package() {
-  cd "$srcdir/$pkgname"
-
   DESTDIR="$pkgdir" ninja -C build install
 }
 
