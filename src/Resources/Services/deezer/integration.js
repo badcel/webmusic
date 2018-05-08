@@ -99,10 +99,10 @@
                 this.volume        = dzPlayer.volume;
                 this.shuffle       = dzPlayer.shuffle;
 
-                let like = document.querySelector('.player-actions .icon-love')
+                let like = document.querySelector('.player .player-actions .svg-icon-love-outline');
                 if(like != null ) {
                     this.canLike = true;
-                    this.like = like.classList.contains('active');
+                    this.like = userData.isFavorite("song", currentSong.SNG_ID);
                 } else {
                     this.canLike = false;
                     this.like = false;
@@ -158,7 +158,7 @@
         }
 
         actionToggleLike() {
-           document.querySelector('.player-actions .icon-love').parentNode.parentNode.click();
+           document.querySelector('.player .player-actions .svg-icon-love-outline').parentNode.click();
         }
 
         actionTrackPosition(position) {
