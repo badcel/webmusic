@@ -102,7 +102,7 @@
                 let like = document.querySelector('.player .player-actions .svg-icon-love-outline');
                 if(like != null ) {
                     this.canLike = true;
-                    this.like = userData.isFavorite("song", currentSong.SNG_ID);
+                    this.like = userData.isFavorite('song', currentSong.SNG_ID);
                 } else {
                     this.canLike = false;
                     this.like = false;
